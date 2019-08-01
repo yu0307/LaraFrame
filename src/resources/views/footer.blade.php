@@ -1,4 +1,4 @@
-@push('footerscripts')
+@prepend('footerscripts')
 <script src="{{asset('FeIron/LaraFrame/plugins/jquery/jquery-3.1.0.min.js')}}"></script>
 <script src="{{asset('FeIron/LaraFrame/plugins/jquery/jquery-migrate-3.0.0.min.js')}}"></script>
 <script src="{{asset('FeIron/LaraFrame/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
@@ -33,11 +33,11 @@
 <script src="{{asset('FeIron/LaraFrame/js/plugins.js')}}"></script> <!-- Main Plugin Initialization Script -->
 
 <script src="{{asset('FeIron/LaraFrame/js/layoutAPI.js')}}"></script> <!-- Main Plugin Initialization Script -->
-@endpush
+@endprepend
 
-@push('footerstyles')
+@prepend('footerstyles')
 
-@endpush
+@endprepend
 
 
 @section('footer')
