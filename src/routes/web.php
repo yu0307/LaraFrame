@@ -1,6 +1,6 @@
 <?php
     Route::group(['namespace' => 'FeIron\LaraFrame\http\controllers', 'middleware' => ['web'], 'as' => 'FrameMenus'], function () {
-        Route::get('home','fe_homeController@home')->name('home');
+        
         Route::get('testframe', function(){
             dump(array_keys(Route::getRoutes()->getRoutesByName()));
             
