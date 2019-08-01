@@ -32,10 +32,12 @@ class LaraFrameServiceProvider extends ServiceProvider {
     }
 
     public function register(){
-
+        $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+        $loader->alias('menuGenerator', 'FeIron\LaraFrame\lib\facades\menuGenerator');
     }
 
     private function registerBladeComponents(){
+        //read from dir and build a cache and load from cache.
         Blade::component('LaraFrame::components.sidebarMenu', 'fesidebarMenu');
     }
 }

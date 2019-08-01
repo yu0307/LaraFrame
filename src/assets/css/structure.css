@@ -24,3 +24,13 @@ div.logopanel > a.logoText{
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+div.sidebar > div.sidebar-inner > ul.nav-sidebar > li.tm.nav-hover{
+    background-color: #319db5;
+    color: #ffffff;
+    opacity: 1;
+}
+
+div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
+    min-width: 15px;
+}

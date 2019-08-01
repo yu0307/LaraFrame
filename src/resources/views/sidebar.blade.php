@@ -18,15 +18,9 @@
         <ul class="nav nav-sidebar">
             <!-- SIDEBAR MENU -->
             @if(config('LaraFrame.appconfig.use_route_as_menu'))
-                @foreach (array_map(
-                                    function($val){ return str_replace('FrameMenus','',$val); }, 
-                                    preg_grep(
-                                                '/^FrameMenus([\w|\S]*)$/i', 
-                                                array_keys(Route::getRoutes()->getRoutesByName())
-                                            )
-                                    ) as $Menu)
-                    @fesidebarMenu(['href'=>(route('FrameMenus'.$Menu))])
-                        {{$Menu}}
+                @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
+                    @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])
+                        {{$Menu['title']}}
                     @endfesidebarMenu
                 @endforeach
             @endif
