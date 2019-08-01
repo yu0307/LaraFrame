@@ -1,0 +1,26 @@
+body>section>div.main-content{
+    height: 100%;
+}
+
+body>section>div.main-content>div.page-content {
+    padding-top: 50px;
+    margin-top: 0px;
+}
+
+body>section>div.main-content>div.page-content>div.footer{
+    position: absolute;
+    bottom: 0px;
+    left: 2%;
+    right: 2%;
+}
+
+div.logopanel > a.logoText{
+    font-size: 25px;
+    color: white;
+    font-family: 'Lato', 'Open Sans', Helvetica, sans-serif;
+    overflow: hidden;
+    padding-left: 10px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
