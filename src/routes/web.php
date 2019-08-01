@@ -1,11 +1,10 @@
 <?php
-    Route::group(['namespace' => 'FeIron\LaraFrame\http\controllers', 'middleware' => ['web'], 'as' => 'FrameMenus'], function () {
+    Route::group(['namespace' => 'FeIron\LaraFrame\http\controllers', 'middleware' => ['web']], function () {
         
-        Route::get('testframe', function(){
-            dump(array_keys(Route::getRoutes()->getRoutesByName()));
-            
-            dd(array_map(function($val){return str_replace('FrameMenus','',$val);}, preg_grep('/^FrameMenus([\w|\S]*)$/i', array_keys(Route::getRoutes()->getRoutesByName()))));
-        })->name('testframe');
+        Route::get('testframe', function(){            
+            dd(Route::getRoutes()->getRoutesByName());
+            dd(preg_grep('/^FrameMenus([\w|\S]*)$/i', array_keys(Route::getRoutes()->getRoutesByName())));
+        })->name('testframes');
     });
 
     Route::group(['as'=>'FrameMenus'],function(){

@@ -3,6 +3,7 @@
 namespace FeIron\LaraFrame;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 
 class LaraFrameServiceProvider extends ServiceProvider {
     public function boot(){
@@ -13,6 +14,8 @@ class LaraFrameServiceProvider extends ServiceProvider {
         $this->loadViewsFrom(__DIR__ . '/resources/views', $PackageName);
         //loading migration scripts
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+
+        $this->registerBladeComponents();
 
         $this->publishes([
             __DIR__ . '/config' => config_path($PackageName),
@@ -30,6 +33,10 @@ class LaraFrameServiceProvider extends ServiceProvider {
 
     public function register(){
 
+    }
+
+    private function registerBladeComponents(){
+        Blade::component('LaraFrame::components.sidebarMenu', 'fesidebarMenu');
     }
 }
 

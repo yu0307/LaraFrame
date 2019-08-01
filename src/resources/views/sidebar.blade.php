@@ -17,16 +17,20 @@
         </div>
         <ul class="nav nav-sidebar">
             <!-- SIDEBAR MENU -->
+            @if(config('LaraFrame.appconfig.use_route_as_menu'))
+                @foreach (array_map(
+                                    function($val){ return str_replace('FrameMenus','',$val); }, 
+                                    preg_grep(
+                                                '/^FrameMenus([\w|\S]*)$/i', 
+                                                array_keys(Route::getRoutes()->getRoutesByName())
+                                            )
+                                    ) as $Menu)
+                    @fesidebarMenu(['href'=>(route('FrameMenus'.$Menu))])
+                        {{$Menu}}
+                    @endfesidebarMenu
+                @endforeach
+            @endif
             @yield('sidebar_menu')
-            <li class="tm nav-active active"><a href="my-link.html"><i class="icon-home"></i><span>Test Active Menu 1</span></a></li>
-            <li class="tm nav-parent">
-                <a href="#"><i class="icon-puzzle"></i><span>test Menu 2</span> <span class="fa arrow"></span></a>
-                <ul class="children collapse">
-                    <li><a href="submenu1.html">Submenu 1</a></li>
-                    <li><a href="submenu2.html">Submenu 2</a></li>
-                    <li><a href="submenu3.html">Submenu 3</a></li>
-                </ul>
-            </li>
         </ul>
         <div class="sidebar-widgets">
             <!-- SIDEBAR WIDGET -->
