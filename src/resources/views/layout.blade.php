@@ -22,10 +22,7 @@
             @yield('topbar')
             <div class="page-content p-b-30">
                 <!-- PAGE CONTENT -->
-                @section('content')
-
-                @endsection
-
+                @yield('content')
                 @yield('footer')
             </div>
         </div>
