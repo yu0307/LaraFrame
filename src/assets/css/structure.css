@@ -34,3 +34,7 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li.tm.nav-hover{
 div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
     min-width: 15px;
 }
+
+.dataTable tfoot tr th input{
+    width: 100% !important;
+}
