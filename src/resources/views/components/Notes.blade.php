@@ -1,4 +1,6 @@
-<form action="{{(isset($custom_note_action)?$custom_note_action:route('LF_SaveNotes'))}}" id="LF_notes_form">
+<form class="LF_form_notes" form_type="LF_form_notes" action="{{(isset($custom_note_action)?$custom_note_action:route('LF_SaveNotes'))}}" id="{{$formID??'LF_notes_form'}}">
+    <input type="hidden" name="method" value="post" />
+    <input type="hidden" name="CurrentNoteID" value="" />
     <div class="tab-pane fade {{($active??false)?'active in':''}}" id="notes">
         <div class="list-notes withScroll" style="height: auto;">
             <div class="notes ">
@@ -23,13 +25,14 @@
             </div>
             <div id="note-detail">
                 <div class="note-write">
-                    <textarea name="fe_notes" class="form-control" placeholder="Type your notes here ..."></textarea>
+                    <textarea name="fe_notes" class="form-control" placeholder="Type your notes here ...">{{$default??''}}</textarea>
                     <div class="note_footer">
                         <button class="btn btn-primary btn-sm pull-left">save</button>
-                        <button type="button" class="btn btn-danger btn-sm pull-right" onclick="toggleQuickview()">cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm pull-right note-back">cancel</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {{$slot}}
 </form>

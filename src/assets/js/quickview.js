@@ -76,7 +76,7 @@ function quickviewSidebar() {
                 $('#quickview-sidebar').addClass('closing');
                 $('#quickview-sidebar').removeClass('open');
                 setTimeout(function(){
-                    $('#quickview-sidebar').removeClass('closing');
+                    $('#quickview-sidebar').removeClass('closing').trigger('sidebarHidden');
                 },400);
             }
         }

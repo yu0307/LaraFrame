@@ -11,9 +11,9 @@ class fe_notesController extends Controller
     public function saveNotes(Request $Request){
         // fe_notes
         if($Request->filled('fe_notes')){
-            LF_notes::create(['notes' => $Request->only('fe_notes')]);
+            LF_notes::create(['notes' => $Request->input('fe_notes')]);
         }
-        if (Request::ajax()) {
+        if ($Request->ajax()) {
             return response()->json(['status' => 'success', 'message' => 'notes created.']);
         }
     }

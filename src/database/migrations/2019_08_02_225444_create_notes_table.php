@@ -15,6 +15,7 @@ class CreateNotesTable extends Migration
     {
         Schema::create('lf_notes', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('subject',220)->default('Untitiled');
             $table->text('notes')->nullable();
             $table->string('notable_id', 36)->nullable();
             $table->string('notable_type', 50)->nullable();

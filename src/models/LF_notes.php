@@ -16,4 +16,9 @@ class LF_notes extends Model
     {
         return $this->morphTo();
     }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return date('l j M, h:i a',strtotime($value));
+    }
 }

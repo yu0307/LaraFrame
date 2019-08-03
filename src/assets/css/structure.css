@@ -43,7 +43,7 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
 }
 
 .quickview #notes .note-item{
-    border-bottom: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro !important;
 }
 
 .quickview .quickview_footer,.quickview .note_footer{
@@ -56,4 +56,8 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
 }
 .quickview .note_footer button{
     width: 30%;
+}
+
+#noty_layout__topCenter .noty_bar:first-child {
+    margin-top: 40px !important;
 }

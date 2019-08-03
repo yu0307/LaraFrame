@@ -11,6 +11,8 @@
 <link href="{{asset('FeIron/LaraFrame/css/theme.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('FeIron/LaraFrame/css/ui.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('FeIron/LaraFrame/css/extension.css')}}" rel="stylesheet"> <!-- MANDATORY -->
+<link href="{{asset('FeIron/LaraFrame/plugins/noty/noty.css/')}}" rel="stylesheet"> <!-- MANDATORY -->
+<link href="{{asset('FeIron/LaraFrame/plugins/noty/themes/bootstrap-v3.css/')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('FeIron/LaraFrame/css/structure.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 @endprepend
 

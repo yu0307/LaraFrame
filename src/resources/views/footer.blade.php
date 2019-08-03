@@ -23,7 +23,7 @@
 <script src="{{asset('FeIron/LaraFrame/plugins/bootstrap-context-menu/bootstrap-contextmenu.min.js')}}"></script> <!-- File Upload and Input Masks -->
 <script src="{{asset('FeIron/LaraFrame/plugins/slick/slick.min.js')}}"></script> <!-- Slider -->
 <script src="{{asset('FeIron/LaraFrame/plugins/countup/countUp.min.js')}}"></script> <!-- Animated Counter Number -->
-<script src="{{asset('FeIron/LaraFrame/plugins/noty/jquery.noty.packaged.min.js')}}"></script> <!-- Notifications -->
+<script src="{{asset('FeIron/LaraFrame/plugins/noty/noty.min.js')}}"></script> <!-- Notifications -->
 <script src="{{asset('FeIron/LaraFrame/plugins/backstretch/backstretch.min.js')}}"></script> <!-- Background Image -->
 <script src="{{asset('FeIron/LaraFrame/plugins/bootstrap-slider/bootstrap-slider.js')}}"></script> <!-- Bootstrap Input Slider -->
 <script src="{{asset('FeIron/LaraFrame/plugins/visible/jquery.visible.min.js')}}"></script> <!-- Visible in Viewport -->
