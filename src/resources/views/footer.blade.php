@@ -27,11 +27,14 @@
 <script src="{{asset('FeIron/LaraFrame/plugins/backstretch/backstretch.min.js')}}"></script> <!-- Background Image -->
 <script src="{{asset('FeIron/LaraFrame/plugins/bootstrap-slider/bootstrap-slider.js')}}"></script> <!-- Bootstrap Input Slider -->
 <script src="{{asset('FeIron/LaraFrame/plugins/visible/jquery.visible.min.js')}}"></script> <!-- Visible in Viewport -->
+<script src="{{asset('FeIron/LaraFrame/js/widgets/notes.js')}}"></script> <!-- Notes Script -->
+<script src="{{asset('FeIron/LaraFrame/js/quickview.js')}}"></script> <!-- Quickview Script -->
 
 <script src="{{asset('FeIron/LaraFrame/js/application.js')}}"></script> <!-- Main Application Script -->
 <script src="{{asset('FeIron/LaraFrame/js/plugins.js')}}"></script> <!-- Main Plugin Initialization Script -->
 
 <script src="{{asset('FeIron/LaraFrame/js/layoutAPI.js')}}"></script> <!-- Main Plugin Initialization Script -->
+<script src="{{asset('FeIron/LaraFrame/js/laraframe.js')}}"></script> <!-- Main Plugin Initialization Script -->
 @endprepend
 
 @prepend('footerstyles')

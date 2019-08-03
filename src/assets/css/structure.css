@@ -38,3 +38,22 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
 .dataTable tfoot tr th input{
     width: 100% !important;
 }
+.dataTable .btn-group{
+    z-index: auto !important;
+}
+
+.quickview #notes .note-item{
+    border-bottom: 1px solid gainsboro;
+}
+
+.quickview .quickview_footer,.quickview .note_footer{
+    position: absolute;
+    z-index: 10001;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 0px 25px;
+}
+.quickview .note_footer button{
+    width: 30%;
+}

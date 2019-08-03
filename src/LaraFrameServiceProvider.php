@@ -39,6 +39,7 @@ class LaraFrameServiceProvider extends ServiceProvider {
     private function registerBladeComponents(){
         //read from dir and build a cache and load from cache.
         Blade::component('LaraFrame::components.sidebarMenu', 'fesidebarMenu');
+        Blade::component('LaraFrame::components.Notes', 'fenotes');
     }
 }
 

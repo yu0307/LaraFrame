@@ -34,9 +34,19 @@
         <!-- PRELOADER -->
     </div>
 
-    <div class="sideview">
-        <!-- SIDEBAR -->
-        @yield('sidebar_alt')
+    <div id="quickview-sidebar" class="sideview">
+        <div class="quickview-header">
+            @yield('quickview_header')
+        </div>
+        <div class="quickview">
+            <div class="tab-content">
+                <!-- SIDEBAR -->
+                @yield('sidebar_alt')
+            </div>
+            <div class="quickview_footer">
+                @yield('sidebar_alt_footer')
+            </div>
+        </div>
     </div>
 
     @stack('footerscripts')
