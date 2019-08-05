@@ -10,6 +10,7 @@
     @yield('header')
     @stack('headerscripts')
     @stack('headerstyles')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <!-- BEGIN BODY -->
@@ -22,10 +23,7 @@
             @yield('topbar')
             <div class="page-content p-b-30">
                 <!-- PAGE CONTENT -->
-                @section('content')
-
-                @endsection
-
+                @yield('content')
                 @yield('footer')
             </div>
         </div>
@@ -36,9 +34,19 @@
         <!-- PRELOADER -->
     </div>
 
-    <div class="sideview">
-        <!-- SIDEBAR -->
-        @yield('sidebar_alt')
+    <div id="quickview-sidebar" class="sideview">
+        <div class="quickview-header">
+            @yield('quickview_header')
+        </div>
+        <div class="quickview">
+            <div class="tab-content">
+                <!-- SIDEBAR -->
+                @yield('sidebar_alt')
+            </div>
+            <div class="quickview_footer">
+                @yield('sidebar_alt_footer')
+            </div>
+        </div>
     </div>
 
     @stack('footerscripts')

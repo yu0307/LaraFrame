@@ -30,7 +30,7 @@
                 <!-- USER DROPDOWN MENU -->
                 <a href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                     <img src="{{$user_profile_pic??asset('FeIron/LaraFrame/images/avatars/avatar7.png')}}" alt="user image">
-                    <span class="username">Hi {{$user_name??''}}</span>
+                    <span class="username">Hi @yield('user_name','')</span>
                 </a>
                 @auth
                 <ul class="dropdown-menu">

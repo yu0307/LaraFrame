@@ -3,7 +3,7 @@ body>section>div.main-content{
 }
 
 body>section>div.main-content>div.page-content {
-    padding-top: 50px;
+    padding-top: 70px;
     margin-top: 0px;
 }
 
@@ -33,4 +33,57 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li.tm.nav-hover{
 
 div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
     min-width: 15px;
+}
+
+.dataTable tfoot tr th input{
+    width: 100% !important;
+}
+.dataTable .btn-group{
+    z-index: auto !important;
+}
+#quickview-sidebar{
+    z-index: 100001;
+}
+.quickview #notes .note-item{
+    border-bottom: 1px solid gainsboro !important;
+}
+
+.quickview .quickview_footer,.quickview .note_footer{
+    position: absolute;
+    z-index: 10001;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    padding: 0px 25px;
+}
+.quickview .note_footer button{
+    width: 30%;
+}
+
+#noty_layout__topCenter .noty_bar:first-child {
+    margin-top: 40px !important;
+}
+
+.select2-container {
+    z-index: inherit;
+}
+.select2-dropdown{
+    z-index: 2000 !important;
+}
+table.dataTable thead .sorting:before {
+    position: absolute;
+    right: 15px;
+}
+table.dataTable thead .sorting:after {
+    right: 0px !important;
+}
+table.dataTable thead .sorting_asc:before,table.dataTable thead .sorting_desc:before {
+    position: absolute;
+    right: 18px;
+}
+table.dataTable thead .sorting_desc:after,table.dataTable thead .sorting_asc:after {
+        right: 0px !important;
+}
+.select2-container--open .select2-dropdown--below{
+    margin-top: 0px;
 }

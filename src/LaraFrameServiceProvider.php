@@ -4,9 +4,12 @@ namespace FeIron\LaraFrame;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 
 class LaraFrameServiceProvider extends ServiceProvider {
+
     public function boot(){
+
         $PackageName='LaraFrame';
         //locading package route files
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
@@ -29,6 +32,9 @@ class LaraFrameServiceProvider extends ServiceProvider {
             __DIR__ . '/assets/js' => public_path('FeIron/' . $PackageName.'/js'),
             __DIR__ . '/assets/css' => public_path('FeIron/' . $PackageName . '/css')
         ], ($PackageName . '_public_scripts'));
+        
+
+        // Event::listen('FeIron\Fe_Login\lib\events\UserCreated', 'FeIron\LaraFrame\lib\Listeners\UserCreated');
     }
 
     public function register(){
@@ -39,6 +45,8 @@ class LaraFrameServiceProvider extends ServiceProvider {
     private function registerBladeComponents(){
         //read from dir and build a cache and load from cache.
         Blade::component('LaraFrame::components.sidebarMenu', 'fesidebarMenu');
+        Blade::component('LaraFrame::components.Notes', 'fenotes');
+        Blade::component('LaraFrame::components.FileUpload', 'fefileupload');
     }
 }
 
