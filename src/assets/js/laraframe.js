@@ -31,30 +31,34 @@ $(document).ready(function(){
             tar_form.prop('action'), 
             tar_form.serialize(), 
             method, 
-            function (jqXHR, status) {
-                var data = jqXHR.responseJSON;
-                message = jQuery.map(data.message, function (n, i) {
-                    return ('<div>' + n + '</div>');
-                }).join("");
-                Notify(message, data.status);
+            function (data, status) {
                 tar_form.trigger('quickview_form_submited');
                 if (tar_form.attr('form_type').length>0){
-                    tar_form.trigger((tar_form.attr('form_type') +'_'+ method));
+                    tar_form.trigger((tar_form.attr('form_type') +'_'+ method).toLowerCase());
                 }
             });
         tar_form.find('input[name="method"]').val('POST');
     });
 });
 
-function SendAjax(URL,DATA,TYPE='POST',callback=null){
+function SendAjax(URL,DATA,TYPE='POST',callback=null,suppress=false){
     $.ajax({
         type: TYPE,
         url: URL,
         dataType: 'json',
         data: DATA,
         complete: function (jqXHR, status) {
+            var data = jqXHR.responseJSON;
+            if(!suppress){
+                if(data.message!==undefined){
+                    message = jQuery.map(data.message, function (n, i) {
+                        return ('<div>' + n + '</div>');
+                    }).join("");
+                    Notify(message, (data.status!==undefined?data.status:'info'));
+                }
+            }
             if (typeof callback === 'function'){
-                callback(jqXHR, status);
+                callback(data, status);
             }
         }
     });

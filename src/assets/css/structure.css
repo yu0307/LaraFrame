@@ -41,7 +41,9 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
 .dataTable .btn-group{
     z-index: auto !important;
 }
-
+#quickview-sidebar{
+    z-index: 100001;
+}
 .quickview #notes .note-item{
     border-bottom: 1px solid gainsboro !important;
 }
@@ -60,4 +62,11 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
 
 #noty_layout__topCenter .noty_bar:first-child {
     margin-top: 40px !important;
+}
+
+.select2-container {
+    z-index: inherit;
+}
+.select2-dropdown{
+    z-index: 2000 !important;
 }

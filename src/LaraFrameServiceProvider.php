@@ -6,6 +6,13 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 
 class LaraFrameServiceProvider extends ServiceProvider {
+
+    protected $listen = [
+            'FeIron\Fe_Login\lib\events\UserCreated' => [
+                'FeIron\LaraFrame\lib\Listeners\UserCreated',
+            ],
+    ];
+
     public function boot(){
         $PackageName='LaraFrame';
         //locading package route files
@@ -40,6 +47,7 @@ class LaraFrameServiceProvider extends ServiceProvider {
         //read from dir and build a cache and load from cache.
         Blade::component('LaraFrame::components.sidebarMenu', 'fesidebarMenu');
         Blade::component('LaraFrame::components.Notes', 'fenotes');
+        Blade::component('LaraFrame::components.FileUpload', 'fefileupload');
     }
 }
 

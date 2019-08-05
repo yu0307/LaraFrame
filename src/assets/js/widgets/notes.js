@@ -177,7 +177,7 @@ function printNotes(ID,Notes,TimeStamp){
 }
 
 $(document).ready(function(){
-    $('form[form_type="LF_form_notes"]').on('LF_form_notes_post', function () { //events fired when note is saved.
+    $('form[form_type="LF_form_notes"]').on('lf_form_notes_post', function () { //events fired when note is saved.
         $('.list-notes').addClass('current');
         $('.detail-note').removeClass('current');
     });

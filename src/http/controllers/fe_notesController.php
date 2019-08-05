@@ -17,4 +17,8 @@ class fe_notesController extends Controller
             return response()->json(['status' => 'success', 'message' => 'notes created.']);
         }
     }
+
+    public function getNotesSelect(Request $Request,$column){
+        return LF_notes::groupBy($column)->get($column)->pluck($column)->toArray() ;
+    }
 }

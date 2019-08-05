@@ -28,7 +28,7 @@ trait DataTables{
             function ($query) use ($request) {
                 foreach ($request->input('columns') as $column) {
                     if (isset($column['search']['value'])) {
-                        $query->orwhere($column['data'],'like', ('%'.$column['search']['value'].'%'));
+                        $query->where($column['data'],'like', ('%'.$column['search']['value'].'%'));
                     }
                 }
             }
