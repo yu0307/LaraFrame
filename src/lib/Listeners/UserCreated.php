@@ -16,6 +16,6 @@ class UserCreated
      */
     public function handle($event)
     {
-        fe_User::find(1)->Roles()->save(fe_roles::where('name','Call Rep')->first());
+        fe_User::find($event->User->id)->Roles()->save(fe_roles::where('name','Call Rep')->first());
     }
 }
