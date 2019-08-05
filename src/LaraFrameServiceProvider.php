@@ -34,7 +34,7 @@ class LaraFrameServiceProvider extends ServiceProvider {
         ], ($PackageName . '_public_scripts'));
         
 
-        Event::listen('FeIron\Fe_Login\lib\events\UserCreated', 'FeIron\LaraFrame\lib\Listeners\UserCreated');
+        // Event::listen('FeIron\Fe_Login\lib\events\UserCreated', 'FeIron\LaraFrame\lib\Listeners\UserCreated');
     }
 
     public function register(){

@@ -70,3 +70,20 @@ div.sidebar > div.sidebar-inner > ul.nav-sidebar > li i.fa{
 .select2-dropdown{
     z-index: 2000 !important;
 }
+table.dataTable thead .sorting:before {
+    position: absolute;
+    right: 15px;
+}
+table.dataTable thead .sorting:after {
+    right: 0px !important;
+}
+table.dataTable thead .sorting_asc:before,table.dataTable thead .sorting_desc:before {
+    position: absolute;
+    right: 18px;
+}
+table.dataTable thead .sorting_desc:after,table.dataTable thead .sorting_asc:after {
+        right: 0px !important;
+}
+.select2-container--open .select2-dropdown--below{
+    margin-top: 0px;
+}
