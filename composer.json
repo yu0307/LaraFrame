@@ -1,0 +1,14 @@
+{
+    "name": "feiron/felaraframe",
+    "description": "Framework for laravel",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Lucas",
+            "email": "yu0307@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
