@@ -1,6 +1,6 @@
 <?php
 
-namespace FeIron\LaraFrame\http\controllers;
+namespace \felaraframe\http\controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

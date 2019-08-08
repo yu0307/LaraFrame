@@ -1,6 +1,6 @@
 <?php
 
-namespace FeIron\LaraFrame\lib\traits;
+namespace \felaraframe\lib\traits;
 
 
 trait DataTables{

@@ -1,6 +1,6 @@
 <?php
 
-namespace FeIron\LaraFrame\http\controllers;
+namespace \felaraframe\http\controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -13,6 +13,6 @@ class fe_homeController extends Controller
     }
 
     public function home(){
-        return view('LaraFrame::home');
+        return view('felaraframe::home');
     }
 }

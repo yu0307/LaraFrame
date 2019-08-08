@@ -1,12 +1,12 @@
 <?php 
-namespace FeIron\LaraFrame\lib\facades;
+namespace \felaraframe\lib\facades;
 
 use Illuminate\Support\Facades\Facade;
 
 class menuGenerator extends Facade{
     protected static function getFacadeAccessor()
     {
-        return \FeIron\LaraFrame\lib\helper\menuGenerator::class;
+        return \\felaraframe\lib\helper\menuGenerator::class;
     }
 }
 

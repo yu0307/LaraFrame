@@ -1,10 +1,10 @@
 <?php
 
-namespace FeIron\LaraFrame\lib\helper;
+namespace \felaraframe\lib\helper;
 use Illuminate\Support\Facades\Route;
 class menuGenerator {
     public static function getMenuFromRoutes(){
-        if(config('LaraFrame.appconfig.use_route_as_menu')){
+        if(config('felaraframe.appconfig.use_route_as_menu')){
             return array_merge(
                 (Route::has('home')?[['title'=>'home','href'=>route('home')]]:[]), 
                 array_map(

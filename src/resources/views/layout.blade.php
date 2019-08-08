@@ -1,7 +1,7 @@
-@includeIf('LaraFrame::header')
-@includeIf('LaraFrame::footer')
-@includeIf('LaraFrame::sidebar')
-@includeIf('LaraFrame::topbar')
+@includeIf('felaraframe::header')
+@includeIf('felaraframe::footer')
+@includeIf('felaraframe::sidebar')
+@includeIf('felaraframe::topbar')
 <!DOCTYPE html>
 <html lang="en">
 

@@ -17,7 +17,7 @@
         </div>
         <ul class="nav nav-sidebar">
             <!-- SIDEBAR MENU -->
-            @if(config('LaraFrame.appconfig.use_route_as_menu'))
+            @if(config('felaraframe.appconfig.use_route_as_menu'))
                 @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
                     @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])
                         {{$Menu['title']}}

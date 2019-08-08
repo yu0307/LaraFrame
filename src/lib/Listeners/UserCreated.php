@@ -1,11 +1,11 @@
 <?php
 
-namespace FeIron\LaraFrame\lib\Listeners;
+namespace \felaraframe\lib\Listeners;
 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use FeIron\Fe_Roles\models\fe_User;
-use FeIron\Fe_Roles\models\fe_roles;
+use \fe_roles\models\fe_User;
+use \fe_roles\models\fe_roles;
 class UserCreated
 {
     /**
