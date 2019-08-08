@@ -1,5 +1,5 @@
 <?php
-    Route::group(['namespace' => '\felaraframe\http\controllers', 'middleware' => ['web']], function () {
+    Route::group(['namespace' => 'feiron\felaraframe\http\controllers', 'middleware' => ['web']], function () {
 
         Route::post('savenote', 'fe_notesController@saveNotes')->name('LF_SaveNotes');
         Route::get('getNotesFilterSelect/{column}', 'fe_notesController@getNotesSelect')->name('LF_GetNotesSelect');
