@@ -5,7 +5,9 @@
     "license": "Apache-2.0",
     "require": {
         "php": "^7.2.1",
-        "laravel/framework": "5.8.*"
+        "laravel/framework": "5.8.*",
+        "feiron/fe_login": "1.*",
+        "feiron/fe_roles": "1.*"
     },
     "require-dev": {
         "php": "^7.2.1",
