@@ -25,12 +25,12 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         ], ($PackageName . '_config'));
         //set the publishing target path for asset files. Run only during update and installation of the package. see composer.json of the package.
         $this->publishes([
-            __DIR__ . '/assets' => public_path('/' . $PackageName),
+            __DIR__ . '/assets' => public_path('feiron/' . $PackageName),
         ], ($PackageName . '_public'));
 
         $this->publishes([
-            __DIR__ . '/assets/js' => public_path('/' . $PackageName.'/js'),
-            __DIR__ . '/assets/css' => public_path('/' . $PackageName . '/css')
+            __DIR__ . '/assets/js' => public_path('feiron/' . $PackageName.'/js'),
+            __DIR__ . '/assets/css' => public_path('feiron/' . $PackageName . '/css')
         ], ($PackageName . '_public_scripts'));
         
 
@@ -44,9 +44,9 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
 
     private function registerBladeComponents(){
         //read from dir and build a cache and load from cache.
-        Blade::component('\feiron\felaraframe::components.sidebarMenu', 'fesidebarMenu');
-        Blade::component('\feiron\felaraframe::components.Notes', 'fenotes');
-        Blade::component('\feiron\felaraframe::components.FileUpload', 'fefileupload');
+        Blade::component('felaraframe::components.sidebarMenu', 'fesidebarMenu');
+        Blade::component('felaraframe::components.Notes', 'fenotes');
+        Blade::component('felaraframe::components.FileUpload', 'fefileupload');
     }
 }
 
