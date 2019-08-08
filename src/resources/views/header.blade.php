@@ -3,7 +3,6 @@
 <!--[if lt IE 9]>
 <script src="{{asset('/felaraframe/assets/plugins/modernizr/modernizr-2.6.2-respond-1.1.0.min.js')}}"></script>
 <![endif]-->
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/js/global.js')}}"></script> <!-- CSRF Token and the rest -->
 @endprepend
 
 @prepend('headerstyles')
