@@ -1,1 +1,1 @@
-@extends('LaraFrame::layout')
+@extends('felaraframe::layout')

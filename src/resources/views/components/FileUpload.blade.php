@@ -25,13 +25,13 @@
 </div>
 
 @push('headerstyles')
-<link type="text/css" href="{{asset('FeIron/LaraFrame/components/FileUploader/css/FileUploader.css')}}" rel="stylesheet"> <!-- upload css -->
+<link type="text/css" href="{{asset('/felaraframe/components/FileUploader/css/FileUploader.css')}}" rel="stylesheet"> <!-- upload css -->
 @endpush
 
 @push('footerscripts')
-<script type="text/javascript" src="{{asset('FeIron/LaraFrame/components/FileUploader/js/FileUploader.js')}}"></script> <!-- upload control script -->
-<script type="text/javascript" src="{{asset('FeIron/LaraFrame/plugins/mini-upload-form/assets/js/jquery.fileupload.js')}}"></script> <!-- Upload Contorls -->
-<script type="text/javascript" src="{{asset('FeIron/LaraFrame/plugins/mini-upload-form/assets/js/jquery.iframe-transport.js')}}"></script> <!-- Upload Contorls -->
-<script type="text/javascript" src="{{asset('FeIron/LaraFrame/plugins/mini-upload-form/assets/js/jquery.knob.js')}}"></script> <!-- Upload Contorls -->
-<script type="text/javascript" src="{{asset('FeIron/LaraFrame/plugins/mini-upload-form/assets/js/jquery.ui.widget.js')}}"></script> <!-- Upload Contorls -->
+<script type="text/javascript" src="{{asset('/felaraframe/components/FileUploader/js/FileUploader.js')}}"></script> <!-- upload control script -->
+<script type="text/javascript" src="{{asset('/felaraframe/plugins/mini-upload-form/assets/js/jquery.fileupload.js')}}"></script> <!-- Upload Contorls -->
+<script type="text/javascript" src="{{asset('/felaraframe/plugins/mini-upload-form/assets/js/jquery.iframe-transport.js')}}"></script> <!-- Upload Contorls -->
+<script type="text/javascript" src="{{asset('/felaraframe/plugins/mini-upload-form/assets/js/jquery.knob.js')}}"></script> <!-- Upload Contorls -->
+<script type="text/javascript" src="{{asset('/felaraframe/plugins/mini-upload-form/assets/js/jquery.ui.widget.js')}}"></script> <!-- Upload Contorls -->
 @endpush
