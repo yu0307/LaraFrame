@@ -1,11 +1,11 @@
 <?php
 
-namespace \felaraframe\lib\Listeners;
+namespace feiron\felaraframe\lib\Listeners;
 
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use \fe_roles\models\fe_User;
-use \fe_roles\models\fe_roles;
+use \feiron\fe_roles\models\fe_User;
+use \feiron\fe_roles\models\fe_roles;
 class UserCreated
 {
     /**

@@ -20,13 +20,13 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "FeIron\\LaraFrame\\": "src/"
+            "feiron\\felaraframe\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "feiron\\felaraframe\\LaraFrameServiceProvider"
+                "feiron\\felaraframe\\FeLaraFrameServiceProvider"
             ]
         }
     }

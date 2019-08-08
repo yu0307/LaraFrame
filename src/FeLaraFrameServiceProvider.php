@@ -1,12 +1,12 @@
 <?php
 
-namespace \felaraframe;
+namespace feiron\felaraframe;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 
-class felaraframeServiceProvider extends ServiceProvider {
+class FeLaraFrameServiceProvider extends ServiceProvider {
 
     public function boot(){
 
@@ -39,14 +39,14 @@ class felaraframeServiceProvider extends ServiceProvider {
 
     public function register(){
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
-        $loader->alias('menuGenerator', '\felaraframe\lib\facades\menuGenerator');
+        $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
     }
 
     private function registerBladeComponents(){
         //read from dir and build a cache and load from cache.
-        Blade::component('felaraframe::components.sidebarMenu', 'fesidebarMenu');
-        Blade::component('felaraframe::components.Notes', 'fenotes');
-        Blade::component('felaraframe::components.FileUpload', 'fefileupload');
+        Blade::component('\feiron\felaraframe::components.sidebarMenu', 'fesidebarMenu');
+        Blade::component('\feiron\felaraframe::components.Notes', 'fenotes');
+        Blade::component('\feiron\felaraframe::components.FileUpload', 'fefileupload');
     }
 }
 

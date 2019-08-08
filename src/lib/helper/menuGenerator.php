@@ -1,6 +1,6 @@
 <?php
 
-namespace \felaraframe\lib\helper;
+namespace feiron\felaraframe\lib\helper;
 use Illuminate\Support\Facades\Route;
 class menuGenerator {
     public static function getMenuFromRoutes(){

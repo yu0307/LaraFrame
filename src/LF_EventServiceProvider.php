@@ -1,14 +1,14 @@
 <?php
 
-namespace \felaraframe;
+namespace feiron\felaraframe;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class LF_EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
-            'feiron\fe_login\lib\events\UserCreated' => [
-                '\felaraframe\lib\Listeners\UserCreated',
+            '\feiron\fe_login\lib\events\UserCreated' => [
+                '\feiron\felaraframe\lib\Listeners\UserCreated',
             ],
     ];
 }

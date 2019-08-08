@@ -1,9 +1,9 @@
 <?php
-namespace \felaraframe\http\controllers;
+namespace feiron\felaraframe\http\controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \fe_roles\models\fe_roles;
+use \feiron\fe_roles\models\fe_roles;
 class LF_Role_Controller extends Controller
 {
     public function getUsersByRole(Request $request, $roleName){

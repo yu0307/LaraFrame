@@ -1,6 +1,6 @@
 <?php
 
-namespace \felaraframe\models;
+namespace feiron\felaraframe\models;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace \felaraframe\http\controllers;
+namespace feiron\felaraframe\http\controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

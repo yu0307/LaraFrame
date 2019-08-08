@@ -1,10 +1,10 @@
 <?php
 
-namespace \felaraframe\http\controllers;
+namespace feiron\felaraframe\http\controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use \felaraframe\models\LF_notes;
+use \feiron\felaraframe\models\LF_notes;
 
 class fe_notesController extends Controller
 {
