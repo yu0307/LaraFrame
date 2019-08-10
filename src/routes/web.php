@@ -14,4 +14,9 @@
             // dd(preg_grep('/^FrameMenus([\w|\S]*)$/i', array_keys(Route::getRoutes()->getRoutesByName())));
         })->name('testframes');
     });
+    Route::group(['namespace' => 'feiron\felaraframe\http\controllers'], function () {
+        Route::get('MyPrivacy',function(){
+            return view('felaraframe::terms');
+        })->name('PrivacyPolicy');
+    });  
 ?>
