@@ -6,7 +6,7 @@
 @endprepend
 
 @prepend('headerstyles')
-<link href="http://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet" type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet" type="text/css">
 <link href="{{asset('/feiron/felaraframe/css/style.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('/feiron/felaraframe/css/theme.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('/feiron/felaraframe/css/ui.css')}}" rel="stylesheet"> <!-- MANDATORY -->
