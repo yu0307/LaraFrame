@@ -107,3 +107,7 @@ $(function(){
     }
 
 });
+
+function setUploadInfo(info){
+    $('.upload_info .upload_info_content').append(info);
+}
