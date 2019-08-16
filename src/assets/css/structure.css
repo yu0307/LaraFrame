@@ -3,15 +3,19 @@ body>section>div.main-content{
 }
 
 body>section>div.main-content>div.page-content {
-    padding-top: 70px;
-    margin-top: 0px;
+    padding-top: 110px;
+    margin-top: -30px;
+    bottom: 10px;
 }
 
-body>section>div.main-content>div.page-content>div.footer{
+body>section>div.main-content> div.footer{
     position: absolute;
+    right: 3%;
+    width: 80%;
     bottom: 0px;
-    left: 2%;
-    right: 2%;
+}
+body>section>div.main-content> div.footer > p{
+    line-height: 18px !important;
 }
 
 div.logopanel > a.logoText{
@@ -86,4 +90,11 @@ table.dataTable thead .sorting_desc:after,table.dataTable thead .sorting_asc:aft
 }
 .select2-container--open .select2-dropdown--below{
     margin-top: 0px;
+}
+
+.main-content .page-content{
+    overflow-y: auto !important;
+}   
+.main-content .footer .copyright{
+    padding: 0px !important;
 }
