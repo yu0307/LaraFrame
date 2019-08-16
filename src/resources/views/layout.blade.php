@@ -21,11 +21,11 @@
         <!-- BEGIN MAIN CONTENT -->
         <div class="main-content">
             @yield('topbar')
-            <div class="page-content p-b-30">
+            <div class="page-content">
                 <!-- PAGE CONTENT -->
                 @yield('content')
-                @yield('footer')
             </div>
+            @yield('footer')
         </div>
         <!-- END MAIN CONTENT -->
     </section>

@@ -20,7 +20,7 @@ trait DataTables{
         $columnSortOrder = $request->input('order')[0]['dir']; // asc or desc
         
 
-        $datainfo['recordsTotal'] = $QueryBuilder->get()->count();
+        $datainfo['recordsTotal'] = $QueryBuilder->count();
         $datainfo['draw'] = $request->input('draw');
         $datainfo['page'] = $request->input('page');
         $datainfo['rowperpage'] = $request->input('length');
