@@ -12,7 +12,7 @@ class menuGenerator {
                             return ['title' =>explode('.', $val)[1], 'href'=>route($val)];
                         },
                         preg_grep(
-                            '/^FrameMenus([\w|\S]*)$/i',
+                            '/^FrameMenus.([\w|\S| ]*)$/i',
                             array_keys(Route::getRoutes()->getRoutesByName())
                         )
                     )
