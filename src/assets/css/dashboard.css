@@ -1,0 +1,12 @@
+#fe_widgetArea, #fe_widgetCtrls{
+    height: 100%;
+    margin: 0px;
+}
+.page-content{
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+.sortGhosting .panel{
+    border: 2px dashed #319db5 !important;
+    box-shadow: 0px 0px 5px 2px #afafaf !important;
+}

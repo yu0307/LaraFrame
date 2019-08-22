@@ -32,6 +32,11 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
             __DIR__ . '/assets/js' => public_path('feiron/' . $PackageName.'/js'),
             __DIR__ . '/assets/css' => public_path('feiron/' . $PackageName . '/css')
         ], ($PackageName . '_public_scripts'));
+
+        //publish widget assets
+        $this->publishes([
+            __DIR__ . '/widgets/assets' => public_path('feiron/' . $PackageName. "/widgets/"),
+        ], ($PackageName . '_widgets'));
         
 
         // Event::listen('feiron\fe_login\lib\events\UserCreated', '\felaraframe\lib\Listeners\UserCreated');
@@ -40,6 +45,9 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
     public function register(){
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
         $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
+        $this->app->register(
+            '\feiron\felaraframe\widgets\Fe_WidgetServiceProvider'
+        );
     }
 
     private function registerBladeComponents(){
