@@ -5,7 +5,5 @@ interface feWidgetContract{
 
     //render widget contents
     public function render();
-    
-    public function buildContents();
 }
 ?>

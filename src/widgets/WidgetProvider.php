@@ -8,7 +8,7 @@ class WidgetProvider {
     private $app;
     private $widgetMaps=[];
 
-    public function __construct(\Illuminate\Foundation\Application $app=null)
+    public function __construct(\Illuminate\Foundation\Application $app)
     {
         $this->app = $app;
         $this->initBuiltinWidgets();
@@ -17,8 +17,8 @@ class WidgetProvider {
     private function initBuiltinWidgets(){
         //we could use readdir to scan through the widget dir. But I don't like execution involving with I/O
         $baseWidgets=[
-            lib\fe_Widgets\WidgetTable::class,
-            lib\fe_Widgets\WidgetGeneric::class
+            lib\fe_Widgets\WidgetGeneric::class,
+            lib\fe_Widgets\WidgetTable::class
         ];
         foreach($baseWidgets as $widget){
             $this->bind($widget);
@@ -38,13 +38,7 @@ class WidgetProvider {
 
     public function BuildWidget($widgetName,$viewParameters=null): Widget{
         $widgetName=trim($widgetName,"'");
-        $widget= new $this->widgetMaps[$widgetName]($viewParameters);
-        $widget->buildContents();
-        return $widget;
-    }
-
-    public function renderWidget($widgetName, $viewParameters = null){
-        return (new $this->widgetMaps[$widgetName]($viewParameters))->render();
+        return (new $this->widgetMaps[$widgetName]($viewParameters));
     }
 }
 ?>

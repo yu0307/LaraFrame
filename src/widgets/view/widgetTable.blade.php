@@ -11,12 +11,12 @@
                     @endforeach
                 </tr>
             @else
-                {{$headers}}
+                {!!$headers!!}
             @endif
         @endisset
     </thead>
     <tbody>
-        {!!$tablecontents!!}
+        {!!$widgetData!!}
     </tbody>
 </table>
 @endsection

@@ -6,17 +6,10 @@ use feiron\felaraframe\widgets\lib\WidgetAbstract as Widget;
 
 class WidgetGeneric extends Widget{
 
-    public function __construct()
+    public function __construct($viewParameters)
     {
-        
-    }
-
-    public function render(){
-        return view('fe_widgets::widgetFrame');
-    }
-
-    public function buildContents(){
-        
+        parent::__construct(($viewParameters ?? []));
+        $this->setView('fe_widgets::widgetFrame');
     }
 }
 

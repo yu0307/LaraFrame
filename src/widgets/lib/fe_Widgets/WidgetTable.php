@@ -17,21 +17,8 @@ class WidgetTable extends Widget{
         //Widget Defaults 
         $defaultParameters['Width'] = '5';
         $defaultParameters['HeaderIcon'] = 'th-list';
-        $defaultParameters['tablecontents'] = '';
         parent::__construct(array_merge($defaultParameters, ($viewParameters ?? [])));
-    }
-
-    public function buildContents(){
-        $this->viewParameters['tablecontents']=(
-                                                    is_callable($this->viewParameters['tablecontents'])? 
-                                                    $this->viewParameters['tablecontents']()
-                                                    : 
-                                                    $this->viewParameters['tablecontents']
-                                                );
-    }
-
-    public function render(){
-        return view('fe_widgets::widgetTable',$this->viewParameters)->render();
+        $this->setView('fe_widgets::widgetTable');
     }
 }
 
