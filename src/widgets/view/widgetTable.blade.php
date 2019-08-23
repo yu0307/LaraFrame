@@ -16,8 +16,7 @@
         @endisset
     </thead>
     <tbody>
-
+        {!!$tablecontents!!}
     </tbody>
 </table>
-    
 @endsection

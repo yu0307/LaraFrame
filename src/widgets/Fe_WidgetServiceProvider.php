@@ -4,6 +4,8 @@ namespace feiron\felaraframe\widgets;
 
 use Illuminate\Support\ServiceProvider;
 use feiron\felaraframe\widgets\WidgetProvider;
+use Illuminate\Support\Facades\Blade;
+
 class Fe_WidgetServiceProvider extends ServiceProvider
 {
     public function register()
@@ -20,5 +22,8 @@ class Fe_WidgetServiceProvider extends ServiceProvider
         //location widgets view files
         $this->loadViewsFrom(__DIR__ . '/view', 'fe_widgets');
 
+        Blade::directive('Widgets', function ($widgetExpression) {
+            return "<?=(app()->Widget->BuildWidget($widgetExpression)->render())?>";
+        });
     }
 }

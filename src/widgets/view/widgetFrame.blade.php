@@ -1,8 +1,8 @@
-<div class="col-md-4 fe_widget">
+<div class="col-md-{{$Width??'4'}} fe_widget">
     <div class="panel">
-        <div class="panel-header panel-controls {{$HeaderBackground??'bg-primary'}}">
+        <div class="panel-header {{(isset($DisableControls)?'':'panel-controls')}}  {{$HeaderBackground??'bg-primary'}}">
             <h3>
-                <i class="icon-{{$HeaderIcon??'star'}}">
+                <i class="fa fa-{{$HeaderIcon??'star'}}"></i>
                     @if(isset($Widget_header))
                         {!! $Widget_header !!}
                     @else
@@ -13,14 +13,14 @@
         </div>
         <div class="panel-content">
             <div class="withScroll" data-height="400">
-                @if(isset($Widget_contents))
+                @if(!empty($Widget_contents))
                     {!! $Widget_contents !!}
                 @else
                     @yield('Widget_contents')
                 @endif
             </div>
         </div>
-        <div class="panel-footer p-t-0 p-b-0">
+        <div class="panel-footer p-t-0 p-b-0 {{$FooterBackground??'bg-dark'}}">
             @if(isset($Widget_footer))
                 {!! $Widget_footer !!}
             @else

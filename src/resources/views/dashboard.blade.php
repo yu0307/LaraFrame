@@ -3,7 +3,7 @@
 @section('content')
 <div class="widgetArea" id="fe_widgetArea">
     <div class="list-group" id="fe_widgetCtrls">
-        
+        @yield('Widget_Area')
     </div>
 </div>
 @endsection
