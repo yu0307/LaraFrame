@@ -53,6 +53,7 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         Blade::component('felaraframe::components.sidebarMenu', 'fesidebarMenu');
         Blade::component('felaraframe::components.Notes', 'fenotes');
         Blade::component('felaraframe::components.FileUpload', 'fefileupload');
+        Blade::component('felaraframe::components.Modal', 'feModal');
     }
 }
 
