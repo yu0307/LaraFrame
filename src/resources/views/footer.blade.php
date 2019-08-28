@@ -35,7 +35,8 @@
 
 <script src="{{asset('/feiron/felaraframe/js/layoutAPI.js')}}"></script> <!-- Main Plugin Initialization Script -->
 <script src="{{asset('/feiron/felaraframe/js/laraframe.js')}}"></script> <!-- Main Plugin Initialization Script -->
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/js/global.js')}}"></script> <!-- DataTables -->
+<script type="text/javascript" src="{{asset('/feiron/felaraframe/js/global.js')}}"></script> <!-- global js -->
+<script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/WidgetAjax.js')}}"></script> <!-- Widget control script -->
 @endprepend
 
 @prepend('footerstyles')

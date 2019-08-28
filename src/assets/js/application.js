@@ -17,9 +17,9 @@ var topbarWidth = $('.topbar').width();
 var headerLeftWidth = $('.header-left').width();
 var headerRightWidth = $('.header-right').width();
 var start = delta = end = 0;
-$(window).load(function() {
+$(window).load(function () {
     "use strict";
-    setTimeout(function() {
+    setTimeout(function () {
         $('.loader-overlay').addClass('loaded');
         $('body > section').animate({
             opacity: 1,
@@ -56,7 +56,7 @@ function toggleFullScreen() {
         }
     }
 }
-$('.toggle_fullscreen').click(function() {
+$('.toggle_fullscreen').click(function () {
     toggleFullScreen();
 });
 
@@ -85,36 +85,37 @@ function unblockUI(item) {
 function handlePanelAction() {
     /* Create Portlets Controls automatically: reload, fullscreen, toggle, remove, popout */
     function handlePanelControls() {
-        $('.panel-controls').each(function() {
-            var controls_html = '<div class="control-btn">' + '<a href="#" class="panel-reload hidden"><i class="icon-reload"></i></a>' + '<a class="hidden" id="dropdownMenu1" data-toggle="dropdown">' + '<i class="icon-settings"></i>' + '</a>' + '<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">' + '<li><a href="#">Action</a>' + '</li>' + '<li><a href="#">Another action</a>' + '</li>' + '<li><a href="#">Something else here</a>' + '</li>' + '</ul>' + '<a href="#" class="panel-popout hidden tt" title="Pop Out/In"><i class="icons-office-58"></i></a>' + '<a href="#" class="panel-maximize hidden"><i class="icon-size-fullscreen"></i></a>' + '<a href="#" class="panel-toggle"><i class="fa fa-angle-down"></i></a>' + '<a href="#" class="panel-close"><i class="icon-trash"></i></a>' + '</div>';
+        $('.panel-controls').each(function () {
+            var controls_html = '<div class="control-btn">' + '<a href="#" class="panel-reload hidden"><i class="icon-reload"></i></a>' + '<a href="#" class="panel-popout hidden tt" title="Pop Out/In"><i class="icons-office-58"></i></a>' + '<a href="#" class="panel-maximize hidden"><i class="icon-size-fullscreen"></i></a>' + '<a href="#" class="panel-toggle"><i class="fa fa-angle-down"></i></a>' + '<a href="#" class="panel-close"><i class="icon-trash"></i></a>' + '</div>';
             $(this).append(controls_html);
         });
-        $('.md-panel-controls').each(function() {
-            var controls_html = '<div class="control-btn">' + '<a href="#" class="panel-reload hidden"><i class="mdi-av-replay"></i></a>' + '<a class="hidden" id="dropdownMenu1" data-toggle="dropdown">' + '<i class="mdi-action-settings"></i>' + '</a>' + '<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dropdownMenu1">' + '<li><a href="#">Action</a>' + '</li>' + '<li><a href="#">Another action</a>' + '</li>' + '<li><a href="#">Something else here</a>' + '</li>' + '</ul>' + '<a href="#" class="panel-popout hidden tt" title="Pop Out/In"><i class="mdi-action-open-in-browser"></i></a>' + '<a href="#" class="panel-maximize hidden"><i class="mdi-action-launch"></i></a>' + '<a href="#" class="panel-toggle"><i class="mdi-navigation-expand-more"></i></a>' + '<a href="#" class="panel-close"><i class="mdi-action-delete"></i></a>' + '</div>';
+        $('.md-panel-controls').each(function () {
+            var controls_html = '<div class="control-btn">' + '<a href="#" class="panel-reload hidden"><i class="mdi-av-replay"></i></a>' + '<a href="#" class="panel-popout hidden tt" title="Pop Out/In"><i class="mdi-action-open-in-browser"></i></a>' + '<a href="#" class="panel-maximize hidden"><i class="mdi-action-launch"></i></a>' + '<a href="#" class="panel-toggle"><i class="mdi-navigation-expand-more"></i></a>' + '<a href="#" class="panel-close"><i class="mdi-action-delete"></i></a>' + '</div>';
             $(this).append(controls_html);
         });
     }
     handlePanelControls();
     // Remove Panel 
-    $(".panel-header .panel-close").on("click", function(event) {
+    $(".panel-header .panel-close").on("click", function (event) {
         event.preventDefault();
         $item = $(this).parents(".panel:first");
-        bootbox.confirm("Are you sure to remove this panel?", function(result) {
+        bootbox.confirm("Are you sure to remove this panel?", function (result) {
             if (result === true) {
                 $item.addClass("animated bounceOutRight");
-                window.setTimeout(function() {
+                window.setTimeout(function () {
+                    $item.trigger('PanelRemoved');
                     $item.remove();
                 }, 300);
             }
         });
     });
     // Toggle Panel Content
-    $(document).on("click", ".panel-header .panel-toggle", function(event) {
+    $(document).on("click", ".panel-header .panel-toggle", function (event) {
         event.preventDefault();
         $(this).toggleClass("closed").parents(".panel:first").find(".panel-content").slideToggle();
     });
     // Popout / Popin Panel
-    $(document).on("click", ".panel-header .panel-popout", function(event) {
+    $(document).on("click", ".panel-header .panel-popout", function (event) {
         event.preventDefault();
         var panel = $(this).parents(".panel:first");
         if (panel.hasClass("modal-panel")) {
@@ -140,21 +141,21 @@ function handlePanelAction() {
                 minWidth: 200
             });
         }
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             $("body").trigger("resize");
         }, 300);
     });
     // Reload Panel Content
-    $(document).on("click", '.panel-header .panel-reload', function(event) {
+    $(document).on("click", '.panel-header .panel-reload', function (event) {
         event.preventDefault();
         var el = $(this).parents(".panel:first");
         blockUI(el);
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             unblockUI(el);
         }, 1800);
     });
     // Maximize Panel Dimension 
-    $(document).on("click", ".panel-header .panel-maximize", function(event) {
+    $(document).on("click", ".panel-header .panel-maximize", function (event) {
         event.preventDefault();
         var panel = $(this).parents(".panel:first");
         $body.toggleClass("maximized-panel");
@@ -176,23 +177,23 @@ function handlePanelAction() {
     });
 }
 
-function maximizePanel(){
-    if($('.maximized').length){
+function maximizePanel() {
+    if ($('.maximized').length) {
         var panel = $('.maximized');
         var windowHeight = $(window).height() - 2;
         panelHeight = panel.find('.panel-header').height() + panel.find('.panel-content').height() + 100;
-        if(panel.hasClass('maximized')){
-            if(windowHeight > panelHeight){
+        if (panel.hasClass('maximized')) {
+            if (windowHeight > panelHeight) {
                 panel.parent().height(windowHeight);
-            } 
-            else{
-                if($('.main-content').height() > panelHeight) {
-                    panel.parent().height($('.main-content').height()); 
+            }
+            else {
+                if ($('.main-content').height() > panelHeight) {
+                    panel.parent().height($('.main-content').height());
                 }
-                else{
-                    panel.parent().height(panelHeight); 
+                else {
+                    panel.parent().height(panelHeight);
                 }
-            } 
+            }
         }
         else {
             panel.parent().height('');
@@ -205,7 +206,7 @@ function maximizePanel(){
 /* Create Custom Scroll for elements like Portlets or Dropdown menu */
 function customScroll() {
     if ($.fn.mCustomScrollbar) {
-        $('.withScroll').each(function() {
+        $('.withScroll').each(function () {
             $(this).mCustomScrollbar("destroy");
             var scroll_height = $(this).data('height') ? $(this).data('height') : 'auto';
             var data_padding = $(this).data('padding') ? $(this).data('padding') : 0;
@@ -235,7 +236,7 @@ function customScroll() {
 /* BEGIN SIDEBAR                                             */
 /* Sidebar Sortable menu & submenu */
 function handleSidebarSortable() {
-    $('.menu-settings').on('click', '#reorder-menu', function(e) {
+    $('.menu-settings').on('click', '#reorder-menu', function (e) {
         e.preventDefault();
         $('.nav-sidebar').removeClass('remove-menu');
         $(".nav-sidebar").sortable({
@@ -246,7 +247,7 @@ function handleSidebarSortable() {
             axis: "y",
             dropOnEmpty: true,
             forcePlaceholderSize: true,
-            receive: function(event, ui) {
+            receive: function (event, ui) {
                 $("body").trigger("resize")
             }
         });
@@ -257,7 +258,7 @@ function handleSidebarSortable() {
             opacity: 0.5,
             dropOnEmpty: true,
             forcePlaceholderSize: true,
-            receive: function(event, ui) {
+            receive: function (event, ui) {
                 $("body").trigger("resize")
             }
         });
@@ -266,7 +267,7 @@ function handleSidebarSortable() {
         $('.remove-menu').attr("id", "remove-menu").html('Remove menu');
     });
     /* End Sortable Menu Elements*/
-    $('.menu-settings').on('click', '#end-reorder-menu', function(e) {
+    $('.menu-settings').on('click', '#end-reorder-menu', function (e) {
         e.preventDefault();
         $(".nav-sidebar").sortable();
         $(".nav-sidebar").sortable("destroy");
@@ -278,7 +279,7 @@ function handleSidebarSortable() {
 /* Sidebar Remove Menu Elements*/
 function handleSidebarRemove() {
     /* Remove Menu Elements*/
-    $('.menu-settings').on('click', '#remove-menu', function(e) {
+    $('.menu-settings').on('click', '#remove-menu', function (e) {
         e.preventDefault();
         $(".nav-sidebar").sortable();
         $(".nav-sidebar").sortable("destroy");
@@ -288,19 +289,19 @@ function handleSidebarRemove() {
         $('.reorder-menu').attr("id", "reorder-menu").html('Reorder menu');
     });
     /* End Remove Menu Elements*/
-    $('.menu-settings').on('click', '#end-remove-menu', function(e) {
+    $('.menu-settings').on('click', '#end-remove-menu', function (e) {
         e.preventDefault();
         $('.nav-sidebar').removeClass('remove-menu');
         $(this).attr("id", "remove-menu").html('Remove menu');
     });
-    $('.sidebar').on('click', '.remove-menu > li', function() {
+    $('.sidebar').on('click', '.remove-menu > li', function () {
         $menu = $(this);
         if ($(this).hasClass('nav-parent')) $remove_txt = "Are you sure to remove this menu (all submenus will be deleted too)?";
         else $remove_txt = "Are you sure to remove this menu?";
-        bootbox.confirm($remove_txt, function(result) {
+        bootbox.confirm($remove_txt, function (result) {
             if (result === true) {
                 $menu.addClass("animated bounceOutLeft");
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     $menu.remove();
                 }, 300);
             }
@@ -312,7 +313,7 @@ function handleSidebarRemove() {
 function handleSidebarHide() {
     hiddenElements = $(':hidden');
     visibleElements = $(':visible');
-    $('.menu-settings').on('click', '#hide-top-sidebar', function(e) {
+    $('.menu-settings').on('click', '#hide-top-sidebar', function (e) {
         e.preventDefault();
         var this_text = $(this).text();
         $('.sidebar .sidebar-top').slideToggle(300);
@@ -320,7 +321,7 @@ function handleSidebarHide() {
             $(this).text('Show user & search');
         }
     });
-    $('.topbar').on('click', '.toggle-sidebar-top', function(e) {
+    $('.topbar').on('click', '.toggle-sidebar-top', function (e) {
         e.preventDefault();
         $('.sidebar .sidebar-top').slideToggle(300);
         if ($('.toggle-sidebar-top span').hasClass('icon-user-following')) {
@@ -334,7 +335,7 @@ function handleSidebarHide() {
 
 /* Change statut of user in sidebar: available, busy, away, invisible */
 function changeUserStatut() {
-    $('.sidebar').on('click', '.user-login li a', function(e) {
+    $('.sidebar').on('click', '.user-login li a', function (e) {
         e.preventDefault();
         var statut = $(this).find('span').text();
         currentStatut = $('.user-login button span').text();
@@ -422,18 +423,18 @@ function toggleSidebarMenu() {
 function sidebarWidgets() {
     /* Folders Widget */
     if ($('.sidebar-widgets .folders').length) {
-        $('.new-folder').on('click', function() {
+        $('.new-folder').on('click', function () {
             $('.sidebar-widgets .add-folder').show();
             return false;
         });
-        $(".add-folder input").keypress(function(e) {
+        $(".add-folder input").keypress(function (e) {
             if (e.which == 13) {
                 $('.sidebar-widgets .add-folder').hide();
                 $('<li><a href="#"><i class="icon-docs c-blue"></i>' + $(this).val() + '</a> </li>').insertBefore(".add-folder");
                 $(this).val('');
             }
         });
-        content.addEventListener('click', function(ev) {
+        content.addEventListener('click', function (ev) {
             addFolder = document.getElementById('add-folder');
             var target = ev.target;
             if (target !== addFolder) {
@@ -443,18 +444,18 @@ function sidebarWidgets() {
     }
     /* Labels Widget */
     if ($('.sidebar-widgets .folders').length) {
-        $('.new-label').on('click', function() {
+        $('.new-label').on('click', function () {
             $('.sidebar-widgets .add-label').show();
             return false;
         });
-        $(".add-label input").keypress(function(e) {
+        $(".add-label input").keypress(function (e) {
             if (e.which == 13) {
                 $('.sidebar-widgets .add-label').hide();
                 $('<li><a href="#"><i class="fa fa-circle-o c-blue"></i>' + $(this).val() + '</a> </li>').insertBefore(".add-label");
                 $(this).val('');
             }
         });
-        content.addEventListener('click', function(ev) {
+        content.addEventListener('click', function (ev) {
             addFolder = document.getElementById('add-label');
             var target = ev.target;
             if (target !== addFolder) {
@@ -491,19 +492,19 @@ function sidebarWidgets() {
     };
     /* Progress Bar  Widget */
     if ($('.sidebar-widgets .progress-chart').length) {
-        $(window).load(function() {
-            setTimeout(function() {
+        $(window).load(function () {
+            setTimeout(function () {
                 $('.sidebar-widgets .progress-chart .stat1').progressbar();
             }, 900);
-            setTimeout(function() {
+            setTimeout(function () {
                 $('.sidebar-widgets .progress-chart .stat2').progressbar();
             }, 1200);
-            setTimeout(function() {
+            setTimeout(function () {
                 $('.sidebar-widgets .progress-chart .stat3').progressbar();
             }, 1500);
         });
     };
-    $('.sidebar').on('click', '.hide-widget', function(e) {
+    $('.sidebar').on('click', '.hide-widget', function (e) {
         e.preventDefault();
         if (start == 0) {
             start = new Date().getTime();
@@ -530,23 +531,23 @@ function sidebarWidgets() {
 
 // Add class everytime a mouse pointer hover over it
 var hoverTimeout;
-$('.nav-sidebar > li').hover(function() {
+$('.nav-sidebar > li').hover(function () {
     clearTimeout(hoverTimeout);
     $(this).siblings().removeClass('nav-hover');
     $(this).addClass('nav-hover');
-}, function() {
+}, function () {
     var $self = $(this);
-    hoverTimeout = setTimeout(function() {
+    hoverTimeout = setTimeout(function () {
         $self.removeClass('nav-hover');
     }, 200);
 });
-$('.nav-sidebar > li .children').hover(function() {
+$('.nav-sidebar > li .children').hover(function () {
     clearTimeout(hoverTimeout);
     $(this).closest('.nav-parent').siblings().removeClass('nav-hover');
     $(this).closest('.nav-parent').addClass('nav-hover');
-}, function() {
+}, function () {
     var $self = $(this);
-    hoverTimeout = setTimeout(function() {
+    hoverTimeout = setTimeout(function () {
         $(this).closest('.nav-parent').removeClass('nav-hover');
     }, 200);
 });
@@ -576,7 +577,7 @@ function reposition_topnav() {
             }).addClass('nav-sidebar').css('margin-bottom', 100);
             createSideScroll();
             $('.nav-horizontal .children').removeClass('dropdown-menu');
-            $('.nav-horizontal > li').each(function() {
+            $('.nav-horizontal > li').each(function () {
                 $(this).removeClass('open');
                 $(this).find('a').removeAttr('class');
                 $(this).find('a').removeAttr('data-toggle');
@@ -589,7 +590,7 @@ function reposition_topnav() {
                 $('.nav-horizontal').removeClass('nav-sidebar').appendTo('.topnav');
                 $('.nav-horizontal .children').addClass('dropdown-menu').removeAttr('style');
                 $('.nav-horizontal li:last-child').show();
-                $('.nav-horizontal > li > a').each(function() {
+                $('.nav-horizontal > li > a').each(function () {
                     $(this).parent().removeClass('active');
                     if ($(this).parent().find('.dropdown-menu').length > 0) {
                         $(this).attr('class', 'dropdown-toggle');
@@ -608,19 +609,19 @@ if ($('body').hasClass('sidebar-collapsed')) $('.nav-sidebar .children').css({
     display: ''
 });
 // Handles form inside of dropdown 
-$('.dropdown-menu').find('form').click(function(e) {
+$('.dropdown-menu').find('form').click(function (e) {
     e.stopPropagation();
 });
 /***** Scroll to top button *****/
 function scrollTop() {
-    $(window).scroll(function() {
+    $(window).scroll(function () {
         if ($(this).scrollTop() > 100) {
             $('.scrollup').fadeIn();
         } else {
             $('.scrollup').fadeOut();
         }
     });
-    $('.scrollup').click(function() {
+    $('.scrollup').click(function () {
         $("html, body").animate({
             scrollTop: 0
         }, 1000);
@@ -656,12 +657,12 @@ function detectIE() {
     var trident = ua.indexOf('Trident/');
     var edge = ua.indexOf('Edge/');
     if (msie > 0 || trident > 0 || edge > 0) {
-        $('html').addClass('ie-browser');   
+        $('html').addClass('ie-browser');
     }
 }
 
 /****  Initiation of Main Functions  ****/
-$(document).ready(function() {
+$(document).ready(function () {
     createSideScroll();
     toggleSidebarMenu();
     customScroll();
@@ -681,8 +682,8 @@ $(document).ready(function() {
 
 /****  Resize Event Functions  ****/
 
-$(window).resize(function() {
-    setTimeout(function() {
+$(window).resize(function () {
+    setTimeout(function () {
         customScroll();
         reposition_topnav();
         if (!$('body').hasClass('fixed-sidebar') && !$('body').hasClass('builder-admin')) sidebarBehaviour();

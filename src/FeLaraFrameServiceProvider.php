@@ -32,6 +32,11 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
             __DIR__ . '/assets/js' => public_path('feiron/' . $PackageName.'/js'),
             __DIR__ . '/assets/css' => public_path('feiron/' . $PackageName . '/css')
         ], ($PackageName . '_public_scripts'));
+
+        //publish widget assets
+        $this->publishes([
+            __DIR__ . '/widgets/assets' => public_path('feiron/' . $PackageName. "/widgets/"),
+        ], ($PackageName . '_widgets'));
         
 
         // Event::listen('feiron\fe_login\lib\events\UserCreated', '\felaraframe\lib\Listeners\UserCreated');
@@ -40,6 +45,7 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
     public function register(){
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
         $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
+        $this->app->register( '\feiron\felaraframe\widgets\Fe_WidgetServiceProvider');
     }
 
     private function registerBladeComponents(){
@@ -47,6 +53,20 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         Blade::component('felaraframe::components.sidebarMenu', 'fesidebarMenu');
         Blade::component('felaraframe::components.Notes', 'fenotes');
         Blade::component('felaraframe::components.FileUpload', 'fefileupload');
+        Blade::component('felaraframe::components.Modal', 'feModal');
+
+
+        Blade::directive('pushonce', function ($expression) {
+            // $expression = substr(substr($expression, 0, -1), 1);
+            // Split variable and its value
+            list($push_name, $push_sub) = explode('\',', $expression, 2);
+            $push_name=trim($push_name,"'");
+            $isDisplayed = '__pushonce_' . $push_name . '_'."{{$push_sub}}";
+            return "<?php if(!isset(\$__env->{$isDisplayed})): \$__env->{$isDisplayed} = true; \$__env->startPush('{$push_name}'); ?>";
+        });
+        Blade::directive('endpushonce', function ($expression) {
+            return '<?php $__env->stopPush(); endif; ?>';
+        });
     }
 }
 
