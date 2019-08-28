@@ -54,6 +54,19 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         Blade::component('felaraframe::components.Notes', 'fenotes');
         Blade::component('felaraframe::components.FileUpload', 'fefileupload');
         Blade::component('felaraframe::components.Modal', 'feModal');
+
+
+        Blade::directive('pushonce', function ($expression) {
+            // $expression = substr(substr($expression, 0, -1), 1);
+            // Split variable and its value
+            list($push_name, $push_sub) = explode('\',', $expression, 2);
+            $push_name=trim($push_name,"'");
+            $isDisplayed = '__pushonce_' . $push_name . '_'."{{$push_sub}}";
+            return "<?php if(!isset(\$__env->{$isDisplayed})): \$__env->{$isDisplayed} = true; \$__env->startPush('{$push_name}'); ?>";
+        });
+        Blade::directive('endpushonce', function ($expression) {
+            return '<?php $__env->stopPush(); endif; ?>';
+        });
     }
 }
 
