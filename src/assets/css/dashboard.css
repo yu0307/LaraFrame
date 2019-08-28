@@ -9,6 +9,7 @@
 .sortGhosting .panel{
     border: 2px dashed #319db5 !important;
     box-shadow: 0px 0px 5px 2px #afafaf !important;
+    margin-bottom: 16px !important;
 }
 
 #fe_widgetArea .panel .panel-header.panel-controls .control-btn > a{
@@ -23,4 +24,18 @@
 }
 #fe_widgetArea .panel div[class*='bg-'].panel-header.panel-header:hover .control-btn > a {
     color: rgb(255, 255, 255) !important;
+}
+#fe_widgetArea .panel.maximized{
+    top: 0px;
+    padding-top: 0px;
+}
+#fe_widgetArea .fe_widget{
+    max-height: 99%;
+}
+#fe_widgetArea .fe_widget .panel-reload{
+    visibility: hidden !important;
+}
+
+#fe_widgetArea .fe_widget .panel-reload.visible{
+    visibility: visible !important;
 }

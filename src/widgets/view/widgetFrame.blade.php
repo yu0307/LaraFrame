@@ -13,7 +13,7 @@
     @endpush
 @endif
 
-<div class="col-md-{{$Width??'4'}} fe_widget_{{$Type}} " id="{{$ID}}">
+<div class="col-md-{{$Width??'4'}} fe_widget fe_widget_{{$Type}} " id="{{$ID}}">
     <div class="panel">
         <div class="panel-header {{(($DisableControls??false)?'':'panel-controls')}}  {{$HeaderBackground??'bg-primary'}}">
             <h3>
@@ -27,15 +27,13 @@
             </h3>
         </div>
         <div class="panel-content">
-            @if (false===($AjaxLoad??false))
-                <div class="withScroll" data-height="{{$DataHeight??'400'}}">
-                    @if(!empty($Widget_contents))
-                        {!! $Widget_contents !!}
-                    @else
-                        @yield('Widget_contents')
-                    @endif
-                </div>
-            @endif
+            <div class="withScroll" data-height="{{$DataHeight??'400'}}">
+                @if(!empty($Widget_contents))
+                    {!! $Widget_contents !!}
+                @else
+                    @yield('Widget_contents')
+                @endif
+            </div>
         </div>
         <div class="panel-footer p-t-0 p-b-0 {{$FooterBackground??'bg-dark'}}">
             @if(isset($Widget_footer))

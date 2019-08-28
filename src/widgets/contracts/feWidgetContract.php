@@ -14,5 +14,8 @@ interface feWidgetContract{
 
     //responsible for polymorphic classes to build their ajax data
     public function getAjaxData();
+
+    //set the control ID
+    public function SetID($name);
 }
 ?>
