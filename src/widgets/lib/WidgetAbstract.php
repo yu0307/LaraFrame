@@ -40,13 +40,14 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['Ajax']['AjaxURL'] = route('WidgetsAjaxPost', ['tarWidget'=>$this->MyName(), 'tarControl'=>$this->MyID()]); //URL for the generic widget
         $this->viewParameters['Ajax']['AjaxInterval'] =false; //false->load once only, true->global interval with everyone else, number->milliseconds to have it's own timer.
         $this->viewParameters['Ajax']['AjaxType']='POST'; //Request type
-        $this->viewParameters['Ajax']['AjaxJS'] = $this->setAjaxJS($this->MyName());
-        $this->viewParameters = array_merge($this->viewParameters, ($viewParameters ?? []));        
+        $this->viewParameters = array_merge($this->viewParameters, ($viewParameters ?? []));     
+        $this->setAjaxJS($this->MyName());   
     }
 
     protected function setAjaxJS($name,$path= '/feiron/felaraframe/widgets/'){
         $path='/'. trim(trim($path,'/'),'\\').'/';
-        return asset($path . $name . '.js');
+        $this->viewParameters['Ajax']['AjaxJS'] = asset($path . $name . '.js');
+        return $this;
     }
 
     protected function setWidgetContents($content){
