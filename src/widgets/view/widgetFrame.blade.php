@@ -1,15 +1,17 @@
 @if (false!==($AjaxLoad??false))
 
     @pushonce('footerscripts',$Type)
-        <script type="text/javascript" src="{{$Ajax['AjaxJS']}}"></script>
+<script type="text/javascript" src="{{$Ajax['AjaxJS']}}"></script>
     @endpushonce
+
     @php
         unset($Ajax['AjaxJS']);
     @endphp
+
     @push('footerscripts')
-            <script type="text/javascript">
-                WidgetPool['{{$ID}}']=@json($Ajax)
-            </script>
+<script type="text/javascript">
+    WidgetPool['{{$ID}}']=@json($Ajax)
+</script>
     @endpush
 @endif
 

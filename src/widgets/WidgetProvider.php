@@ -8,8 +8,7 @@ class WidgetProvider {
     private $app;
     private $widgetMaps=[];
 
-    public function __construct(\Illuminate\Foundation\Application $app)
-    {
+    public function __construct(\Illuminate\Foundation\Application $app){
         $this->app = $app;
         $this->initBuiltinWidgets();
     }

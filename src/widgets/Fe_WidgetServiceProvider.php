@@ -4,6 +4,7 @@ namespace feiron\felaraframe\widgets;
 
 use Illuminate\Support\ServiceProvider;
 use feiron\felaraframe\widgets\WidgetProvider;
+use feiron\felaraframe\widgets\WidgetManager;
 use Illuminate\Support\Facades\Blade;
 
 class Fe_WidgetServiceProvider extends ServiceProvider
@@ -12,6 +13,10 @@ class Fe_WidgetServiceProvider extends ServiceProvider
     {
         $this->app->singleton('Widget', function ($app) {
             return new WidgetProvider($app);
+        });
+
+        $this->app->singleton('WidgetManager', function ($app) {
+            return new WidgetManager($app);
         });
     }
 
