@@ -21,7 +21,7 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['DataHeight'] = '400';
         $this->viewParameters['Widget_contents'] = '';
         $this->viewParameters['widgetData'] = ''; //used by polymorphic classes to set their data.
-        $this->viewParameters['Ajaxload'] = false; //If data should be loaded via Ajax request.
+        $this->viewParameters['AjaxLoad'] = false; //If data should be loaded via Ajax request.
         $this->SetID($viewParameters['ID'] ?? ($this->MyName() . '_' . rand(1000, 9000)));
         $this->viewParameters['Ajax']['AjaxURL'] = route('WidgetsAjaxPost', ['tarWidget' => $this->MyName(), 'tarControl' => $this->MyID()]); //URL for the generic widget
         $this->viewParameters['Ajax']['AjaxInterval'] = false; //false->load once only, true->global interval with everyone else, number->milliseconds to have it's own timer.
@@ -75,9 +75,7 @@ abstract class WidgetAbstract implements Widget{
 
     //render final widget html to the pipeline
     public function render(){
-        if($this->viewParameters['Ajaxload']===true){
-            $this->viewParameters['widgetData']=('<h4 class="c-primary text-center text-capitalize align-middle">Loading contents...</h4>');
-        }else{
+        if($this->viewParameters['AjaxLoad']===false){
             $this->viewParameters['widgetData'] = (is_callable($this->viewParameters['widgetData'])) ? $this->viewParameters['widgetData']() : $this->dataFunction();
             if (empty($this->viewParameters['widgetData'])) {
                 $this->setWidgetContents('<h4 class="c-primary text-center text-capitalize align-middle">No data is available...</h4>');

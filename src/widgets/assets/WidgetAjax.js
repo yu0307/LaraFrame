@@ -5,12 +5,12 @@ $(document).ready(function () {
     $.each(WidgetPool, function (key, widget) {
         widget.AjaxInterval = (undefined == widget.AjaxInterval) ? false : widget.AjaxInterval;
         $('#' + key).find('.control-btn .panel-reload').addClass('visible');
+        loadWidgetAjax(key, widget);
         switch (widget.AjaxInterval) {
             case true://load with global timer
                 globalWidgetList[key] = (widget);
                 break;
             case false://load once
-                loadWidgetAjax(key, widget);
                 break;
 
             default://load with specific timer
