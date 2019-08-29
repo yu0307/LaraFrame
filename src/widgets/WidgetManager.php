@@ -37,7 +37,7 @@ class WidgetManager {
         $cnt='';
         foreach($this->UserWidgetList as $widget){
             if(!empty($this->AvailableWidgets[$widget]['widgetType'])){
-                $cnt = app()->Widget->BuildWidget($this->AvailableWidgets[$widget]['widgetType'], ($this->AvailableWidgets[$widget]['widgetParam'] ?? []))->render();
+                $cnt .= app()->Widget->BuildWidget($this->AvailableWidgets[$widget]['widgetType'], ($this->AvailableWidgets[$widget]['widgetParam'] ?? []))->render();
             }
         }
         return $cnt;

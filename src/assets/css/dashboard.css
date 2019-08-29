@@ -39,3 +39,12 @@
 #fe_widgetArea .fe_widget .panel-reload.visible{
     visibility: visible !important;
 }
+
+#new_widget_area{
+    border: 3px dashed #848484;
+    box-shadow: 0px 0px 6px 1px #cecece;
+    background: snow;
+}
+#new_widget_area .widgetadd{
+    cursor: pointer;
+}

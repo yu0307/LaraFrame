@@ -11,8 +11,9 @@
 <link href="{{asset('/feiron/felaraframe/css/theme.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('/feiron/felaraframe/css/ui.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 <link href="{{asset('/feiron/felaraframe/css/extension.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/plugins/noty/noty.css/')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css/')}}" rel="stylesheet"> <!-- MANDATORY -->
+<link href="{{asset('/feiron/felaraframe/plugins/noty/noty.css')}}" rel="stylesheet"> <!-- MANDATORY -->
+<link href="{{asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css')}}" rel="stylesheet"> <!-- MANDATORY -->
+<link href="{{asset('/feiron/felaraframe/plugins/font-awesome-animation/font-awesome-animation.min.css')}}" rel="stylesheet"> <!-- MANDATORY -->>
 <link href="{{asset('/feiron/felaraframe/css/structure.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 @endprepend
 
