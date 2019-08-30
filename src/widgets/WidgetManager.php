@@ -13,6 +13,10 @@ class WidgetManager {
         $this->UserWidgetList=[];
     }
 
+    public function getSiteWidgetList(){
+        return $this->AvailableWidgets;
+    }
+
     //Add widgets to site's available widgets pool
     public function addWidget($widgetName,$Param=[]){
         $this->AvailableWidgets[$widgetName]= array_merge(['widgetType' => 'WidgetGeneric', 'Description' => '', 'widgetParam' => []],($Param??[])) ;
@@ -33,7 +37,7 @@ class WidgetManager {
         //update Cookies layout
     }
 
-    public function renderWidgets(){
+    public function renderUserWidgets(){
         $cnt='';
         foreach($this->UserWidgetList as $widget){
             if(!empty($this->AvailableWidgets[$widget]['widgetType'])){
@@ -41,5 +45,20 @@ class WidgetManager {
             }
         }
         return $cnt;
+    }
+
+    public function renderUserWidget($userWidgetName,$asResource=false){
+        if($asResource===false){
+            return app()->Widget->BuildWidget($this->AvailableWidgets[$userWidgetName]['widgetType'], ($this->AvailableWidgets[$userWidgetName]['widgetParam'] ?? []))->render();
+        }
+        $widget= app()->Widget->BuildWidget($this->AvailableWidgets[$userWidgetName]['widgetType'], ($this->AvailableWidgets[$userWidgetName]['widgetParam'] ?? []));
+        return [
+                'html'=> $widget->render(),
+                'settings'=> $widget->getWidgetSettings()
+        ];
+    }
+
+    public function getUserWidgetSettings($userWidgetName){
+
     }
 }

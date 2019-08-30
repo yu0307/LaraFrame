@@ -89,6 +89,10 @@ abstract class WidgetAbstract implements Widget{
         return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $this->getAjaxData()]);
     }
 
+    public function getWidgetSettings(){
+        return collect($this->viewParameters)->only(['ID', 'AjaxLoad', 'Ajax', 'DataHeight'])->toArray();
+    }
+
     //responsible for polymorphic classes to build their ajax data
     public abstract function getAjaxData();
     
