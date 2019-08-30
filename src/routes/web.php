@@ -6,13 +6,6 @@
 
         Route::get('getUsersByRole/{roleName}','LF_Role_Controller@getUsersByRole')->name('getUserByRoles');
         Route::post('lf_uploadfiles','LF_FileUpload_Controller@processUploads')->name('LF_FileUploads');
-        
-        Route::get('testframe', function(){     
-            // // dump($this->app);  
-            // // dd(Route::has('home')?'Y':"N");
-            // dd(menuGenerator::getMenuFromRoutes());
-            // dd(preg_grep('/^FrameMenus([\w|\S]*)$/i', array_keys(Route::getRoutes()->getRoutesByName())));
-        })->name('testframes');
     });
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers'], function () {
         Route::get('MyPrivacy',function(){
