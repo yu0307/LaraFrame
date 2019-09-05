@@ -21,8 +21,8 @@ class WidgetTable extends Widget{
         $defaultParameters['headers']=[];
         parent::__construct(array_merge($defaultParameters, ($viewParameters ?? [])));
         $this->setView('fe_widgets::widgetTable');
-        if(false===empty($this->viewParameters['widgetData'])){
-            $this->tableData = (is_callable($this->viewParameters['widgetData'])) ? $this->viewParameters['widgetData']() : $this->viewParameters['widgetData'];
+        if(false===empty($this->viewParameters['WidgetData'])){
+            $this->tableData = (is_callable($this->viewParameters['WidgetData'])) ? $this->viewParameters['WidgetData']() : $this->viewParameters['WidgetData'];
         }
     }
 

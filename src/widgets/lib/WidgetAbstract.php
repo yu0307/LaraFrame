@@ -11,6 +11,7 @@ abstract class WidgetAbstract implements Widget{
 
     public function __construct($viewParameters){
         $this->setWidgetType($this->MyName());
+        $this->viewParameters['WidgetName'] = $viewParameters['WidgetName']??'';
         $this->viewParameters['HeaderBackground'] = 'bg-primary';
         $this->viewParameters['FooterBackground'] = 'bg-dark';
         $this->viewParameters['HeaderIcon'] = 'star';
@@ -20,7 +21,7 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['Width'] = '4';
         $this->viewParameters['DataHeight'] = '400';
         $this->viewParameters['Widget_contents'] = '';
-        $this->viewParameters['widgetData'] = ''; //used by polymorphic classes to set their data.
+        $this->viewParameters['WidgetData'] = ''; //used by polymorphic classes to set their data.
         $this->viewParameters['AjaxLoad'] = false; //If data should be loaded via Ajax request.
         $this->SetID($viewParameters['ID'] ?? ($this->MyName() . '_' . rand(1000, 9000)));
         $this->viewParameters['Ajax']['AjaxURL'] = route('WidgetsAjaxPost', ['tarWidget' => $this->MyName(), 'tarControl' => $this->MyID()]); //URL for the generic widget
@@ -31,6 +32,10 @@ abstract class WidgetAbstract implements Widget{
 
     public function MyName(): string{
         return (new \ReflectionClass($this))->getShortName();
+    }
+
+    public function WidgetName():string{
+        return $this->viewParameters['WidgetName'];
     }
 
     public function MyID(): string{
@@ -69,18 +74,21 @@ abstract class WidgetAbstract implements Widget{
     }
 
     public function setData($data){
-        $this->viewParameters['widgetData'] = (is_callable($data)) ? $data() : $data;
+        $this->viewParameters['WidgetData'] = (is_callable($data)) ? $data() : $data;
         return $this;
     }
 
     //render final widget html to the pipeline
     public function render(){
+        
         if($this->viewParameters['AjaxLoad']===false){
-            $this->viewParameters['widgetData'] = (is_callable($this->viewParameters['widgetData'])) ? $this->viewParameters['widgetData']() : $this->dataFunction();
-            if (empty($this->viewParameters['widgetData'])) {
+            $this->viewParameters['WidgetData'] = (is_callable($this->viewParameters['WidgetData'])) ? $this->viewParameters['WidgetData']() : $this->dataFunction();
+            if (empty($this->viewParameters['WidgetData'])) {
                 $this->setWidgetContents('<h4 class="c-primary text-center text-capitalize align-middle">No data is available...</h4>');
             }
         }
+        
+        $this->viewParameters['WidgetName'] = $this->WidgetName();
         return (false=== $this->view?view('fe_widgets::widgetFrame', $this->viewParameters)->render():$this->view->with($this->viewParameters)->render());
     }
 
@@ -89,10 +97,14 @@ abstract class WidgetAbstract implements Widget{
         return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $this->getAjaxData()]);
     }
 
+    public function getWidgetSettings(){
+        return collect($this->viewParameters)->only(['ID', 'AjaxLoad', 'Ajax', 'DataHeight'])->toArray();
+    }
+
     //responsible for polymorphic classes to build their ajax data
     public abstract function getAjaxData();
     
-    //responsible for building widget specific data as part of the widget output. for parameter [widgetData]
+    //responsible for building widget specific data as part of the widget output. for parameter [WidgetData]
     public abstract function dataFunction();
 }
 

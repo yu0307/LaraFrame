@@ -10,12 +10,12 @@
 
     @push('footerscripts')
 <script type="text/javascript">
-    WidgetPool['{{$ID}}']=@json($Ajax)
+    AjaxWidgetPool['{{$ID}}']=@json($Ajax)
 </script>
     @endpush
 @endif
 
-<div class="col-md-{{$Width??'4'}} fe_widget fe_widget_{{$Type}} " id="{{$ID}}">
+<div class="col-md-{{$Width??'4'}} fe_widget fe_widget_{{$Type}} " id="{{$ID}}" name="{{$WidgetName}}">
     <div class="panel">
         <div class="panel-header {{(($DisableControls??false)?'':'panel-controls')}}  {{$HeaderBackground??'bg-primary'}}">
             <h3>

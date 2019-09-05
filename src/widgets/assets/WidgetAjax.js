@@ -1,22 +1,11 @@
-var WidgetPool = {};
+var AjaxWidgetPool = {};
 var GlobalWidgetTimer;
+var WidgetTimer = {};
+var globalWidgetList;
 $(document).ready(function () {
-    var globalWidgetList = {};
-    $.each(WidgetPool, function (key, widget) {
-        widget.AjaxInterval = (undefined == widget.AjaxInterval) ? false : widget.AjaxInterval;
-        $('#' + key).find('.control-btn .panel-reload').addClass('visible');
-        loadWidgetAjax(key, widget);
-        switch (widget.AjaxInterval) {
-            case true://load with global timer
-                globalWidgetList[key] = (widget);
-                break;
-            case false://load once
-                break;
-
-            default://load with specific timer
-                setInterval(function () { loadWidgetAjax(key, widget) }, widget.AjaxInterval);
-                break;
-        }
+    globalWidgetList = {};
+    $.each(AjaxWidgetPool, function (key, widget) {
+        checkAjaxStatus(key, widget);
     });
     if (!$.isEmptyObject(globalWidgetList)) {
         GlobalWidgetTimer = setInterval(function () {
@@ -26,22 +15,44 @@ $(document).ready(function () {
         }, 15000);
     }
     $(document).off("click", '.panel-header .panel-reload');
+
     // Reload Panel Content
-    $(document).on("click", '.widgetArea .panel-header .panel-reload', function (event) {
+    bindWidgetReloadEvent($('.widgetArea .panel-header .panel-reload'));
+    bindWidgetReloadResponse($('.fe_widget'));
+
+});
+
+function bindWidgetReloadEvent(tar) {
+    $(tar).on("click", function (event) {
         event.preventDefault();
         $(this).parents(".fe_widget:first").trigger('ReloadWidget');
         event.stopPropagation();
     });
+}
 
-    $(".fe_widget .panel").on("PanelRemoved", function (event) {
-        $(this).parents('.fe_widget:first').remove();
-    });
-
-    $('.fe_widget').on('ReloadWidget', function (event) {
-        loadWidgetAjax($(this).attr('id'), WidgetPool[$(this).attr('id')]);
+function bindWidgetReloadResponse(tar) {
+    $(tar).on('ReloadWidget', function (event) {
+        loadWidgetAjax($(this).attr('id'), AjaxWidgetPool[$(this).attr('id')]);
         event.stopPropagation();
     });
-});
+}
+
+function checkAjaxStatus(key, widget) {
+    widget.AjaxInterval = (undefined == widget.AjaxInterval) ? false : widget.AjaxInterval;
+    $('#' + key).find('.control-btn .panel-reload').addClass('visible');
+    loadWidgetAjax(key, widget);
+    switch (widget.AjaxInterval) {
+        case true://load with global timer
+            globalWidgetList[key] = (widget);
+            break;
+        case false://load once
+            break;
+
+        default://load with specific timer
+            WidgetTimer[key] = setInterval(function () { loadWidgetAjax(key, widget) }, widget.AjaxInterval);
+            break;
+    }
+}
 
 function triggerUpdate(target) {
     $(target).trigger('AjaxUpdated');
@@ -66,3 +77,12 @@ function loadWidgetAjax(widgetType, widget) {
     });
 }
 
+function removeAjaxWidget(key) {
+    if (undefined !== WidgetTimer[key]) {
+        clearInterval(WidgetTimer[key]);
+        delete WidgetTimer[key];
+    }
+    if (undefined !== globalWidgetList[key]) {
+        delete globalWidgetList[key];
+    }
+}

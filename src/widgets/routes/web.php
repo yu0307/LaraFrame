@@ -7,5 +7,11 @@
         Route::get('WidgetsAjax/{tarWidget}/{tarControl}', function($tarWidget, $tarControl){
             return app()->Widget->BuildWidget($tarWidget)->SetID($tarControl)->renderAjax($tarControl);
         })->name('WidgetsAjaxGet');
+
+        Route::post('GetWidget/{WidgetName}', function ($WidgetName) {
+            return response()->json(app()->WidgetManager->renderUserWidget($WidgetName,true));
+        })->name('WidgetsAjaxBuild');
+
+        Route::post('updateWidgetLayout', 'userWidgetLayoutController@UpdateWidgetLayout')->name('updateWidgetLayout');
     });
 ?>

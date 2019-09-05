@@ -82,6 +82,20 @@ function unblockUI(item) {
 }
 
 /**** PANEL ACTIONS ****/
+function remove_panel(tar) {
+    event.preventDefault();
+    $item = $(tar).parents(".panel:first");
+    bootbox.confirm("Are you sure to remove this panel?", function (result) {
+        if (result === true) {
+            $item.addClass("animated bounceOutRight");
+            window.setTimeout(function () {
+                $item.trigger('PanelRemoved');
+                $item.remove();
+            }, 300);
+        }
+    });
+}
+
 function handlePanelAction() {
     /* Create Portlets Controls automatically: reload, fullscreen, toggle, remove, popout */
     function handlePanelControls() {
@@ -97,17 +111,7 @@ function handlePanelAction() {
     handlePanelControls();
     // Remove Panel 
     $(".panel-header .panel-close").on("click", function (event) {
-        event.preventDefault();
-        $item = $(this).parents(".panel:first");
-        bootbox.confirm("Are you sure to remove this panel?", function (result) {
-            if (result === true) {
-                $item.addClass("animated bounceOutRight");
-                window.setTimeout(function () {
-                    $item.trigger('PanelRemoved');
-                    $item.remove();
-                }, 300);
-            }
-        });
+        remove_panel($(this));
     });
     // Toggle Panel Content
     $(document).on("click", ".panel-header .panel-toggle", function (event) {

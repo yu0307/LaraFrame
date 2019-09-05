@@ -16,7 +16,7 @@
         @endisset
     </thead>
     <tbody>
-        {!!$widgetData!!}
+        {!!$WidgetData!!}
     </tbody>
 </table>
 @endsection
