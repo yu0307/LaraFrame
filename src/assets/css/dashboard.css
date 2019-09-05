@@ -1,10 +1,11 @@
 #fe_widgetArea, #fe_widgetCtrls{
-    height: 100%;
+    height: auto;
     margin: 0px;
 }
 .page-content{
     padding-left: 15px !important;
     padding-right: 15px !important;
+    padding-bottom: 50px !important;
 }
 .sortGhosting .panel{
     border: 2px dashed #319db5 !important;
@@ -32,6 +33,11 @@
 #fe_widgetArea .fe_widget{
     max-height: 99%;
 }
+
+#fe_widgetArea .fe_widget .panel-header{
+    min-height: 50px;
+}
+
 #fe_widgetArea .fe_widget .panel-reload{
     visibility: hidden !important;
 }
@@ -41,10 +47,39 @@
 }
 
 #new_widget_area{
-    border: 3px dashed #848484;
-    box-shadow: 0px 0px 6px 1px #cecece;
-    background: snow;
+    left: 50%;
+    position: fixed;
+    bottom: 25px;
+    margin-left: -45px;
+    mix-blend-mode: multiply;
 }
-#new_widget_area .widgetadd{
+#new_widget_area #widget_add{
     cursor: pointer;
+}
+.page-content:hover #new_widget_area{
+    -webkit-animation-name: fadeInUp !important;
+    animation-name: fadeInUp !important;
+}
+#shadow_widget.fadeOutUp{
+    z-index: -1;
+}
+#shadow_widget .btn{
+    min-width: 100px;
+}
+#shadow_widget .panel{
+    border: 2px dashed #a7a7a7;
+    min-height: 480px;
+}
+#shadow_widget > div{
+    background: #ffffff6e;
+}
+#shadow_widget:not(.fadeOutUp) ~#new_widget_area {
+    -webkit-animation-name: fadeOutDown !important;
+    animation-name: fadeOutDown !important;
+}
+#shadow_widget .panel-footer{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
 }

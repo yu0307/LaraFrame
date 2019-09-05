@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Blade;
 
 class Fe_WidgetServiceProvider extends ServiceProvider
 {
+
+    protected $defer = true;
+
     public function register()
     {
         $this->app->singleton('Widget', function ($app) {

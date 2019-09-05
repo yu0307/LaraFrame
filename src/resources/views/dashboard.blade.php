@@ -29,41 +29,41 @@
     <div class="list-group" id="fe_widgetCtrls">
         @yield('Widget_Area')
         @php
-            echo app()->WidgetManager->renderUserWidgets();
-        @endphp
-        <div id="shadow_widget" class="col-md-3 animated fadeIn fadeOutUp faa-fast" >
-            <div class="panel">
-                <div class="panel-header bg-default">
-                    <h3>
-                        <i class="fa fa-list"></i>
-                        <strong>New</strong> Widget    
-                    </h3>
-                </div>
-                <div class="panel-content p-t-0">
-                    <div class="withScroll" data-height="200">
-                        <h3><strong>Select</strong> your widget from the list below</h3>
-                        <select class="btn-block" name="site_widgets" id="site_widgets">
-                            <option value=""></option>
-                            {!!$options!!}
-                        </select>
-                        <div class="widget_description p-10">
-
-                        </div>
+            echo app()->WidgetManager->renderUserWidgets(Auth::user());
+        @endphp      
+    </div>
+    
+    <div id="shadow_widget" class="col-md-3 animated fadeIn fadeOutUp faa-fast">
+        <div class="panel">
+            <div class="panel-header bg-default">
+                <h3>
+                    <i class="fa fa-list"></i>
+                    <strong>New</strong> Widget
+                </h3>
+            </div>
+            <div class="panel-content p-t-0">
+                <div class="withScroll" data-height="300">
+                    <h3><strong>Select</strong> your widget from the list below</h3>
+                    <select class="btn-block" name="site_widgets" id="site_widgets" style="width:100%">
+                        <option value=""></option>
+                        {!!$options!!}
+                    </select>
+                    <div class="widget_description p-10">
+    
                     </div>
                 </div>
-                <div class="panel-footer p-10 bg-default">
-                    <button class="btn btn-success btn-sm pull-left btn-save">Add Widget</button>
-                    <button class="btn btn-danger btn-sm pull-right btn-cancel">Cancel</button>
-                    <div class="clearfix"></div>
-                </div>
+            </div>
+            <div class="panel-footer p-10 bg-default">
+                <button class="btn btn-success btn-sm pull-left btn-save">Add Widget</button>
+                <button class="btn btn-danger btn-sm pull-right btn-cancel">Cancel</button>
+                <div class="clearfix"></div>
             </div>
         </div>
-        
-        <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown">
-            <div class="front text-center" id="widget_add">
-                <div class="text-center m-5"><i class="fa fa-plus-circle fa-3x faa-float animated"></i></div>
-                <h4 class="m-t-0"><strong>Add</strong> Widgets</h4>
-            </div>
+    </div>
+    <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown">
+        <div class="front text-center" id="widget_add">
+            <div class="text-center m-5"><i class="fa fa-plus-circle fa-3x faa-float animated"></i></div>
+            <h4 class="m-t-0"><strong>Add</strong> Widgets</h4>
         </div>
     </div>
 </div>

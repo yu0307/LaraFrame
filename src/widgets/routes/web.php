@@ -11,5 +11,7 @@
         Route::post('GetWidget/{WidgetName}', function ($WidgetName) {
             return response()->json(app()->WidgetManager->renderUserWidget($WidgetName,true));
         })->name('WidgetsAjaxBuild');
+
+        Route::post('updateWidgetLayout', 'userWidgetLayoutController@UpdateWidgetLayout')->name('updateWidgetLayout');
     });
 ?>
