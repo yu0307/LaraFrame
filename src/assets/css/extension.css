@@ -107,3 +107,7 @@
 .m-b-30{
     margin-bottom: 30px;
 }
+
+.bg-transparent{
+    background: none !important;
+}

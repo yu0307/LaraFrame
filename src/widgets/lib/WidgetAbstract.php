@@ -10,20 +10,26 @@ abstract class WidgetAbstract implements Widget{
     protected $view=false;
 
     public function __construct($viewParameters){
+
+        $this->viewParameters=[
+            'WidgetName'        =>($viewParameters['WidgetName'] ?? ''),
+            'ID'                =>($viewParameters['ID'] ?? ($this->MyName() . '_' . rand(1000, 9000))),
+            'DisableHeader'     =>false,
+            'DisableFooter'     => true,
+            'WidgetBackground'  => 'bg-white',
+            'HeaderBackground'  => 'bg-primary',
+            'FooterBackground'  => 'bg-dark',
+            'HeaderIcon'        => 'star',
+            'Widget_header'     => '',
+            'Widget_footer'     => '',
+            'DisableControls'   => false,
+            'Width'             => '4',
+            'DataHeight'        => '400',
+            'Widget_contents'   => '',
+            'WidgetData'        => false,//[false: Display contents only, no data to load. function:function to get data. dataset:var of data]
+            'AjaxLoad'          =>false
+        ];
         $this->setWidgetType($this->MyName());
-        $this->viewParameters['WidgetName'] = $viewParameters['WidgetName']??'';
-        $this->viewParameters['HeaderBackground'] = 'bg-primary';
-        $this->viewParameters['FooterBackground'] = 'bg-dark';
-        $this->viewParameters['HeaderIcon'] = 'star';
-        $this->viewParameters['Widget_header'] = '';
-        $this->viewParameters['Widget_footer'] = '';
-        $this->viewParameters['DisableControls'] = false;
-        $this->viewParameters['Width'] = '4';
-        $this->viewParameters['DataHeight'] = '400';
-        $this->viewParameters['Widget_contents'] = '';
-        $this->viewParameters['WidgetData'] = ''; //used by polymorphic classes to set their data.
-        $this->viewParameters['AjaxLoad'] = false; //If data should be loaded via Ajax request.
-        $this->SetID($viewParameters['ID'] ?? ($this->MyName() . '_' . rand(1000, 9000)));
         $this->viewParameters['Ajax']['AjaxURL'] = route('WidgetsAjaxPost', ['tarWidget' => $this->MyName(), 'tarControl' => $this->MyID()]); //URL for the generic widget
         $this->viewParameters['Ajax']['AjaxInterval'] = false; //false->load once only, true->global interval with everyone else, number->milliseconds to have it's own timer.
         $this->viewParameters['Ajax']['AjaxType'] = 'POST'; //Request type
@@ -81,7 +87,7 @@ abstract class WidgetAbstract implements Widget{
     //render final widget html to the pipeline
     public function render(){
         
-        if($this->viewParameters['AjaxLoad']===false){
+        if($this->viewParameters['AjaxLoad']===false && $this->viewParameters['WidgetData']!==false){
             $this->viewParameters['WidgetData'] = (is_callable($this->viewParameters['WidgetData'])) ? $this->viewParameters['WidgetData']() : $this->dataFunction();
             if (empty($this->viewParameters['WidgetData'])) {
                 $this->setWidgetContents('<h4 class="c-primary text-center text-capitalize align-middle">No data is available...</h4>');
@@ -98,7 +104,11 @@ abstract class WidgetAbstract implements Widget{
     }
 
     public function getWidgetSettings(){
-        return collect($this->viewParameters)->only(['ID', 'AjaxLoad', 'Ajax', 'DataHeight'])->toArray();
+        $settingList= ['ID', 'DataHeight'];
+        if($this->viewParameters['AjaxLoad']!==false){
+            $settingList = array_merge($settingList,['AjaxLoad', 'Ajax']);
+        }
+        return collect($this->viewParameters)->only($settingList)->toArray();
     }
 
     //responsible for polymorphic classes to build their ajax data
