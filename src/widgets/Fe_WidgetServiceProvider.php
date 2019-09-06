@@ -34,4 +34,9 @@ class Fe_WidgetServiceProvider extends ServiceProvider
             return "<?=(app()->Widget->BuildWidget($widgetExpression)->render())?>";
         });
     }
+
+    // public function provides()
+    // {
+    //     return [WidgetProvider::class, WidgetManager::class];
+    // }
 }

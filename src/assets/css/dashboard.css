@@ -60,6 +60,7 @@
     -webkit-animation-name: fadeInUp !important;
     animation-name: fadeInUp !important;
 }
+
 #shadow_widget.fadeOutUp{
     z-index: -1;
 }
@@ -82,4 +83,11 @@
     bottom: 0px;
     left: 0px;
     right: 0px;
+}
+.fe_widget .bg-transparent{
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+.fe_widget .bg-transparent .panel-controls i{
+    color: gray !important;
 }

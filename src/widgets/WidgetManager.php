@@ -12,7 +12,9 @@ class WidgetManager {
 
     public function __construct(\Illuminate\Foundation\Application $app){
         $this->app = $app;
-        $this->AvailableWidgets=[];
+        $this->AvailableWidgets=[
+            'clock'=>['widgetType' => 'wg_clock', 'Description' => 'showing a clock on the dashboard']
+        ];
         $this->UserWidgetList=[];
     }
 
@@ -23,7 +25,7 @@ class WidgetManager {
     public function loadLayout($user){
         $layout = userWidgetLayout::where('layoutable_id', $user->id)->first()->toArray();
         $layout=json_decode($layout['widget_name']);
-        $this->UserWidgetList = $layout ?? [];
+        $this->UserWidgetList = $layout ?? $this->UserWidgetList;
     }
 
     //Add widgets to site's available widgets pool
@@ -42,14 +44,18 @@ class WidgetManager {
         array_push($this->UserWidgetList,$widgetName);
     }
 
-    // public function updateUserWidgetList($New_UserWidgetList){
-    //     $this->UserWidgetList=$New_UserWidgetList;
-    //     //update DB layout
-    //     //update Cookies layout
-    // }
+    public function UpdateWidgetLayout($layout_array=[],$setting_array=[]){
+        userWidgetLayout::updateOrCreate([
+            'layoutable_id' => auth()->user()->id,
+            'layoutable_type' => get_class(auth()->user())
+        ], [
+            'widget_name' => json_encode($layout_array),
+            'settings' => json_encode($setting_array)
+        ]);
+    }
 
     public function renderUserWidgets($user){
-        $this->loadLayout($user);
+        $this->loadLayout($user??auth()->user());
         $cnt='';
         foreach($this->UserWidgetList as $widget){
             if(!empty($this->AvailableWidgets[$widget]) && !empty($this->AvailableWidgets[$widget]['widgetType'])){
