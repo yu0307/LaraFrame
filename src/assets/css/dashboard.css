@@ -91,3 +91,11 @@
 .fe_widget .bg-transparent .panel-controls i{
     color: gray !important;
 }
+
+.fe_widget .panel-header.bg-transparent{
+    position: absolute;
+    right: 15px;
+    width: 90%;
+    top: 15px;
+    mix-blend-mode: inherit;
+}

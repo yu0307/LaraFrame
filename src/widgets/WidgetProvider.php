@@ -18,7 +18,9 @@ class WidgetProvider {
         $baseWidgets=[
             lib\fe_Widgets\WidgetGeneric::class,
             lib\fe_Widgets\WidgetTable::class,
-            lib\stock\wg_clock::class
+            lib\stock\wg_clock::class,
+            lib\stock\wg_weather::class,
+            lib\stock\wg_calendar::class
         ];
         foreach($baseWidgets as $widget){
             $this->bind($widget);

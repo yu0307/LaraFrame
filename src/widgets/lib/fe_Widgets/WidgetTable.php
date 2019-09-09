@@ -30,7 +30,7 @@ class WidgetTable extends Widget{
         $this->tableData = (is_callable($data)) ? $data() : $data;
     }
 
-    public function getAjaxData(){
+    public function getAjaxData($request){
         return $this->tableData;
     }
 

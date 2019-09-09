@@ -23,7 +23,7 @@ abstract class WidgetAbstract implements Widget{
             'Widget_header'     => '',
             'Widget_footer'     => '',
             'DisableControls'   => false,
-            'Width'             => '4',
+            'Width'             => '3',
             'DataHeight'        => '400',
             'Widget_contents'   => '',
             'WidgetData'        => false,//[false: Display contents only, no data to load. function:function to get data. dataset:var of data]
@@ -95,12 +95,12 @@ abstract class WidgetAbstract implements Widget{
         }
         
         $this->viewParameters['WidgetName'] = $this->WidgetName();
-        return (false=== $this->view?view('fe_widgets::widgetFrame', $this->viewParameters)->render():$this->view->with($this->viewParameters)->render());
+        return (false=== $this->view? View::make('fe_widgets::widgetFrame', $this->viewParameters): $this->view->with($this->viewParameters))->render();
     }
 
     //send ajax data to the client
-    public function renderAjax(){
-        return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $this->getAjaxData()]);
+    public function renderAjax($request){
+        return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $this->getAjaxData($request)]);
     }
 
     public function getWidgetSettings(){
@@ -112,7 +112,10 @@ abstract class WidgetAbstract implements Widget{
     }
 
     //responsible for polymorphic classes to build their ajax data
-    public abstract function getAjaxData();
+    public function getAjaxData($request)
+    {
+        return $this->dataFunction();
+    }
     
     //responsible for building widget specific data as part of the widget output. for parameter [WidgetData]
     public abstract function dataFunction();

@@ -19,10 +19,5 @@ class WidgetGeneric extends Widget{
     {
         return $this->viewParameters['Widget_contents'];
     }
-
-    public function getAjaxData()
-    {
-        return $this->dataFunction();
-    }
 }
 ?>

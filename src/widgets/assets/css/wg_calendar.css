@@ -1,0 +1,42 @@
+.fe_widget .wg_calendar *:before, .fe_widget .wg_calendar *:after {
+  box-sizing: border-box;
+}
+
+.fe_widget .wg_calendar {
+  font-family: "Roboto", sans-serif !important;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+.wg_calendar {
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.wg_calendar .wg_calendar-header {
+    height: 160px;
+    background-image: url('https://cdn.dribbble.com/users/3178178/screenshots/6346366/lifeguard_on_duty.jpg');
+    background-position: center -55px;
+    background-size: 100%;
+  }
+.wg_calendar .ui-datepicker-inline {
+    margin-top: 0px;
+}
+
+.wg_calendar .ui-datepicker .ui-datepicker-header{
+  background-color: white;
+}
+.wg_calendar .ui-datepicker .ui-datepicker-prev, .wg_calendar .ui-datepicker .ui-datepicker-next{
+    cursor: pointer;
+    font-size: 1.4em;
+    color: #CCC;
+}
+.wg_calendar .ui-datepicker-title{
+  color: black;
+  font-size: 18px;
+  font-family: "Roboto", sans-serif !important;
+}
+.wg_calendar .ui-datepicker thead{
+    color: #CCC;
+}

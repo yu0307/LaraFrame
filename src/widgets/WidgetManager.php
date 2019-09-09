@@ -13,7 +13,9 @@ class WidgetManager {
     public function __construct(\Illuminate\Foundation\Application $app){
         $this->app = $app;
         $this->AvailableWidgets=[
-            'clock'=>['widgetType' => 'wg_clock', 'Description' => 'showing a clock on the dashboard']
+            'clock'=>['widgetType' => 'wg_clock', 'Description' => 'showing a clock on the dashboard'],
+            'calendar' => ['widgetType' => 'wg_calendar', 'Description' => 'A simple calendar widget.'],
+            'weather' => ['widgetType' => 'wg_weather', 'Description' => 'A simple widget shows current weather forecast at your location.']
         ];
         $this->UserWidgetList=[];
     }

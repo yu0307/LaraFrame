@@ -19,4 +19,4 @@
         {!!$WidgetData!!}
     </tbody>
 </table>
-@endsection
+@overwrite

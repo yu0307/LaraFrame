@@ -3,7 +3,7 @@
     <script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/wg_clock.js')}}"></script>
 @endpushonce
 @section('Widget_contents')
-    <div class="wg_clock">
+    <div class="wg_clock m-t-30">
         <ul class="jquery-clock small" data-jquery-clock="">
             <li class="jquery-clock-pin"></li>
             <li class="jquery-clock-sec"></li>
@@ -32,4 +32,4 @@
             </div>
         @endif
     </div>
-@endsection
+@overwrite
