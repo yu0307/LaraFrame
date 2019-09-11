@@ -2,7 +2,7 @@
 
 @pushonce('footerscripts',$Type)
     <script src="{{asset('/feiron/felaraframe/plugins/skycons/skycons.min.js')}}"></script> <!-- Animated Weather Icons -->
-    <script src="{{asset('/feiron/felaraframe/plugins/simplerWeather/jquery.simplerWeather.min.js')}}"></script> <!-- Weather Plugin -->
+    <script src="{{asset('/feiron/felaraframe/plugins/FeiWeather/FeiWeather.js')}}"></script> <!-- Weather Plugin -->
     <script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/wg_weather.js')}}"></script>
 @endpushonce
 
