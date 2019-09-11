@@ -1,0 +1,16 @@
+
+
+.wg_weather  .widget-weather .weather .weather-highlighted {
+    height: inherit !important;
+    padding: 10px !important;
+}
+
+.wg_weather .weather-highlighted .inner{
+    width: 50% !important;
+}
+.wg_weather .weather-item{
+    margin-top: 0px !important;
+}
+.wg_weather .widget-weather .weather .weather-location strong{
+    width: 60%;
+}

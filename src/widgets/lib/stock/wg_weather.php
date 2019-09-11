@@ -21,6 +21,7 @@ class wg_weather extends Widget
             'DataHeight' => 260,
             'HeaderBackground' => 'bg-transparent',
             'WidgetBackground' => 'bg-primary',
+            
             'HeaderIcon' => false
             // 'AjaxLoad'=>true,
         ];
@@ -29,16 +30,10 @@ class wg_weather extends Widget
         $this->setView('fe_widgets::stock.wg_weather');
     }
     public function getAjaxData($request){
-        $api_key = '6fad2b1b1bd87f79b9845d97f4e6e85e';
-        $api_endpoint = 'https://api.darksky.net/forecast';
-        $lat= $request->input('lat');
-        $lat = (isset($lat) && is_numeric($lat) ? (float) ($lat) : null);
-        $lon = $request->input('lat');
-        $lon = (isset($lon) && is_numeric($lon) ? (float) ($lon) : null);
-        $units = $request->input('units');
-        $units = (isset($units) && strtolower($units) == 'si'  ? 'si' : 'us');
-
-        $api_url = $api_endpoint . '/' . $api_key . '/' . $lat . ',' . $lon . '/?units=' . $units . '&exclude=minutely,hourly,alerts,flags';
+        $api_key = '13abbb52fe069d005b73bef3cd35b232';
+        $api_endpoint = ($request->input('URLaction')== 'get5days')? 'https://api.openweathermap.org/data/2.5/forecast': 'https://api.openweathermap.org/data/2.5/weather';
+        
+        $api_url = $api_endpoint. $request->input('parameter') . '&appid=' . $api_key;
         if (!isset($api_url)) {
             return (['status'=>'error','message'=>'no api URL found']);
         }
@@ -46,7 +41,7 @@ class wg_weather extends Widget
             return (['status' => 'error', 'message' => 'URL format invalid']);
         }
         $api_data = file_get_contents($api_url);
-        return json_decode($api_data);
+        return (['status' => false, 'message' => 'bypass for direct output', 'data' => json_decode($api_data)]);
     }
 
     private function get_http_response_code($url){

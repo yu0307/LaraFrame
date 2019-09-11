@@ -100,7 +100,11 @@ abstract class WidgetAbstract implements Widget{
 
     //send ajax data to the client
     public function renderAjax($request){
-        return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $this->getAjaxData($request)]);
+        $rsp= $this->getAjaxData($request);
+        if(isset($rsp['status']) && $rsp['status']===false){//if bypass is enabled.
+            return response()->json($rsp['data']);
+        }
+        return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $rsp]);
     }
 
     public function getWidgetSettings(){

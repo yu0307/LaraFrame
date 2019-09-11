@@ -6,6 +6,10 @@
     <script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/wg_weather.js')}}"></script>
 @endpushonce
 
+@pushonce('headerstyles',$Type)
+    <link href="{{asset('/feiron/felaraframe/widgets/css/wg_Weather.css')}}" rel="stylesheet"> <!-- MANDATORY -->
+@endpushonce
+
 @section('Widget_contents')
 <div class="wg_weather">
     <div class="panel widget-weather bg-transparent m-b-0"></div>

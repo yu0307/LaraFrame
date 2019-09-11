@@ -1,30 +1,37 @@
 /**** WEATHER WIDGET ****/
-var Location='';
 $(document).ready(function () {
-    
-    // if ($('.fe_widget .wg_weather .widget-weather').length) {
-    //     if (navigator.geolocation) {
-    //         navigator.geolocation.getCurrentPosition(widgetWeather);
-    //     } else {
-    //         console.log('Browser does no support geoLocation ');
-    //     }
-    // }
-    widgetWeather('37.412362, -122.076790');
+    var weatherControl = widgetWeather();
+    weatherControl.getForecast();
+    weatherControl.get5days();
+    /* We get city from input on change */
+    $(".widget-weather input.wg_weather_city_search").change(function (e) {
+        e.preventDefault;
+        city = $(this).value();
+        if (city.length > 0) {
+            weatherControl.setLocation(city);
+            weatherControl.getForecast();
+            weatherControl.get5days();
+        }
+    });
+
+    $(window).resize(function () {
+        setTimeout(function () {
+            $('.widget-weather').height($('.widget-weather .panel-header').height() + $('.weather').height() + 12);
+        }, 100);
+    });
 });
 
-function widgetWeather(position) {
+function widgetWeather() {
 
-    position = position.coords.latitude + ',' + position.coords.longitude;
-
-    var weatherWidget = '<div class="panel-header background-primary"><h3><i class="icon-30"></i> <strong>Weather</strong> Widget</h3></div><div class="weather panel-content" class="widget-container widget-weather boxed"><div class="weather-highlighted">';
+    var weatherWidget = '<div class="panel-header background-primary p-0"><h3 class="m-0"><i class="icon-30"></i> <strong>Weather</strong> Widget</h3></div><div class="weather panel-content" class="widget-container widget-weather boxed"><div class="weather-highlighted">';
     weatherWidget += '<div class="day-0 weather-item clearfix active"><canvas id="day-0-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="today-temp-low"></strong><span class="weather-currently"></span><span class="today-temp"></span></div></div>';
-    weatherWidget += '<div class="day-1 weather-item clearfix"><canvas id="day-1-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="1-days-temp-low"></strong><span class="one-days-text"></span><span class="1-days-temp"></span></div></div>';
-    weatherWidget += '<div class="day-2 weather-item clearfix"><canvas id="day-2-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="2-days-temp-low"></strong><span class="two-days-text"></span><span class="2-days-temp"></span></div></div>';
-    weatherWidget += '<div class="day-3 weather-item clearfix"><canvas id="day-3-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="3-days-temp-low"></strong><span class="three-days-text"></span><span class="3-days-temp"></span></div></div>';
-    weatherWidget += '<div class="day-4 weather-item clearfix"><canvas id="day-4-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="4-days-temp-low"></strong><span class="four-days-text"></span><span class="4-days-temp"></span></div></div>';
-    weatherWidget += '</div><div class="weather-location clearfix"><strong></strong>';
-    weatherWidget += '<div class="weather-search-form"><input type="text" name="search2" value="" id="city-form" class="weather-search-field" placeholder="Try me!"><input type="submit" value="" class="btn weather-search-submit" name="search-send2"></div></div><ul class="weather-forecast clearfix">';
-    weatherWidget += '<li class="first"><a id="day-0" class="today-day active" href="javascript:;"><strong>dd</strong><span class="today-img"></span><span class="today-temp-low"></span></a></li>';
+    weatherWidget += '<div class="day-1 weather-item clearfix"><canvas id="day-1-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="1-days-temp-low"></strong><span class="1-days-text"></span><span class="1-days-temp"></span></div></div>';
+    weatherWidget += '<div class="day-2 weather-item clearfix"><canvas id="day-2-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="2-days-temp-low"></strong><span class="2-days-text"></span><span class="2-days-temp"></span></div></div>';
+    weatherWidget += '<div class="day-3 weather-item clearfix"><canvas id="day-3-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="3-days-temp-low"></strong><span class="3-days-text"></span><span class="3-days-temp"></span></div></div>';
+    weatherWidget += '<div class="day-4 weather-item clearfix"><canvas id="day-4-icon" class="m-t-15" width="64" height="64"></canvas><div class="inner"><strong class="4-days-temp-low"></strong><span class="4-days-text"></span><span class="4-days-temp"></span></div></div>';
+    weatherWidget += '</div><div class="weather-location clearfix p-10"><strong></strong>';
+    weatherWidget += '<div class="weather-search-form"><input type="text" name="search2" value="" id="wg_weather_city" class="wg_weather_city_search weather-search-field" placeholder="Try me!"><input type="submit" value="" class="btn weather-search-submit" name="search-send2"></div></div><ul class="weather-forecast clearfix">';
+    weatherWidget += '<li class="first"><a id="day-0" class="today-day active" href="javascript:;"><strong></strong><span class="today-img"></span><span class="today-temp-low"></span></a></li>';
     weatherWidget += '<li><a id="day-1" class="1-days-day" href="javascript:;"><strong></strong><span class="1-days-image"></span><span class="1-days-temp-low"></span></a></li>';
     weatherWidget += '<li><a id="day-2" class="2-days-day" href="javascript:;"><strong></strong><span class="2-days-image"></span><span class="2-days-temp-low"></span></a></li>';
     weatherWidget += '<li><a id="day-3" href="javascript:;" class="3-days-day"><strong></strong><span class="3-days-image"></span><span class="3-days-temp-low"></span></a></li>';
@@ -40,233 +47,84 @@ function widgetWeather(position) {
         $(this).addClass('active');
         $('.weather-item.' + day).addClass('active');
     });
+
     //************************* WEATHER WIDGET *************************//
     /* We initiate widget with a city (can be changed) */
-    // var city = 'New York';
-    var today_day = '';
-    var icon_type_today = icon_type_1 = icon_type_2 = icon_type_3 = icon_type_4 = "partly-cloudy-day";
+    var city = 'Mountain View, US';
+    var icon_type_today = "partly-cloudy-day";
 
-    $.simplerWeather({
-        location: position,
-        authmethod: 'proxy',
-        proxyurl: '/WidgetsAjax/wg_weather/.wg_weather',
-        success: function (weather) { },
+    var weatherControl = $.FeiWeather({
+        location: 'Mountain View, US',
+        proxyURL: '/WidgetsAjax/wg_weather/.wg_weather',
+        success: function (weather) {
+            var icon_type = {};
+            var icons = new Skycons(), list = ["clear-day", "cloudy", "rain", "sleet", "snow", "wind", "fog"], i;
+            for (i = list.length; i--;) { icons.set(list[i], list[i]); }
+            switch (weather.actionPerformed) {
+                case 'getForecast'://one day forecast
+                    city = weather.city;
+                    region = weather.country;
+                    weather_icon = '<i class="icon-' + decodeWeather(weather.code) + '"></i>';
+                    $(".weather-location strong").html(city);
+                    $(".weather-currently").html(weather.currently);
+                    $(".today-img").html('<i class="big-img-weather icon-' + decodeWeather(weather.code) + '"></i>');
+                    $(".today-temp-low").html(weather.low + ' ' + weather.units.temp + '°');
+                    $(".today-temp").html(weather.temp + ' ' + weather.units.temp + '° / ' + weather.high + ' ' + weather.units.temp + '°');
+                    $(".today-desc").text(weather.description);
+                    $(".weather-region").html(region);
+                    $(".weather-day").html(weather.day);
+                    $(".weather-icon").html(weather_icon);
+                    icons.set("day-0-icon", decodeWeather(weather.code));
+                    break;
+                case 'get5days'://5 days forecast
+                    if (undefined !== weather.forecastData && weather.forecastData.length > 0) {
+                        $(weather.forecastData).each(function (idx, ForecastData) {
+                            if (idx <= 3) {
+                                index = idx + 1;
+                                $("." + index + "-days-day strong").html(ForecastData.day);
+                                $("." + index + "-text").html(ForecastData.text);
+                                $("." + index + "-days-image").html('<i class="icon-' + ForecastData.icon + '"></i>');
+                                $("." + index + "-days-temp-low").html(ForecastData.low + ' ' + ForecastData.units.temp + '°');
+                                $("." + index + "-days-temp").html(ForecastData.low + ' ' + ForecastData.units.temp + '° / ' + ForecastData.high + ' ' + ForecastData.units.temp + '°');
+                                icons.set("day-" + index + "-icon", decodeWeather(ForecastData.code));
+                            }
+                        });
+                    }
+                    break;
+            }
+
+            function decodeWeather(code) {
+                switch (true) {
+                    case (/^800$/.test(code))://clear
+                        return 'clear-day';
+                    case (/^611$/.test(code))://sleet
+                        return 'sleet';
+                    case (/^741$/.test(code))://fog
+                        return 'fog';
+                    case (/^2[0-9]{2}$/.test(code))://Thunderstorm
+                        return 'storm';
+                    case (/^3[0-9]{2}$/.test(code))://Drizzle
+                        return 'drizzle';
+                    case (/^5[0-9]{2}$/.test(code))://Rain
+                        return 'rain';
+                    case (/^6[0-9]{2}$/.test(code))://snow
+                        return 'snow';
+                    case (/^7[0-9]{2}$/.test(code))://Atmosphere
+                        return 'wind';
+                    case (/^80[0-9]{1}$/.test(code))://Clouds
+                        return 'cloudy';
+                    default:
+                        return '';
+                }
+                return '';
+            }
+            icons.play();
+            // tomorrow_date = weather.forecast[0].date;
+        },
         error: function (error) { }
     });
 
-
-    // $.simpleWeather({
-    //     location: city,
-    //     woeid: '',
-    //     unit: 'f',
-    //     success: function (weather) {
-    //         city = weather.city;
-    //         region = weather.country;
-    //         tomorrow_date = weather.forecast[0].date;
-    //         weather_icon = '<i class="icon-' + weather.code + '"></i>';
-    //         $(".weather-location strong").html(city);
-    //         if (weather.forecast[1].day == 'Sun') today_day = 'Sat'; if (weather.forecast[1].day == 'Mon') today_day = 'Sun'; if (weather.forecast[1].day == 'Tue') today_day = 'Mon'; if (weather.forecast[1].day == 'Wed') today_day = 'Tue'; if (weather.forecast[1].day == 'Thu') today_day = 'Wed'; if (weather.forecast[1].day == 'Fri') today_day = 'Thu'; if (weather.forecast[1].day == 'Sat') today_day = 'Fri'; $(".today-day strong").html(today_day);
-    //         $(".weather-currently").html(weather.currently);
-    //         $(".today-img").html('<i class="big-img-weather icon-' + weather.code + '"></i>');
-    //         $(".today-temp-low").html(weather.low + '°');
-    //         $(".today-temp").html(weather.low + '° / ' + weather.high + '°');
-    //         $(".weather-region").html(region);
-    //         $(".weather-day").html(weather.forecast[1].day);
-    //         $(".weather-icon").html(weather_icon);
-    //         $(".1-days-day strong").html(weather.forecast[1].day);
-    //         $(".one-days-text").html(weather.forecast[1].forecast);
-    //         $(".1-days-image").html('<i class="icon-' + weather.forecast[1].code + '"></i>');
-    //         $(".1-days-temp-low").html(weather.forecast[1].low + '°');
-    //         $(".1-days-temp").html(weather.forecast[1].low + '° / ' + weather.forecast[1].high + '°');
-    //         $(".2-days-day strong").html(weather.forecast[2].day);
-    //         $(".two-days-text").html(weather.forecast[2].forecast);
-    //         $(".2-days-image").html('<i class="icon-' + weather.forecast[2].code + '"></i>');
-    //         $(".2-days-temp-low").html(weather.forecast[2].low + '°');
-    //         $(".2-days-temp").html(weather.forecast[2].low + '° / ' + weather.forecast[2].high + '°');
-    //         $(".3-days-day strong").html(weather.forecast[3].day);
-    //         $(".three-days-text").html(weather.forecast[3].forecast);
-    //         $(".3-days-image").html('<i class="icon-' + weather.forecast[3].code + '"></i>');
-    //         $(".3-days-temp-low").html(weather.forecast[3].low + '°');
-    //         $(".3-days-temp").html(weather.forecast[3].low + '° / ' + weather.forecast[3].high + '°');
-    //         $(".4-days-day strong").html(weather.forecast[4].day);
-    //         $(".four-days-text").html(weather.forecast[4].forecast);
-    //         $(".4-days-image").html('<i class="icon-' + weather.forecast[4].code + '"></i>');
-    //         $(".4-days-temp-low").html(weather.forecast[4].low + '°');
-    //         $(".4-days-temp").html(weather.forecast[4].low + '° / ' + weather.forecast[4].high + '°');
-
-    //         if (weather.code == 31 || weather.code == 32 || weather.code == 33 || weather.code == 34 || weather.code == 36) icon_type_today = "clear-day";
-    //         if (weather.code == 13 || weather.code == 14 || weather.code == 15 || weather.code == 16) icon_type_today = "snow";
-    //         if (weather.code == 25 || weather.code == 26 || weather.code == 27 || weather.code == 28 || weather.code == 29 || weather.code == 30) icon_type_today = "cloudy";
-    //         if (weather.code == 5 || weather.code == 6 || weather.code == 10 || weather.code == 11 || weather.code == 12 || weather.code == 35) icon_type_today = "rain";
-    //         if (weather.code == 20) icon_type_today = "fog";
-    //         if (weather.code == 32) icon_type_today = "partly-cloudy-day";
-    //         if (weather.code == 29) icon_type_today = "partly-cloudy-night";
-    //         if (weather.code == 24) icon_type_today = "wind";
-    //         if (weather.code == 18) icon_type_today = "sleet";
-
-    //         if (weather.forecast[1].code == 31 || weather.forecast[1].code == 32 || weather.forecast[1].code == 33 || weather.forecast[1].code == 34 || weather.forecast[1].code == 36) icon_type_1 = "clear-day";
-    //         if (weather.forecast[1].code == 13 || weather.forecast[1].code == 14 || weather.forecast[1].code == 15 || weather.forecast[1].code == 16) icon_type_1 = "snow";
-    //         if (weather.forecast[1].code == 25 || weather.forecast[1].code == 26 || weather.forecast[1].code == 27 || weather.forecast[1].code == 28) icon_type_1 = "cloudy";
-    //         if (weather.forecast[1].code == 5 || weather.forecast[1].code == 6 || weather.forecast[1].code == 10 || weather.forecast[1].code == 11 || weather.forecast[1].code == 12 || weather.forecast[1].code == 35) icon_type_1 = "rain";
-    //         if (weather.forecast[1].code == 20) icon_type_1 = "fog";
-    //         if (weather.forecast[1].code == 30) icon_type_1 = "partly-cloudy-day";
-    //         if (weather.forecast[1].code == 29) icon_type_1 = "partly-cloudy-night";
-    //         if (weather.forecast[1].code == 24) icon_type_1 = "wind";
-    //         if (weather.forecast[1].code == 18) icon_type_1 = "sleet";
-
-    //         if (weather.forecast[2].code == 31 || weather.forecast[2].code == 32 || weather.forecast[2].code == 33 || weather.forecast[2].code == 34 || weather.forecast[2].code == 36) icon_type_2 = "clear-day";
-    //         if (weather.forecast[2].code == 13 || weather.forecast[2].code == 14 || weather.forecast[2].code == 15 || weather.forecast[2].code == 16) icon_type_2 = "snow";
-    //         if (weather.forecast[2].code == 25 || weather.forecast[2].code == 26 || weather.forecast[2].code == 27 || weather.forecast[2].code == 28) icon_type_2 = "cloudy";
-    //         if (weather.forecast[2].code == 5 || weather.forecast[2].code == 6 || weather.forecast[2].code == 10 || weather.forecast[2].code == 11 || weather.forecast[2].code == 12 || weather.forecast[2].code == 35) icon_type_2 = "rain";
-    //         if (weather.forecast[2].code == 20) icon_type_2 = "fog";
-    //         if (weather.forecast[2].code == 30) icon_type_2 = "partly-cloudy-day";
-    //         if (weather.forecast[2].code == 29) icon_type_2 = "partly-cloudy-night";
-    //         if (weather.forecast[2].code == 24) icon_type_2 = "wind";
-    //         if (weather.forecast[2].code == 18) icon_type_2 = "sleet";
-
-    //         if (weather.forecast[3].code == 31 || weather.forecast[3].code == 32 || weather.forecast[3].code == 33 || weather.forecast[3].code == 34 || weather.forecast[3].code == 36) icon_type_3 = "clear-day";
-    //         if (weather.forecast[3].code == 13 || weather.forecast[3].code == 14 || weather.forecast[3].code == 15 || weather.forecast[3].code == 16) icon_type_3 = "snow";
-    //         if (weather.forecast[3].code == 25 || weather.forecast[3].code == 26 || weather.forecast[3].code == 27 || weather.forecast[3].code == 28) icon_type_3 = "cloudy";
-    //         if (weather.forecast[3].code == 5 || weather.forecast[3].code == 6 || weather.forecast[3].code == 10 || weather.forecast[3].code == 11 || weather.forecast[3].code == 12 || weather.forecast[3].code == 356) icon_type_3 = "rain";
-    //         if (weather.forecast[3].code == 20) icon_type_3 = "fog";
-    //         if (weather.forecast[3].code == 30) icon_type_3 = "partly-cloudy-day";
-    //         if (weather.forecast[3].code == 29) icon_type_3 = "partly-cloudy-night";
-    //         if (weather.forecast[3].code == 24) icon_type_3 = "wind";
-    //         if (weather.forecast[3].code == 18) icon_type_3 = "sleet";
-
-    //         if (weather.forecast[4].code == 31 || weather.forecast[4].code == 32 || weather.forecast[4].code == 33 || weather.forecast[4].code == 33) icon_type_4 = "clear-day";
-    //         if (weather.forecast[4].code == 13 || weather.forecast[4].code == 14 || weather.forecast[4].code == 15 || weather.forecast[4].code == 16) icon_type_4 = "snow";
-    //         if (weather.forecast[4].code == 25 || weather.forecast[4].code == 26 || weather.forecast[4].code == 27 || weather.forecast[4].code == 28) icon_type_4 = "cloudy";
-    //         if (weather.forecast[4].code == 5 || weather.forecast[4].code == 6 || weather.forecast[4].code == 10 || weather.forecast[4].code == 11 || weather.forecast[4].code == 12 || weather.forecast[4].code == 35) icon_type_4 = "rain";
-    //         if (weather.forecast[4].code == 20) icon_type_4 = "fog";
-    //         if (weather.forecast[4].code == 30) icon_type_4 = "partly-cloudy-day";
-    //         if (weather.forecast[4].code == 29) icon_type_4 = "partly-cloudy-night";
-    //         if (weather.forecast[4].code == 24) icon_type_4 = "wind";
-    //         if (weather.forecast[4].code == 18) icon_type_4 = "sleet";
-
-    //         var icons = new Skycons(), list = ["clear-day", "clear-night", "partly-cloudy-day", "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind", "fog"], i;
-    //         for (i = list.length; i--;) { icons.set(list[i], list[i]); }
-    //         icons.set("day-0-icon", icon_type_today);
-    //         icons.set("day-1-icon", icon_type_1);
-    //         icons.set("day-2-icon", icon_type_2);
-    //         icons.set("day-3-icon", icon_type_3);
-    //         icons.set("day-4-icon", icon_type_4);
-    //         icons.play();
-
-    //     }
-    // });
-
-    /* We get city from input on change */
-    $("#city-form").change(function (e) {
-        e.preventDefault;
-        city = document.getElementById("city-form").value;
-        $.simpleWeather({
-            location: city,
-            woeid: '',
-            unit: 'f',
-            success: function (weather) {
-                city = weather.city;
-                region = weather.country;
-                tomorrow_date = weather.forecast[0].date;
-                weather_icon = '<i class="icon-' + weather.code + '"></i>';
-                $(".weather-location strong").html(city);
-                if (weather.forecast[1].day == 'Sun') today_day = 'Sat'; if (weather.forecast[1].day == 'Mon') today_day = 'Sun'; if (weather.forecast[1].day == 'Tue') today_day = 'Mon'; if (weather.forecast[1].day == 'Wed') today_day = 'Tue'; if (weather.forecast[1].day == 'Thu') today_day = 'Wed'; if (weather.forecast[1].day == 'Fri') today_day = 'Thu'; if (weather.forecast[1].day == 'Sat') today_day = 'Fri'; $(".today-day strong").html(today_day);
-                $(".weather-currently").html(weather.currently);
-                $(".today-img").html('<i class="big-img-weather icon-' + weather.code + '"></i>');
-                $(".today-temp-low").html(weather.low + '°');
-                $(".today-temp").html(weather.low + '° / ' + weather.high + '°');
-                $(".weather-region").html(region);
-                $(".weather-day").html(weather.forecast[1].day);
-                $(".weather-icon").html(weather_icon);
-                $(".1-days-day strong").html(weather.forecast[1].day);
-                $(".one-days-text").html(weather.forecast[1].forecast);
-                $(".1-days-image").html('<i class="icon-' + weather.forecast[1].code + '"></i>');
-                $(".1-days-temp-low").html(weather.forecast[1].low + '°');
-                $(".1-days-temp").html(weather.forecast[1].low + '° / ' + weather.forecast[1].high + '°');
-                $(".2-days-day strong").html(weather.forecast[2].day);
-                $(".two-days-text").html(weather.forecast[2].forecast);
-                $(".2-days-image").html('<i class="icon-' + weather.forecast[2].code + '"></i>');
-                $(".2-days-temp-low").html(weather.forecast[2].low + '°');
-                $(".2-days-temp").html(weather.forecast[2].low + '° / ' + weather.forecast[2].high + '°');
-                $(".3-days-day strong").html(weather.forecast[3].day);
-                $(".three-days-text").html(weather.forecast[3].forecast);
-                $(".3-days-image").html('<i class="icon-' + weather.forecast[3].code + '"></i>');
-                $(".3-days-temp-low").html(weather.forecast[3].low + '°');
-                $(".3-days-temp").html(weather.forecast[3].low + '° / ' + weather.forecast[3].high + '°');
-                $(".4-days-day strong").html(weather.forecast[4].day);
-                $(".four-days-text").html(weather.forecast[4].forecast);
-                $(".4-days-image").html('<i class="icon-' + weather.forecast[4].code + '"></i>');
-                $(".4-days-temp-low").html(weather.forecast[4].low + '°');
-                $(".4-days-temp").html(weather.forecast[4].low + '° / ' + weather.forecast[4].high + '°');
-
-                if (weather.code == 31 || weather.code == 32 || weather.code == 33 || weather.code == 34 || weather.code == 36) icon_type_today = "clear-day";
-                if (weather.code == 13 || weather.code == 14 || weather.code == 15 || weather.code == 16) icon_type_today = "snow";
-                if (weather.code == 25 || weather.code == 26 || weather.code == 27 || weather.code == 28 || weather.code == 29 || weather.code == 30) icon_type_today = "cloudy";
-                if (weather.code == 5 || weather.code == 6 || weather.code == 10 || weather.code == 35) icon_type_today = "rain";
-                if (weather.code == 20) icon_type_today = "fog";
-                if (weather.code == 32) icon_type_today = "partly-cloudy-day";
-                if (weather.code == 29) icon_type_today = "partly-cloudy-night";
-                if (weather.code == 24) icon_type_today = "wind";
-                if (weather.code == 18) icon_type_today = "sleet";
-
-                if (weather.forecast[1].code == 31 || weather.forecast[1].code == 32 || weather.forecast[1].code == 33 || weather.forecast[1].code == 34 || weather.forecast[1].code == 36) icon_type_1 = "clear-day";
-                if (weather.forecast[1].code == 13 || weather.forecast[1].code == 14 || weather.forecast[1].code == 15 || weather.forecast[1].code == 16) icon_type_1 = "snow";
-                if (weather.forecast[1].code == 25 || weather.forecast[1].code == 26 || weather.forecast[1].code == 27 || weather.forecast[1].code == 28) icon_type_1 = "cloudy";
-                if (weather.forecast[1].code == 5 || weather.forecast[1].code == 6 || weather.forecast[1].code == 10 || weather.forecast[1].code == 35) icon_type_1 = "rain";
-                if (weather.forecast[1].code == 20) icon_type_1 = "fog";
-                if (weather.forecast[1].code == 30) icon_type_1 = "partly-cloudy-day";
-                if (weather.forecast[1].code == 29) icon_type_1 = "partly-cloudy-night";
-                if (weather.forecast[1].code == 24) icon_type_1 = "wind";
-                if (weather.forecast[1].code == 18) icon_type_1 = "sleet";
-
-                if (weather.forecast[2].code == 31 || weather.forecast[2].code == 32 || weather.forecast[2].code == 33 || weather.forecast[2].code == 34 || weather.forecast[2].code == 36) icon_type_2 = "clear-day";
-                if (weather.forecast[2].code == 13 || weather.forecast[2].code == 14 || weather.forecast[2].code == 15 || weather.forecast[2].code == 16) icon_type_2 = "snow";
-                if (weather.forecast[2].code == 25 || weather.forecast[2].code == 26 || weather.forecast[2].code == 27 || weather.forecast[2].code == 28) icon_type_2 = "cloudy";
-                if (weather.forecast[2].code == 5 || weather.forecast[2].code == 6 || weather.forecast[2].code == 10 || weather.forecast[2].code == 35) icon_type_2 = "rain";
-                if (weather.forecast[2].code == 20) icon_type_2 = "fog";
-                if (weather.forecast[2].code == 30) icon_type_2 = "partly-cloudy-day";
-                if (weather.forecast[2].code == 29) icon_type_2 = "partly-cloudy-night";
-                if (weather.forecast[2].code == 24) icon_type_2 = "wind";
-                if (weather.forecast[2].code == 18) icon_type_2 = "sleet";
-
-                if (weather.forecast[3].code == 31 || weather.forecast[3].code == 32 || weather.forecast[3].code == 33 || weather.forecast[3].code == 34 || weather.forecast[3].code == 36) icon_type_3 = "clear-day";
-                if (weather.forecast[3].code == 13 || weather.forecast[3].code == 14 || weather.forecast[3].code == 15 || weather.forecast[3].code == 16) icon_type_3 = "snow";
-                if (weather.forecast[3].code == 25 || weather.forecast[3].code == 26 || weather.forecast[3].code == 27 || weather.forecast[3].code == 28) icon_type_3 = "cloudy";
-                if (weather.forecast[3].code == 5 || weather.forecast[3].code == 6 || weather.forecast[3].code == 10 || weather.forecast[3].code == 356) icon_type_3 = "rain";
-                if (weather.forecast[3].code == 20) icon_type_3 = "fog";
-                if (weather.forecast[3].code == 30) icon_type_3 = "partly-cloudy-day";
-                if (weather.forecast[3].code == 29) icon_type_3 = "partly-cloudy-night";
-                if (weather.forecast[3].code == 24) icon_type_3 = "wind";
-                if (weather.forecast[3].code == 18) icon_type_3 = "sleet";
-
-                if (weather.forecast[4].code == 31 || weather.forecast[4].code == 32 || weather.forecast[4].code == 33 || weather.forecast[4].code == 33) icon_type_4 = "clear-day";
-                if (weather.forecast[4].code == 13 || weather.forecast[4].code == 14 || weather.forecast[4].code == 15 || weather.forecast[4].code == 16) icon_type_4 = "snow";
-                if (weather.forecast[4].code == 25 || weather.forecast[4].code == 26 || weather.forecast[4].code == 27 || weather.forecast[4].code == 28) icon_type_4 = "cloudy";
-                if (weather.forecast[4].code == 5 || weather.forecast[4].code == 6 || weather.forecast[4].code == 10 || weather.forecast[4].code == 35) icon_type_4 = "rain";
-                if (weather.forecast[4].code == 20) icon_type_4 = "fog";
-                if (weather.forecast[4].code == 30) icon_type_4 = "partly-cloudy-day";
-                if (weather.forecast[4].code == 29) icon_type_4 = "partly-cloudy-night";
-                if (weather.forecast[4].code == 24) icon_type_4 = "wind";
-                if (weather.forecast[4].code == 18) icon_type_4 = "sleet";
-
-                var icons = new Skycons(), list = ["clear-day", "clear-night", "partly-cloudy-day", "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind", "fog"], i;
-                for (i = list.length; i--;) { icons.set(list[i], list[i]); }
-                icons.set("day-0-icon", icon_type_today);
-                icons.set("day-1-icon", icon_type_1);
-                icons.set("day-2-icon", icon_type_2);
-                icons.set("day-3-icon", icon_type_3);
-                icons.set("day-4-icon", icon_type_4);
-                icons.play();
-            }
-        });
-    });
-
-    $(window).resize(function () {
-        setTimeout(function () {
-            $('.widget-weather').height($('.widget-weather .panel-header').height() + $('.weather').height() + 12);
-        }, 100);
-    });
-
+    return weatherControl;
 }
 
 
