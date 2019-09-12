@@ -12,6 +12,14 @@
             return response()->json(app()->WidgetManager->renderUserWidget($WidgetName,true));
         })->name('WidgetsAjaxBuild');
 
+        Route::get('GetWidgetList', function () {
+            return response()->json(app()->WidgetManager->getSiteWidgetList());
+        })->name('GetWidgetList');
+
+        Route::get('GetWidgetDetails/{WidgetName}', function ($WidgetName) {
+            return response()->json(app()->WidgetManager->getSiteWidgetDetail($WidgetName));
+        })->name('GetWidgetDetails');
+
         Route::post('updateWidgetLayout', 'userWidgetLayoutController@UpdateWidgetLayout')->name('updateWidgetLayout');
 
         

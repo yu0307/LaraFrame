@@ -1,3 +1,4 @@
+var RoamingWidget = {};
 $(document).ready(function () {
     Sortable.create(fe_widgetCtrls, {
         animation: 150,
@@ -16,34 +17,59 @@ $(document).ready(function () {
         removeWidgetPanel($(this));
     });
 
-    $('#site_widgets').select2();
-
     $('#new_widget_area #widget_add').on('click', function () {
-        $('#fe_widgetArea #shadow_widget').toggleClass('fadeOutUp');
-
-    });
-
-    $('#shadow_widget .btn-cancel').on('click', function () {
+        // $('#fe_widgetArea #shadow_widget').toggleClass('fadeOutUp');
         clearWidgetWin();
+        if ($('#fe_widget_list').find('i.loading').length > 0) {
+            loadWidgetList();
+        }
+        $('#dashboardWidgetControl').modal('show');
     });
 
-    $('#shadow_widget .btn-save').on('click', function () {
+    $('#widget_add').on('click', function () {
         if ($('#site_widgets').val().length > 0) {
             add_widget($('#site_widgets').val());
             clearWidgetWin();
+            $('#dashboardWidgetControl').modal('hide');
         } else {
             Notify('Please select a widget from the dropdown.', 'error');
         }
-    });
-
-    $('#site_widgets').on('change', function () {
-        $('#shadow_widget .widget_description').text(SiteWidgets[$(this).val()]);
     });
 
     $(document).on('WidgetLayoutChanged', function () {
         updateLayout();
     });
 });
+
+function loadWidgetDetails(WidgetName) {
+    $('#fe_widget_desc').html('<div class="text-center sm-col-12 m-t-10"><i class= "fa fa-spinner fa-spin fa-3x fa-fw loading" ></i><div class="text-center ">Loading Widget Details...</div></div>');
+    SendAjax('/GetWidgetDetails/' + WidgetName, [], 'GET', function (data, status) {
+        if (data !== undefined && $.isEmptyObject(data) === false) {
+            RoamingWidget = data;
+            $('#fe_widget_desc').html(data.Description);
+        } else {
+            $('#fe_widget_desc').html('<div class="text-center"><h3>Widget Info Unavailable...</h3></div>');
+        }
+    });
+}
+
+function loadWidgetList() {
+    SendAjax('/GetWidgetList', [], 'GET', function (data, status) {
+        var new_WidgetList = '<div class="text-center">Site Widetes not available...</div>';
+        if (data !== undefined && $.isEmptyObject(data) === false) {
+            new_WidgetList = '<h3><strong>Select</strong> your widget from the list below</h3><select class="btn-block" name="site_widgets" id="site_widgets" style="width:100%"><option value="">Select A Widget</option>';
+            $.each(data, function (widget, settings) {
+                new_WidgetList += '<option value="' + widget + '">' + widget + '</option>';
+            });
+            new_WidgetList += '</select>';
+        }
+        $('#fe_widget_list').fadeOut(1000, 'linear', function () {
+            $('#fe_widget_list').html(new_WidgetList).fadeIn(1000).find('select').on('change', function () {
+                if ($(this).val().length > 0) loadWidgetDetails($(this).val());
+            }).select2();
+        })
+    });
+}
 
 function removeWidgetPanel(tar) {
     if ($(tar).parent('.fe_widget:first').attr('id').length > 0) {
@@ -54,9 +80,9 @@ function removeWidgetPanel(tar) {
 }
 
 function clearWidgetWin() {
-    $('#fe_widgetArea #shadow_widget').toggleClass('fadeOutUp');
+    $('#fe_widget_desc').html('');
     $('#site_widgets').val(null).trigger('change');
-    $('#shadow_widget .widget_description').text('');
+    RoamingWidget = {};
 }
 
 function add_widget(widget) {
