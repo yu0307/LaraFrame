@@ -39,7 +39,7 @@
                     <div class="text-center ">Loading Site Widgets...</div>
                 </div>
             </div>
-            <div id="fe_widget_desc" class="h-100 f-18 p-15"></div>
+            <div id="fe_widget_desc" class="f-18 p-10"></div>
         </div>
     @endfeModal
     <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown">

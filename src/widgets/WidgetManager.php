@@ -26,7 +26,7 @@ class WidgetManager {
 
     public function getSiteWidgetDetail($widgetName){
         if(array_key_exists($widgetName,$this->AvailableWidgets)===true){
-            return $this->AvailableWidgets[$widgetName];
+            return array_merge($this->AvailableWidgets[$widgetName], ['userSettingOutlet'=>app()->Widget->getWidgetSettingOutlet($this->AvailableWidgets[$widgetName]['widgetType'])]);
         }
         return [];
     }

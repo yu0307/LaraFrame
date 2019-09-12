@@ -21,14 +21,13 @@ class wg_weather extends Widget
             'DataHeight' => 300,
             'HeaderBackground' => 'bg-transparent',
             'WidgetBackground' => 'bg-primary',
-            
             'HeaderIcon' => false
-            // 'AjaxLoad'=>true,
         ];
         parent::__construct(array_merge($defaultParameters, ($viewParameters ?? [])));
         // $this->viewParameters['Ajax']['AjaxInterval'] = false;
         $this->setView('fe_widgets::stock.wg_weather');
     }
+
     public function getAjaxData($request){
         $api_key = '13abbb52fe069d005b73bef3cd35b232';
         $api_endpoint = ($request->input('URLaction')== 'get5days')? 'https://api.openweathermap.org/data/2.5/forecast': 'https://api.openweathermap.org/data/2.5/weather';
@@ -52,5 +51,13 @@ class wg_weather extends Widget
     public function dataFunction()
     {
         return $this->viewParameters['Widget_contents'];
+    }
+
+    public static function userSettingOutlet()
+    {
+        return [
+            ['key'=>'location','type'=>'text','placeholder'=>''],
+            ['key' => 'unit', 'type' => 'radio','options'=>['Metric', 'Imperial'],'value'=> 'Imperial']
+        ];
     }
 }
