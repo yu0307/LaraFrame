@@ -18,7 +18,7 @@ class wg_weather extends Widget
         $defaultParameters = [
             'WidgetName' => 'weather',
             'Width' => '4',
-            'DataHeight' => 260,
+            'DataHeight' => 300,
             'HeaderBackground' => 'bg-transparent',
             'WidgetBackground' => 'bg-primary',
             

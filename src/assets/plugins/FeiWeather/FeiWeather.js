@@ -20,34 +20,25 @@ Based on SimpleWeather -- https://github.com/monkeecreate/jquery.simpleWeather
                 success: function (weather) { },
                 error: function (message) { }
             }, options);
-            if (settings.location !== '') {
-                if (/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/.test(settings.location)) {
-                    settings.location = settings.location.split(',');
-                    settings.location = 'lat=' + settings.location[0] + '&lon=' + settings.location[1];
-                } else {
-                    settings.location = ('q=' + settings.location.replace(", ", ','));
-                }
-                settings.requestParameters += ('?' + settings.location) + ('&units=' + (settings.unit === 'Imperial' ? 'imperial' : 'metric'));
-            } else {
-                settings.error('Could not retrieve weather due to an invalid location.');
-                console.log('Could not retrieve weather due to an invalid location.');
-                return false;
-            }
-            if (settings.proxyURL.length <= 0) {
-                if (settings.APIKey.length > 0) {
-                    settings.requestParameters += ('&appid=' + settings.APIKey);
-                } else {
-                    settings.error('API key is needed.');
-                    console.log('API key is needed.');
-                    return false;
-                }
-            }
+
+            setLocation(settings.location);
+
             // else{
             //     settings.proxyURL = settings.proxyURL+(settings.proxyURL.substr(-1)!=='/'?'/':'');
             // }
             var compass = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW', 'N'];
 
             function GetWeather(callback) {
+                settings.requestParameters = ('?' + settings.location) + ('&units=' + (settings.unit === 'Imperial' ? 'imperial' : 'metric'));
+                if (settings.proxyURL.length <= 0) {
+                    if (settings.APIKey.length > 0) {
+                        settings.requestParameters += ('&appid=' + settings.APIKey);
+                    } else {
+                        settings.error('API key is needed.');
+                        console.log('API key is needed.');
+                        return false;
+                    }
+                }
                 var payLoad = {
                     url: ((settings.proxyURL.length > 0) ? (settings.proxyURL + '?') : (encodeURI(settings.weatherUrl + settings.requestParameters) + '&')) + 'callback=?',
                     type: ((settings.proxyURL.length > 0) ? "POST" : 'GET'),
@@ -153,17 +144,35 @@ Based on SimpleWeather -- https://github.com/monkeecreate/jquery.simpleWeather
                 return false;
             }
 
+            function setLocation(location) {
+                if (location !== '') {
+                    if (/^(\-?\d+(\.\d+)?),\s*(\-?\d+(\.\d+)?)$/.test(location)) {
+                        location = location.split(',');
+                        settings.location = 'lat=' + location[0] + '&lon=' + location[1];
+                    } else {
+                        settings.location = ('q=' + location.replace(", ", ','));
+                    }
+                } else {
+                    settings.error('Could not retrieve weather due to an invalid location.');
+                    console.log('Could not retrieve weather due to an invalid location.');
+                    return false;
+                }
+                return true;
+            }
+
             return {
                 get5days: function () {
                     settings.weatherUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+                    settings.action = 'get5days';
                     GetWeather(Process5DaysForecast);
                 },
                 getForecast: function () {
                     settings.weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
+                    settings.action = 'getForecast';
                     return GetWeather(ProcessDailyCast);
                 },
                 setLocation: function (location) {
-                    settings.location = location;
+                    return setLocation(location);
                 }
             };
         }

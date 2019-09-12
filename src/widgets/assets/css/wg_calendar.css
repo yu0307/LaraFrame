@@ -16,8 +16,8 @@
 }
 .wg_calendar .wg_calendar-header {
     height: 160px;
-    background-image: url('https://cdn.dribbble.com/users/3178178/screenshots/6346366/lifeguard_on_duty.jpg');
-    background-position: center -55px;
+    background-image: url('/feiron/felaraframe/widgets/image/wg_Calendar/Weather.jpg');
+    background-position: center -60px;
     background-size: 100%;
   }
 .wg_calendar .ui-datepicker-inline {
@@ -39,4 +39,7 @@
 }
 .wg_calendar .ui-datepicker thead{
     color: #CCC;
+}
+.fe_widget_wg_calendar .panel-header.bg-transparent{
+      mix-blend-mode: color-dodge;
 }

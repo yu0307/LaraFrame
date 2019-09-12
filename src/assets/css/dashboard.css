@@ -45,6 +45,9 @@
 #fe_widgetArea .fe_widget .panel-reload.visible{
     visibility: visible !important;
 }
+#fe_widgetArea .fe_widget > .panel{
+    margin-bottom: 5px;
+}
 
 #new_widget_area{
     left: 50%;
