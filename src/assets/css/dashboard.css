@@ -45,6 +45,9 @@
 #fe_widgetArea .fe_widget .panel-reload.visible{
     visibility: visible !important;
 }
+#fe_widgetArea .fe_widget > .panel{
+    margin-bottom: 5px;
+}
 
 #new_widget_area{
     left: 50%;
@@ -90,4 +93,12 @@
 }
 .fe_widget .bg-transparent .panel-controls i{
     color: gray !important;
+}
+
+.fe_widget .panel-header.bg-transparent{
+    position: absolute;
+    right: 15px;
+    width: 90%;
+    top: 15px;
+    mix-blend-mode: inherit;
 }

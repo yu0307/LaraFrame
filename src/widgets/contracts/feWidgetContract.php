@@ -13,10 +13,10 @@ interface feWidgetContract{
     public function dataFunction();
 
     //responsible for returning ajax data.
-    public function renderAjax();
+    public function renderAjax($request);
 
     //responsible for polymorphic classes to build their ajax data
-    public function getAjaxData();
+    public function getAjaxData($request);
 
     //set the control ID
     public function SetID($name);
