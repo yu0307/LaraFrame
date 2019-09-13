@@ -1,12 +1,4 @@
 @extends('felaraframe::layout')
-@php
-    $SiteWidgets=[];
-    $options='';
-    foreach(app()->WidgetManager->getSiteWidgetList() as $widget=>$settings){
-        $options.="<option value='$widget'>$widget</option>";
-        $SiteWidgets[$widget]=$settings['Description'];
-    }
-@endphp
 
 @prepend('footerscripts')
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/SortableMaster/Sortable.min.js')}}"></script> <!-- Sortable  MANDATORY-->
@@ -19,9 +11,6 @@
 @push('headerstyles')
 <link href="{{asset('feiron/felaraframe/plugins/select2/dist/css/select2.min.css')}}" rel="stylesheet">
 <link href="{{asset('/feiron/felaraframe/css/dashboard.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<script type="text/javascript">
-    var SiteWidgets=@json($SiteWidgets);
-</script>
 @endpush
 
 @section('content')
@@ -32,34 +21,27 @@
             echo app()->WidgetManager->renderUserWidgets(Auth::user());
         @endphp      
     </div>
-    
-    <div id="shadow_widget" class="col-md-3 animated fadeIn fadeOutUp faa-fast">
-        <div class="panel">
-            <div class="panel-header bg-default">
-                <h3>
-                    <i class="fa fa-list"></i>
-                    <strong>New</strong> Widget
-                </h3>
-            </div>
-            <div class="panel-content p-t-0">
-                <div class="withScroll" data-height="300">
-                    <h3><strong>Select</strong> your widget from the list below</h3>
-                    <select class="btn-block" name="site_widgets" id="site_widgets" style="width:100%">
-                        <option value=""></option>
-                        {!!$options!!}
-                    </select>
-                    <div class="widget_description p-10">
-    
-                    </div>
+
+    @feModal([
+        'modal_ID'=>'dashboardWidgetControl',
+        'header'=>'Site Available Widgets',
+        'modal_size'=>'',
+        'header_bg'=>'dark',
+        'footer'=>'
+        <button type="button" class="btn btn-primary" id="widget_add">Add Widget</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        '
+        ])
+        <div id="fe_widget_list_area">
+            <div id="fe_widget_list">
+                <div class="text-center sm-col-12 m-t-10">
+                    <i class="fa fa-spinner fa-spin fa-3x fa-fw loading"></i>
+                    <div class="text-center ">Loading Site Widgets...</div>
                 </div>
             </div>
-            <div class="panel-footer p-10 bg-default">
-                <button class="btn btn-success btn-sm pull-left btn-save">Add Widget</button>
-                <button class="btn btn-danger btn-sm pull-right btn-cancel">Cancel</button>
-                <div class="clearfix"></div>
-            </div>
+            <div id="fe_widget_desc" class="h-100 f-18 p-15"></div>
         </div>
-    </div>
+    @endfeModal
     <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown">
         <div class="front text-center" id="widget_add">
             <div class="text-center m-5"><i class="fa fa-plus-circle fa-3x faa-float animated"></i></div>

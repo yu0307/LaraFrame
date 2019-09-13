@@ -24,8 +24,15 @@ class WidgetManager {
         return $this->AvailableWidgets;
     }
 
+    public function getSiteWidgetDetail($widgetName){
+        if(array_key_exists($widgetName,$this->AvailableWidgets)===true){
+            return $this->AvailableWidgets[$widgetName];
+        }
+        return [];
+    }
+
     public function loadLayout($user){
-        $layout = userWidgetLayout::where('layoutable_id', $user->id)->first()->toArray();
+        $layout = (userWidgetLayout::where('layoutable_id', $user->id)->first()??collect([]))->toArray();
         $layout=json_decode($layout['widget_name']);
         $this->UserWidgetList = $layout ?? $this->UserWidgetList;
     }

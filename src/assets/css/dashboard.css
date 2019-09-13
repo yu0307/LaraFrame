@@ -45,9 +45,6 @@
 #fe_widgetArea .fe_widget .panel-reload.visible{
     visibility: visible !important;
 }
-#fe_widgetArea .fe_widget > .panel{
-    margin-bottom: 5px;
-}
 
 #new_widget_area{
     left: 50%;
@@ -64,29 +61,11 @@
     animation-name: fadeInUp !important;
 }
 
-#shadow_widget.fadeOutUp{
-    z-index: -1;
-}
-#shadow_widget .btn{
-    min-width: 100px;
-}
-#shadow_widget .panel{
-    border: 2px dashed #a7a7a7;
-    min-height: 480px;
-}
-#shadow_widget > div{
-    background: #ffffff6e;
-}
-#shadow_widget:not(.fadeOutUp) ~#new_widget_area {
+#dashboardWidgetControl.in ~#new_widget_area {
     -webkit-animation-name: fadeOutDown !important;
     animation-name: fadeOutDown !important;
 }
-#shadow_widget .panel-footer{
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-}
+
 .fe_widget .bg-transparent{
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
