@@ -32,9 +32,8 @@ class WidgetManager {
     }
 
     public function loadLayout($user){
-        $layout = userWidgetLayout::where('layoutable_id', $user->id)->first()->toArray();
-        $layout=json_decode($layout['widget_name']);
-        $this->UserWidgetList = $layout ?? $this->UserWidgetList;
+        $layout = userWidgetLayout::where('layoutable_id', $user->id)->first();
+        $this->UserWidgetList = (json_decode($layout->widget_name??false)??$this->UserWidgetList);
     }
 
     //Add widgets to site's available widgets pool
