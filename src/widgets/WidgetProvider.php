@@ -38,6 +38,13 @@ class WidgetProvider {
         $this->widgetMaps[$className] = $abstract;
     }
 
+    public function getWidgetSettingOutlet($widgetName){
+        if(array_key_exists($widgetName, $this->widgetMaps) === false){
+            return false;
+        }
+        return ($this->widgetMaps[$widgetName]::userSettingOutlet());
+    }
+
     public function BuildWidget($widgetName,$viewParameters=null): Widget{
         $widgetName=trim($widgetName,"'");
         return (new $this->widgetMaps[$widgetName]($viewParameters));

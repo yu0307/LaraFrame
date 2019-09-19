@@ -20,5 +20,8 @@ interface feWidgetContract{
 
     //set the control ID
     public function SetID($name);
+
+    //front end settings available to users.
+    public static function userSettingOutlet();
 }
 ?>

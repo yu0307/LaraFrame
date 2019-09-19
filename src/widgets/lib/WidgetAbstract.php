@@ -120,6 +120,11 @@ abstract class WidgetAbstract implements Widget{
     {
         return $this->dataFunction();
     }
+
+    //front end settings available to users.
+    public static function userSettingOutlet(){
+        return [];
+    }
     
     //responsible for building widget specific data as part of the widget output. for parameter [WidgetData]
     public abstract function dataFunction();
