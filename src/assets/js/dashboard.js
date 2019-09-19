@@ -90,7 +90,11 @@ function add_widget(widget) {
         SendAjax('/GetWidget/' + widget, [], 'POST', function (data, status) {
             var new_Widget = data;
             var WidgetSetting = new_Widget.settings;
-            $(initNewWidget(new_Widget.html, WidgetSetting)).insertAfter($('.fe_widget:not("#shadow_widget"):last'));
+            if ($('.fe_widget:last').length <= 0) {
+                $(initNewWidget(new_Widget.html, WidgetSetting)).appendTo($('#fe_widgetCtrls'));
+            } else {
+                $(initNewWidget(new_Widget.html, WidgetSetting)).insertAfter($('.fe_widget:last'));
+            }
             if (WidgetSetting.AjaxLoad === true) {
                 if (undefined === window.AjaxWidgetPool) {//load ajax script if not exist
                     $.getScript("/feiron/felaraframe/widgets/WidgetAjax.js")
