@@ -24,14 +24,14 @@
     </div>
 </div>
 
-@push('headerstyles')
+@pushonce('headerstyles','FeFileUpload')
 <link type="text/css" href="{{asset('/feiron/felaraframe/components/FileUploader/css/FileUploader.css')}}" rel="stylesheet"> <!-- upload css -->
-@endpush
+@endpushonce
 
-@push('footerscripts')
+@pushonce('footerscripts','FeFileUpload')
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/components/FileUploader/js/FileUploader.js')}}"></script> <!-- upload control script -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/mini-upload-form/assets/js/jquery.fileupload.js')}}"></script> <!-- Upload Contorls -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/mini-upload-form/assets/js/jquery.iframe-transport.js')}}"></script> <!-- Upload Contorls -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/mini-upload-form/assets/js/jquery.knob.js')}}"></script> <!-- Upload Contorls -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/mini-upload-form/assets/js/jquery.ui.widget.js')}}"></script> <!-- Upload Contorls -->
-@endpush
+@endpushonce
