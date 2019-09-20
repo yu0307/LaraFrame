@@ -51,6 +51,11 @@
 
     @stack('footerscripts')
     @stack('footerstyles')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            @stack('DocumentReady')
+        });
+    </script>
 </body>
 
 </html>

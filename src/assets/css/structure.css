@@ -94,7 +94,10 @@ table.dataTable thead .sorting_desc:after,table.dataTable thead .sorting_asc:aft
 
 .main-content .page-content{
     overflow-y: auto !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
 }   
 .main-content .footer .copyright{
     padding: 0px !important;
 }
+
