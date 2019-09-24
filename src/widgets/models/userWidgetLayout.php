@@ -8,7 +8,7 @@ class userWidgetLayout extends Model
 {
     protected $table = 'user_widget_layout';
 
-    protected $fillable = ['widget_name', 'settings', 'layoutable_id', 'layoutable_type'];
+    protected $fillable = ['widget_name', 'settings', 'layoutable_id', 'layoutable_type','order'];
     /**
      * Get the owning model.
      */

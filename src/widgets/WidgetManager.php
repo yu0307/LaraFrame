@@ -7,17 +7,16 @@ use feiron\felaraframe\widgets\models\userWidgetLayout;
 
 class WidgetManager {
     private $app;
-    private $UserWidgetList;    //Array of keys for widget names
     private $AvailableWidgets;  //[WidgetDisplayName]=>Settings['widgetType','Description','widgetParam']
 
     public function __construct(\Illuminate\Foundation\Application $app){
         $this->app = $app;
-        $this->AvailableWidgets=[
+        $this->AvailableWidgets=[//available generic widgets to users for selection.
             'clock'=>['widgetType' => 'wg_clock', 'Description' => 'showing a clock on the dashboard'],
             'calendar' => ['widgetType' => 'wg_calendar', 'Description' => 'A simple calendar widget.'],
             'weather' => ['widgetType' => 'wg_weather', 'Description' => 'A simple widget shows current weather forecast at your location.']
         ];
-        $this->UserWidgetList=[];
+        $this->UserWidgetList= $this->UserWidgetSetings=[];
     }
 
     public function getSiteWidgetList(){
@@ -31,9 +30,8 @@ class WidgetManager {
         return [];
     }
 
-    public function loadLayout($user){
-        $layout = userWidgetLayout::where('layoutable_id', $user->id)->first();
-        $this->UserWidgetList = (json_decode($layout->widget_name??false)??$this->UserWidgetList);
+    private function loadLayout($user){
+        return userWidgetLayout::where('layoutable_id', $user->id)->orderBy('order', 'asc')->get();
     }
 
     //Add widgets to site's available widgets pool
@@ -48,41 +46,60 @@ class WidgetManager {
         unset($this->AvailableWidgets[$widgetName]);
     }
 
-    public function addToUserWidgetList($widgetName){
-        array_push($this->UserWidgetList,$widgetName);
+    public function addToUserWidgetList($widgetName,$settings=[]){
+        array_push($this->UserWidgetList,   $widgetName);
+        array_push($this->UserWidgetSetings, $settings);
     }
 
-    public function UpdateWidgetLayout($layout_array=[],$setting_array=[]){
-        userWidgetLayout::updateOrCreate([
-            'layoutable_id' => auth()->user()->id,
-            'layoutable_type' => get_class(auth()->user())
-        ], [
-            'widget_name' => json_encode($layout_array),
-            'settings' => json_encode($setting_array)
+    public function UpdateWidgetLayout($layout_array=[]){
+        foreach($layout_array as $index=>$key){
+            userWidgetLayout::find($key)
+                            ->update(['order' => $index+1]);
+        }
+    }
+
+    public function UpdateUserWidgetSettings($target,$setting){
+        userWidgetLayout::find($target)
+            ->update(['settings' => $setting]);
+    }
+
+    public function addToLayout($widget){
+        $UID= auth()->user()->id;
+        $counter = (userWidgetLayout::where('layoutable_id', $UID)->max('order')??0)+1;
+        return userWidgetLayout::create([
+            'layoutable_id' => $UID,
+            'layoutable_type' => get_class(auth()->user()),
+            'widget_name' => $widget['name'],
+            'order'=> $counter,
+            'settings'=> json_encode($widget['setting'])
         ]);
     }
 
     public function renderUserWidgets($user){
-        $this->loadLayout($user??auth()->user());
         $cnt='';
-        foreach($this->UserWidgetList as $widget){
-            if(!empty($this->AvailableWidgets[$widget]) && !empty($this->AvailableWidgets[$widget]['widgetType'])){
-                $cnt .= app()->Widget->BuildWidget($this->AvailableWidgets[$widget]['widgetType'], ($this->AvailableWidgets[$widget]['widgetParam'] ?? []))->render();
+        foreach($this->loadLayout($user ?? auth()->user()) as $widget){
+            if(!empty($this->AvailableWidgets[$widget->widget_name]) && !empty($this->AvailableWidgets[$widget->widget_name]['widgetType'])){
+                $usrSetting= array_merge(($this->AvailableWidgets[$widget->widget_name]['widgetParam'] ?? []), (json_decode($widget->settings,true) ?? []));
+                $usrSetting['usr_key']= $widget->id;
+                $cnt .= app()->Widget->BuildWidget(
+                                                        $this->AvailableWidgets[$widget->widget_name]['widgetType'], 
+                                                        $usrSetting
+                                                    )->render();
             }
         }
         return $cnt;
     }
 
-    public function renderUserWidget($userWidgetName,$asResource=false){
+    public function renderUserWidget($userWidgetName,$asResource=false,$widgetUserSettings=[]){
         
-        $widget= app()->Widget->BuildWidget($this->AvailableWidgets[$userWidgetName]['widgetType'], ($this->AvailableWidgets[$userWidgetName]['widgetParam'] ?? []));
+        $widget= app()->Widget->BuildWidget(
+                                                $this->AvailableWidgets[$userWidgetName]['widgetType'], 
+                                                ($this->AvailableWidgets[$userWidgetName]['widgetParam'] ?? [])
+                                            );
+        if(!empty($widgetUserSettings))$widget->UpdateWidgetSettings($widgetUserSettings);
         return (($asResource === false)? $widget->render(): [
             'html' => $widget->render(),
             'settings' => $widget->getWidgetSettings()
         ]) ;
-    }
-
-    public function getUserWidgetSettings($userWidgetName){
-
     }
 }

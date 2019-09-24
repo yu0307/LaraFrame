@@ -8,6 +8,7 @@ abstract class WidgetAbstract implements Widget{
 
     protected $viewParameters;
     protected $view=false;
+    protected $settingList;
 
     public function __construct($viewParameters){
 
@@ -34,6 +35,7 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['Ajax']['AjaxInterval'] = false; //false->load once only, true->global interval with everyone else, number->milliseconds to have it's own timer.
         $this->viewParameters['Ajax']['AjaxType'] = 'POST'; //Request type
         $this->viewParameters = array_merge($this->viewParameters, ($viewParameters ?? []));
+        $this->settingList = array_merge(['ID', 'DataHeight'], (($this->viewParameters['AjaxLoad'] !== false)? ['AjaxLoad', 'Ajax']:[]));
     }
 
     public function MyName(): string{
@@ -95,6 +97,7 @@ abstract class WidgetAbstract implements Widget{
         }
         
         $this->viewParameters['WidgetName'] = $this->WidgetName();
+        // $this->viewParameters['WidgetUserSetting'] = $this->getWidgetSettings();
         return (false=== $this->view? View::make('fe_widgets::widgetFrame', $this->viewParameters): $this->view->with($this->viewParameters))->render();
     }
 
@@ -107,12 +110,13 @@ abstract class WidgetAbstract implements Widget{
         return response()->json(['target'=>$this->MyID(),'widget_type'=>$this->WidgetType(),'data' => $rsp]);
     }
 
+    public function UpdateWidgetSettings($Settings=[]){
+        $this->viewParameters=array_merge($this->viewParameters,$Settings);
+        $this->settingList=array_merge($this->settingList,array_keys($Settings));
+    }
+
     public function getWidgetSettings(){
-        $settingList= ['ID', 'DataHeight'];
-        if($this->viewParameters['AjaxLoad']!==false){
-            $settingList = array_merge($settingList,['AjaxLoad', 'Ajax']);
-        }
-        return collect($this->viewParameters)->only($settingList)->toArray();
+        return collect($this->viewParameters)->only($this->settingList)->toArray();
     }
 
     //responsible for polymorphic classes to build their ajax data

@@ -8,15 +8,33 @@ use feiron\felaraframe\widgets\models\userWidgetLayout;
 
 class userWidgetLayoutController extends Controller
 {
+    
+    public function addWidget(Request $request, $WidgetName){
+        $layoutItem=app()->WidgetManager->addToLayout(['name'=> $WidgetName, 'setting'=> ($request->input('userSetting') ?? [])]);
+        return response()->json(app()->WidgetManager->renderUserWidget($WidgetName, true, array_merge(($request->input('userSetting') ?? []),['usr_key'=> $layoutItem->id])));
+    }
+
     public function UpdateWidgetLayout(Request $request){
         $request->validate([
             'layout' => 'required'
         ]);
         
-        app()->WidgetManager->UpdateWidgetLayout($request->input('layout'),($request->input('settings') ?? []));
+        app()->WidgetManager->UpdateWidgetLayout($request->input('layout'));
 
         if ($request->ajax()) {
             return response()->json(['status' => 'success', 'message' => 'Layout Updated.']);
+        }
+    }
+
+    public function updateUserWidgetSetting(Request $request){
+        $request->validate([
+            'target' => 'required',
+            'Settings' => 'required'
+        ]);
+        app()->WidgetManager->UpdateUserWidgetSettings($request->input('target'), ($request->input('Settings') ?? []));
+
+        if ($request->ajax()) {
+            return response()->json(['status' => 'success', 'message' => 'widget setting Updated.']);
         }
     }
 }

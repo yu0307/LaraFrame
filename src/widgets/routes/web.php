@@ -8,9 +8,7 @@
             return app()->Widget->BuildWidget($tarWidget)->SetID($tarControl)->renderAjax($request);
         })->name('WidgetsAjaxGet');
 
-        Route::post('GetWidget/{WidgetName}', function ($WidgetName) {
-            return response()->json(app()->WidgetManager->renderUserWidget($WidgetName,true));
-        })->name('WidgetsAjaxBuild');
+        Route::post('GetWidget/{WidgetName}', 'userWidgetLayoutController@addWidget')->name('WidgetsAjaxBuild');
 
         Route::get('GetWidgetList', function () {
             return response()->json(app()->WidgetManager->getSiteWidgetList());
@@ -22,6 +20,6 @@
 
         Route::post('updateWidgetLayout', 'userWidgetLayoutController@UpdateWidgetLayout')->name('updateWidgetLayout');
 
-        
+        Route::post('updateUserWidgetSetting', 'userWidgetLayoutController@updateUserWidgetSetting')->name('updateWidgetSetting');
     });
 ?>
