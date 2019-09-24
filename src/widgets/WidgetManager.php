@@ -56,6 +56,7 @@ class WidgetManager {
             userWidgetLayout::find($key)
                             ->update(['order' => $index+1]);
         }
+        userWidgetLayout::whereNotIn('id', $layout_array)->delete();
     }
 
     public function UpdateUserWidgetSettings($target,$setting){
