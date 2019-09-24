@@ -5,7 +5,7 @@ namespace feiron\felaraframe\lib\traits;
 
 trait DataTables{
 
-    public function get_results(\Illuminate\Http\Request $request, \Illuminate\Database\Eloquent\Builder $QueryBuilder, $globalSearchTargets=[]): array
+    public function get_results(\Illuminate\Http\Request $request, \Illuminate\Database\Eloquent\Builder $QueryBuilder, $globalSearchTargets=[], callable $dataTableFormater=null): array
     {
         $datainfo = [];
 
@@ -51,8 +51,11 @@ trait DataTables{
 
         $datainfo['recordsFiltered'] = $QueryBuilder->count();
         $datainfo['data'] = $QueryBuilder->orderBy($columnName, $columnSortOrder)->paginate($datainfo['rowperpage'])->flatten()->toArray();
-        
-
+        if(is_callable($dataTableFormater)===true){
+            foreach($datainfo['data'] as $index=>$row){
+                $datainfo['data'][$index]= $dataTableFormater($row);
+            }
+        }
         return $datainfo;
     }
 }

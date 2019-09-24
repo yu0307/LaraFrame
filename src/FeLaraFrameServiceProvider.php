@@ -54,6 +54,8 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         Blade::component('felaraframe::components.Notes', 'fenotes');
         Blade::component('felaraframe::components.FileUpload', 'fefileupload');
         Blade::component('felaraframe::components.Modal', 'feModal');
+        Blade::component('felaraframe::components.DataTable', 'feDataTable');
+        Blade::component('felaraframe::components.form.DatePicker', 'feDatePicker');
 
 
         Blade::directive('pushonce', function ($expression) {
