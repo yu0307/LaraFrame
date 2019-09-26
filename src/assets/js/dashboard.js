@@ -1,4 +1,5 @@
 var RoamingWidget = {};
+var LoadedDynamicResources = [];
 $(document).ready(function () {
     Sortable.create(fe_widgetCtrls, {
         animation: 150,
@@ -157,6 +158,12 @@ function add_widget(widget, settings = []) {
                     $.getScript(WidgetSetting.Ajax.AjaxJS);
                 }
             }
+            $(WidgetSetting.scripts).each(function (indx, elm) {
+                loadWidgetResource(elm);
+            });
+            $(WidgetSetting.styles).each(function (indx, elm) {
+                loadWidgetResource(elm);
+            });
             // $(document).trigger('WidgetLayoutChanged');
         });
     }
@@ -214,3 +221,20 @@ function updateLayout() {
         }
     });
 }
+
+function loadWidgetResource(resource) {
+    if (resource !== undefined) {
+        var extension = resource.file.substr((resource.file.lastIndexOf('.') + 1));
+        if (extension == 'css') {
+            if ($('link[href$="' + resource.file + '"]').length <= 0) {
+                $('head').append($('<link rel="stylesheet" type="text/css" media="screen" />').attr('href', resource.file));
+            }
+        } else {
+            if (resource.duplicate != undefined && resource.duplicate !== true && $('script[src$="' + resource.file + '"]').length <= 0 && false === LoadedDynamicResources.includes(resource.file)) {
+                $.getScript(resource.file);
+                LoadedDynamicResources.push(resource.file);
+            }
+        }
+    }
+}
+

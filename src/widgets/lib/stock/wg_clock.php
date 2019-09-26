@@ -24,6 +24,7 @@ class wg_clock extends Widget{
         ];
         parent::__construct(array_merge($defaultParameters, ($viewParameters ?? [])));
         $this->setView('fe_widgets::stock.wg_clock');
+        $this->enqueueFooter(asset('/feiron/felaraframe/widgets/wg_clock.js'));
     }
 
     public function dataFunction()

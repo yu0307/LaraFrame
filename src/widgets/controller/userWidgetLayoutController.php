@@ -15,12 +15,8 @@ class userWidgetLayoutController extends Controller
     }
 
     public function UpdateWidgetLayout(Request $request){
-        $request->validate([
-            'layout' => 'required'
-        ]);
-        
-        app()->WidgetManager->UpdateWidgetLayout($request->input('layout'));
 
+        app()->WidgetManager->UpdateWidgetLayout($request->input('layout')??[]);
         if ($request->ajax()) {
             return response()->json(['status' => 'success', 'message' => 'Layout Updated.']);
         }

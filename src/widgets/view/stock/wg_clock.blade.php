@@ -1,7 +1,5 @@
 @extends('fe_widgets::widgetFrame')
-@pushonce('footerscripts',$Type)
-    <script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/wg_clock.js')}}"></script>
-@endpushonce
+
 @section('Widget_contents')
     <div class="wg_clock m-t-30">
         <ul class="jquery-clock small" data-jquery-clock="">

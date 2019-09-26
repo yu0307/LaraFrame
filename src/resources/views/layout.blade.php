@@ -8,8 +8,8 @@
 <head>
     <title>@yield('title')</title>
     @yield('header')
-    @stack('headerscripts')
     @stack('headerstyles')
+    @stack('headerscripts')
     <meta name="csrf-token" content="{{ csrf_token() }}" >
 </head>
 

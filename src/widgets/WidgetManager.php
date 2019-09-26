@@ -56,7 +56,7 @@ class WidgetManager {
             userWidgetLayout::find($key)
                             ->update(['order' => $index+1]);
         }
-        userWidgetLayout::whereNotIn('id', $layout_array)->delete();
+        userWidgetLayout::where('layoutable_id', auth()->user()->id)->whereNotIn('id', $layout_array)->delete();
     }
 
     public function UpdateUserWidgetSettings($target,$setting){
@@ -78,29 +78,43 @@ class WidgetManager {
 
     public function renderUserWidgets($user){
         $cnt='';
+        $SourceList = [];
         foreach($this->loadLayout($user ?? auth()->user()) as $widget){
             if(!empty($this->AvailableWidgets[$widget->widget_name]) && !empty($this->AvailableWidgets[$widget->widget_name]['widgetType'])){
                 $usrSetting= array_merge(($this->AvailableWidgets[$widget->widget_name]['widgetParam'] ?? []), (json_decode($widget->settings,true) ?? []));
                 $usrSetting['usr_key']= $widget->id;
-                $cnt .= app()->Widget->BuildWidget(
+                $Tempwidget=app()->Widget->BuildWidget(
                                                         $this->AvailableWidgets[$widget->widget_name]['widgetType'], 
                                                         $usrSetting
-                                                    )->render();
+                                                    );
+                foreach(array_merge($Tempwidget->getHeaderScripts(), $Tempwidget->getFooterScripts()) as $resource){
+                    if($resource['duplicate']===false && in_array($resource['file'], $SourceList)){
+                        $Tempwidget->removeResource($resource['file']);
+                    }
+                    if (!in_array($resource['file'], $SourceList)){
+                        array_push($SourceList, $resource['file']);
+                    }
+                }
+                $cnt .= $Tempwidget->render();
             }
         }
         return $cnt;
     }
 
-    public function renderUserWidget($userWidgetName,$asResource=false,$widgetUserSettings=[]){
+    public function renderUserWidget($userWidgetName,$asResource=false,$widgetUserSettings=[]){//For ajax rendering use
         
         $widget= app()->Widget->BuildWidget(
                                                 $this->AvailableWidgets[$userWidgetName]['widgetType'], 
                                                 ($this->AvailableWidgets[$userWidgetName]['widgetParam'] ?? [])
                                             );
         if(!empty($widgetUserSettings))$widget->UpdateWidgetSettings($widgetUserSettings);
+        $resources=[
+            'scripts'=>array_merge($widget->getHeaderScripts(), $widget->getFooterScripts()),
+            'styles'=> array_merge($widget->getHeaderStyle(), $widget->getFooterStyle())
+        ];
         return (($asResource === false)? $widget->render(): [
             'html' => $widget->render(),
-            'settings' => $widget->getWidgetSettings()
+            'settings' => array_merge($widget->getWidgetSettings(),$resources)
         ]) ;
     }
 }

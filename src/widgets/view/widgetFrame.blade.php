@@ -1,20 +1,13 @@
 @if (false!==($AjaxLoad??false))
-
-    @pushonce('footerscripts',$Type)
-<script type="text/javascript" src="{{$Ajax['AjaxJS']}}"></script>
-    @endpushonce
-
     @php
         unset($Ajax['AjaxJS']);
     @endphp
-
-    @push('footerscripts')
 <script type="text/javascript">
     AjaxWidgetPool['{{$ID}}']=@json($Ajax)
 </script>
-    @endpush
-
 @endif
+
+@yield('Widget_InlineScript')
 
 <div class="col-md-{{$Width??'4'}} fe_widget fe_widget_{{$Type}} " id="{{$ID}}" name="{{$WidgetName}}" usrKey="{{$usr_key}}">
     <div class="panel {{$WidgetBackground??'bg-white'}}">
@@ -50,3 +43,29 @@
         @endif
     </div>
 </div>
+
+
+@push('headerscripts')
+    @foreach ($headerscripts as $script)
+        <script type="text/javascript" src="{{$script['file']}}"></script>
+    @endforeach
+@endpush
+@push('headerstyles')
+    @foreach ($headerstyles as $style)
+        <link href="{{$style['file']}}" rel="stylesheet"> <!-- MANDATORY -->
+    @endforeach
+@endpush
+@push('footerscripts')
+    @foreach ($footerscripts as $script)
+        <script type="text/javascript" src="{{$script['file']}}"></script>
+    @endforeach
+@endpush
+@push('footerstyles')
+    @foreach ($footerstyles as $style)
+        <link href="{{$style['file']}}" rel="stylesheet"> <!-- MANDATORY -->
+    @endforeach
+@endpush
+
+@push('DocumentReady')
+    @yield('Widget_DocumentReady')
+@endpush

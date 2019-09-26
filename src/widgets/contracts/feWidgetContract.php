@@ -23,5 +23,12 @@ interface feWidgetContract{
 
     //front end settings available to users.
     public static function userSettingOutlet();
+
+    public function getWidgetSettings();
+
+    public function getHeaderScripts(): array;
+    public function getHeaderStyle(): array;
+    public function getFooterScripts(): array;
+    public function getFooterStyle(): array;
 }
 ?>
