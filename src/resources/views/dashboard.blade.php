@@ -5,6 +5,7 @@
 <script type="text/javascript" src="{{asset('feiron/felaraframe/plugins/select2/dist/js/select2.full.min.js')}}"></script> <!-- Select2 -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/js/dashboard.js')}}"></script> <!-- DashBoard driver MANDATORY -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/WidgetAjax.js')}}"></script> <!-- Widget control script -->
+<script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/flip-master/jquery.flip.min.js')}}"></script> <!-- Widget control script -->
 
 @endprepend
 

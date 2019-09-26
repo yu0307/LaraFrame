@@ -39,7 +39,7 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['Ajax']['AjaxInterval'] = false; //false->load once only, true->global interval with everyone else, number->milliseconds to have it's own timer.
         $this->viewParameters['Ajax']['AjaxType'] = 'POST'; //Request type
         $this->viewParameters = array_merge($this->viewParameters, ($viewParameters ?? []));
-        $this->settingList = array_merge(['ID', 'DataHeight'], (($this->viewParameters['AjaxLoad'] !== false)? ['AjaxLoad', 'Ajax']:[]));
+        $this->settingList = array_merge(['ID', 'DataHeight', 'hasSettingOutlet'], (($this->viewParameters['AjaxLoad'] !== false)? ['AjaxLoad', 'Ajax']:[]));
         $this->headerscripts = collect([]);
         $this->headerstyles=collect([]);
         $this->footerscripts=collect([]);
@@ -167,6 +167,7 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['headerstyles'] = $this->getHeaderStyle();
         $this->viewParameters['footerscripts'] = $this->getFooterScripts();
         $this->viewParameters['footerstyles'] = $this->getFooterStyle();
+        $this->viewParameters['usrSettings']= $this->userSettingOutlet();
         $this->viewParameters['ID'] = $this->viewParameters['usr_key']?? $this->viewParameters['ID'];
 
         return (false=== $this->view? View::make('fe_widgets::widgetFrame', $this->viewParameters): $this->view->with($this->viewParameters))->render();
