@@ -57,7 +57,8 @@ Based on SimpleWeather -- https://github.com/monkeecreate/jquery.simpleWeather
                 $.ajax(payLoad);
             }
 
-            function ProcessDailyCast(DailyCast, returnValue = false) {
+            function ProcessDailyCast(DailyCast, returnValue) {
+                returnValue = returnValue || false;
                 if (false !== DailyCast) {
                     var weather = {};
                     var time = new Date(DailyCast.dt * 1000);

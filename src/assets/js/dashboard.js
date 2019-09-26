@@ -50,7 +50,7 @@ $(document).ready(function () {
 function loadWidgetDetails(WidgetName) {
     $('#fe_widget_desc').html('<div class="text-center sm-col-12 m-t-10"><i class= "fa fa-spinner fa-spin fa-3x fa-fw loading" ></i><div class="text-center ">Loading Widget Details...</div></div>');
     SendAjax('/GetWidgetDetails/' + WidgetName, [], 'GET', function (data, status) {
-        $('#fe_widget_desc').fadeOut(700, 'linear', function () {
+        $('#fe_widget_desc').fadeOut(200, 'linear', function () {
             if (data !== undefined && $.isEmptyObject(data) === false) {
                 RoamingWidget = data;
                 data.Description = '<div class="w-100 p-10">' + data.Description + '<hr class="m-0 m-t-5"/></div>';
@@ -63,7 +63,6 @@ function loadWidgetDetails(WidgetName) {
             }
             $('#fe_widget_desc').fadeIn();
         });
-
     });
 }
 
@@ -116,8 +115,8 @@ function loadWidgetList() {
             });
             new_WidgetList += '</select>';
         }
-        $('#fe_widget_list').fadeOut(1000, 'linear', function () {
-            $('#fe_widget_list').html(new_WidgetList).fadeIn(1000).find('select').on('change', function () {
+        $('#fe_widget_list').fadeOut(300, 'linear', function () {
+            $('#fe_widget_list').html(new_WidgetList).fadeIn(300).find('select').on('change', function () {
                 if ($(this).val().length > 0) loadWidgetDetails($(this).val());
             }).select2();
         })
@@ -138,7 +137,8 @@ function clearWidgetWin() {
     RoamingWidget = {};
 }
 
-function add_widget(widget, settings = []) {
+function add_widget(widget, settings) {
+    settings = settings || [];
     if (widget !== undefined && widget.length > 0) {
         SendAjax('/GetWidget/' + widget, { 'userSetting': settings }, 'POST', function (data, status) {
             var new_Widget = data;

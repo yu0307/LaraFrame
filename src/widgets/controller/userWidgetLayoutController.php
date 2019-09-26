@@ -16,7 +16,7 @@ class userWidgetLayoutController extends Controller
 
     public function UpdateWidgetLayout(Request $request){
 
-        app()->WidgetManager->UpdateWidgetLayout($request->input('layout')??[]);
+        app()->WidgetManager->UpdateWidgetLayout($request->input('newLayout')??[]);
         if ($request->ajax()) {
             return response()->json(['status' => 'success', 'message' => 'Layout Updated.']);
         }

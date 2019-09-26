@@ -10,7 +10,7 @@ $(document).ready(function () {
         city = $(this).val();
         if (city.length > 0) {
             clearTimeout(weatherTimer);
-            weatherTimer = setTimeout(() => {
+            weatherTimer = setTimeout(function () {
                 weatherControl.setLocation(city);
                 weatherControl.getForecast();
                 weatherControl.get5days();
@@ -41,14 +41,18 @@ function widgetWeather() {
     weatherWidget += '<li><a id="day-3" href="javascript:;" class="3-days-day"><strong></strong><span class="3-days-image"></span><span class="3-days-temp-low"></span></a></li>';
     weatherWidget += '<li class="last"><a id="day-4" href="javascript:;" class="4-days-day"><strong></strong><span class="4-days-image"></span><span class="4-days-temp-low"></span></a></li></ul></div>';
 
-    var icon_type_today = "partly-cloudy-day";
-    var weekdays = new Array(
-        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-    );
+    $('.widget-weather').html('');
+    $('.widget-weather').append(weatherWidget);
+
+
 
     //************************* WEATHER WIDGET *************************//
     /* We initiate widget with a city (can be changed) */
     var city = 'Mountain View, US';
+    var icon_type_today = "partly-cloudy-day";
+    var weekdays = new Array(
+        "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+    );
     var weatherControl = $.FeiWeather({
         location: 'Mountain View, US',
         proxyURL: '/WidgetsAjax/wg_weather/.wg_weather',
@@ -126,10 +130,9 @@ function widgetWeather() {
 
     $('.widget-weather').each(function () {
         $(this).html('');
-        weatherControl.setLocation($(this).prop('city'));
+        weatherControl.setLocation($(this).attr('city'));
         $(this).append(weatherWidget);
     });
-
 
     // Weather
     $('.weather-forecast li a').on('click', function () {
