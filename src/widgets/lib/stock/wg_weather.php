@@ -26,6 +26,10 @@ class wg_weather extends Widget
         parent::__construct(array_merge($defaultParameters, ($viewParameters ?? [])));
         // $this->viewParameters['Ajax']['AjaxInterval'] = false;
         $this->setView('fe_widgets::stock.wg_weather');
+        $this->enqueueFooter(asset('/feiron/felaraframe/plugins/skycons/skycons.min.js'));
+        $this->enqueueFooter(asset('/feiron/felaraframe/plugins/FeiWeather/FeiWeather.js'));
+        $this->enqueueFooter(asset('/feiron/felaraframe/widgets/wg_weather.js'));
+        $this->enqueueHeader(asset('/feiron/felaraframe/widgets/css/wg_Weather.css'));
     }
 
     public function getAjaxData($request){

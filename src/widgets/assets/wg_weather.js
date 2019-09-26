@@ -41,24 +41,14 @@ function widgetWeather() {
     weatherWidget += '<li><a id="day-3" href="javascript:;" class="3-days-day"><strong></strong><span class="3-days-image"></span><span class="3-days-temp-low"></span></a></li>';
     weatherWidget += '<li class="last"><a id="day-4" href="javascript:;" class="4-days-day"><strong></strong><span class="4-days-image"></span><span class="4-days-temp-low"></span></a></li></ul></div>';
 
-    $('.widget-weather').html('');
-    $('.widget-weather').append(weatherWidget);
-
-    // Weather
-    $('.weather-forecast li a').on('click', function () {
-        var day = $(this).attr('id');
-        $('.weather-forecast li a, .weather-item').removeClass('active');
-        $(this).addClass('active');
-        $('.weather-item.' + day).addClass('active');
-    });
-
-    //************************* WEATHER WIDGET *************************//
-    /* We initiate widget with a city (can be changed) */
-    var city = 'Mountain View, US';
     var icon_type_today = "partly-cloudy-day";
     var weekdays = new Array(
         "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
     );
+
+    //************************* WEATHER WIDGET *************************//
+    /* We initiate widget with a city (can be changed) */
+    var city = 'Mountain View, US';
     var weatherControl = $.FeiWeather({
         location: 'Mountain View, US',
         proxyURL: '/WidgetsAjax/wg_weather/.wg_weather',
@@ -132,6 +122,21 @@ function widgetWeather() {
             // tomorrow_date = weather.forecast[0].date;
         },
         error: function (error) { }
+    });
+
+    $('.widget-weather').each(function () {
+        $(this).html('');
+        weatherControl.setLocation($(this).prop('city'));
+        $(this).append(weatherWidget);
+    });
+
+
+    // Weather
+    $('.weather-forecast li a').on('click', function () {
+        var day = $(this).attr('id');
+        $('.weather-forecast li a, .weather-item').removeClass('active');
+        $(this).addClass('active');
+        $('.weather-item.' + day).addClass('active');
     });
 
     return weatherControl;

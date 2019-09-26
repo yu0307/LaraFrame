@@ -1,4 +1,5 @@
 var RoamingWidget = {};
+var LoadedDynamicResources = [];
 $(document).ready(function () {
     Sortable.create(fe_widgetCtrls, {
         animation: 150,
@@ -28,7 +29,12 @@ $(document).ready(function () {
 
     $('#widget_add').on('click', function () {
         if ($('#site_widgets').val().length > 0) {
-            add_widget($('#site_widgets').val());
+            userSettings = {};
+            $.each($('#fe_widget_desc .form-control').serializeArray(), function (key, em) {
+                userSettings[em.name] = em.value;
+            });
+
+            add_widget($('#site_widgets').val(), userSettings);
             clearWidgetWin();
             $('#dashboardWidgetControl').modal('hide');
         } else {
@@ -44,13 +50,60 @@ $(document).ready(function () {
 function loadWidgetDetails(WidgetName) {
     $('#fe_widget_desc').html('<div class="text-center sm-col-12 m-t-10"><i class= "fa fa-spinner fa-spin fa-3x fa-fw loading" ></i><div class="text-center ">Loading Widget Details...</div></div>');
     SendAjax('/GetWidgetDetails/' + WidgetName, [], 'GET', function (data, status) {
-        if (data !== undefined && $.isEmptyObject(data) === false) {
-            RoamingWidget = data;
-            $('#fe_widget_desc').html(data.Description);
-        } else {
-            $('#fe_widget_desc').html('<div class="text-center"><h3>Widget Info Unavailable...</h3></div>');
-        }
+        $('#fe_widget_desc').fadeOut(700, 'linear', function () {
+            if (data !== undefined && $.isEmptyObject(data) === false) {
+                RoamingWidget = data;
+                data.Description = '<div class="w-100 p-10">' + data.Description + '<hr class="m-0 m-t-5"/></div>';
+                if (data.userSettingOutlet !== undefined && $.isEmptyObject(data.userSettingOutlet) === false) {
+                    data.Description += InitWidgetUsrSetting(data.userSettingOutlet);
+                }
+                $('#fe_widget_desc').html(data.Description).find('select').select2();
+            } else {
+                $('#fe_widget_desc').html('<div class="text-center"><h3>Widget Info Unavailable...</h3></div>');
+            }
+            $('#fe_widget_desc').fadeIn();
+        });
+
     });
+}
+
+function InitWidgetUsrSetting(usrSetting) {
+    var settingHtml = '<h3 class="m-t-10 w-100">Widget Settings:</h3>';
+    $(usrSetting).each(function (idx, setting) {
+        settingHtml += ' <div class="form-group row">' +
+            '<label class="col-sm-12 col-md-3 control-label">' + setting.key + '</label>' +
+            '<div class="col-md-9 col-sm-12" >';
+        switch (setting.type) {
+            case 'text':
+                settingHtml += '<div class="input-group" > ' +
+                    '<span class="input-group-addon"><i class="fa fa-gear"></i></span > ' +
+                    '<input name="' + setting.key + '" value="' + (setting.value === undefined ? '' : setting.value) + '" type ="text" class="form-control form-white" placeholder = "' + setting.placeholder + '" > ' +
+                    '</div > ';
+                break;
+            case 'radio':
+                if (setting.options !== undefined && $.isEmptyObject(setting.options) === false) {
+                    settingHtml += '<div class="icheck-inline">';
+                    $(setting.options).each(function (idx, option) {
+                        settingHtml += '<label><input class="form-control" type="radio" ' + (option == setting.value ? 'CHECKED' : '') + ' name="' + setting.key + '" data-radio="iradio_minimal-blue" value="' + option + '">' + option + '</label>';
+                    });
+                    settingHtml += '</div>';
+                }
+                break;
+            case 'select':
+                if (setting.options !== undefined && $.isEmptyObject(setting.options) === false) {
+                    settingHtml += '<select name="' + setting.key + '" class="form-control">';
+                    $(setting.options).each(function (idx, option) {
+                        settingHtml += '<option value="' + option + '">' + option + '</option>';
+                    });
+                    settingHtml += '</select>';
+                }
+                break;
+        }
+
+        settingHtml += '</div > ' +
+            '</div > ';
+    });
+    return '<div class="panel">' + settingHtml + '</div>';
 }
 
 function loadWidgetList() {
@@ -85,16 +138,12 @@ function clearWidgetWin() {
     RoamingWidget = {};
 }
 
-function add_widget(widget) {
+function add_widget(widget, settings = []) {
     if (widget !== undefined && widget.length > 0) {
-        SendAjax('/GetWidget/' + widget, [], 'POST', function (data, status) {
+        SendAjax('/GetWidget/' + widget, { 'userSetting': settings }, 'POST', function (data, status) {
             var new_Widget = data;
             var WidgetSetting = new_Widget.settings;
-            if ($('.fe_widget:last').length <= 0) {
-                $(initNewWidget(new_Widget.html, WidgetSetting)).appendTo($('#fe_widgetCtrls'));
-            } else {
-                $(initNewWidget(new_Widget.html, WidgetSetting)).insertAfter($('.fe_widget:last'));
-            }
+            $(initNewWidget(new_Widget.html, WidgetSetting)).appendTo($('#fe_widgetCtrls'));
             if (WidgetSetting.AjaxLoad === true) {
                 if (undefined === window.AjaxWidgetPool) {//load ajax script if not exist
                     $.getScript("/feiron/felaraframe/widgets/WidgetAjax.js")
@@ -109,9 +158,19 @@ function add_widget(widget) {
                     $.getScript(WidgetSetting.Ajax.AjaxJS);
                 }
             }
-            $(document).trigger('WidgetLayoutChanged');
+            $(WidgetSetting.scripts).each(function (indx, elm) {
+                loadWidgetResource(elm);
+            });
+            $(WidgetSetting.styles).each(function (indx, elm) {
+                loadWidgetResource(elm);
+            });
+            // $(document).trigger('WidgetLayoutChanged');
         });
     }
+}
+
+function updateUserWidgetSetting(ID, Setting) {
+    WidgetUserSettings[ID] = Setting;
 }
 
 function initNewWidget(widget, WidgetSetting) {
@@ -133,11 +192,23 @@ function initNewWidget(widget, WidgetSetting) {
     return widget;
 }
 
+function updateWidgetSetting(tar, setting) {
+    $.ajax({
+        type: 'POST',
+        url: '/updateUserWidgetSetting',
+        dataType: 'json',
+        data: { target: tar, Settings: setting },
+        complete: function (data, textStatus, jqXHR) {
+            console.log(data.responseJSON);
+        }
+    });
+}
+
 function updateLayout() {
     var layout = [];
     $('#fe_widgetCtrls .fe_widget:not(.pendingRemoval)').each(function () {
-        if ($(this).attr('name') !== undefined && $(this).attr('name').length > 0) {
-            layout.push($(this).attr('name'));
+        if ($(this).attr('usrkey') !== undefined && $(this).attr('usrkey').length > 0) {
+            layout.push($(this).attr('usrkey'));
         }
     });
     $.ajax({
@@ -150,3 +221,20 @@ function updateLayout() {
         }
     });
 }
+
+function loadWidgetResource(resource) {
+    if (resource !== undefined) {
+        var extension = resource.file.substr((resource.file.lastIndexOf('.') + 1));
+        if (extension == 'css') {
+            if ($('link[href$="' + resource.file + '"]').length <= 0) {
+                $('head').append($('<link rel="stylesheet" type="text/css" media="screen" />').attr('href', resource.file));
+            }
+        } else {
+            if (resource.duplicate != undefined && resource.duplicate !== true && $('script[src$="' + resource.file + '"]').length <= 0 && false === LoadedDynamicResources.includes(resource.file)) {
+                $.getScript(resource.file);
+                LoadedDynamicResources.push(resource.file);
+            }
+        }
+    }
+}
+

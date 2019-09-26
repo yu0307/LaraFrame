@@ -25,6 +25,8 @@ class wg_calendar extends Widget
         ];
         parent::__construct(array_merge($defaultParameters, ($viewParameters ?? [])));
         $this->setView('fe_widgets::stock.wg_calendar');
+        $this->enqueueFooter(asset('/feiron/felaraframe/widgets/wg_calendar.js'));
+        $this->enqueueHeader(asset('/feiron/felaraframe/widgets/css/wg_calendar.css'));
     }
 
     public function dataFunction()
