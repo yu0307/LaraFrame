@@ -16,7 +16,7 @@ class userWidgetLayoutController extends Controller
 
     public function UpdateWidgetLayout(Request $request){
 
-        app()->WidgetManager->UpdateWidgetLayout($request->input('layout')??[]);
+        app()->WidgetManager->UpdateWidgetLayout($request->input('newLayout')??[]);
         if ($request->ajax()) {
             return response()->json(['status' => 'success', 'message' => 'Layout Updated.']);
         }
@@ -27,7 +27,7 @@ class userWidgetLayoutController extends Controller
             'target' => 'required',
             'Settings' => 'required'
         ]);
-        app()->WidgetManager->UpdateUserWidgetSettings($request->input('target'), ($request->input('Settings') ?? []));
+        app()->WidgetManager->UpdateUserWidgetSettings($request->input('target'), json_encode($request->input('Settings') ?? []));
 
         if ($request->ajax()) {
             return response()->json(['status' => 'success', 'message' => 'widget setting Updated.']);

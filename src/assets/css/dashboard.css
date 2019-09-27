@@ -81,3 +81,50 @@
     top: 15px;
     mix-blend-mode: inherit;
 }
+.fe_widget .wg_main_cnt{
+    position: relative !important;
+}
+.fe_widget .panel-content .back{
+    position: absolute !important;
+    top: 0px;
+    left: 0px;
+}
+.fe_widget .panel-content .back .panel{
+    padding: 10px;
+    background: none;
+    border:none;
+    box-shadow: none;
+
+}
+.fe_widget .panel-content .back .btn{
+    position: absolute;
+    bottom: 10px;
+}
+.fe_widget .panel-content .back .btn.btn-success{
+    left:10px;
+}
+.fe_widget .panel-content .back .btn.btn-danger{
+    right:0px;
+}
+.fe_widget .panel.bg-primary .back .panel{
+    color:snow !important;
+}
+
+#fe_widget_desc{
+    min-height: 200px;
+    max-height: 80%;
+    overflow-y: auto;
+}
+#fe_widget_desc label{
+    font-size: 16px;
+}
+#fe_widget_desc .row{
+    width: 100%;
+}
+
+.fe_widget input[type="radio"]{
+    margin-right: 10px;
+    -webkit-appearance: radio !important;
+}
+
+

@@ -1,5 +1,6 @@
 var RoamingWidget = {};
 var LoadedDynamicResources = [];
+var DashBoardWidgetBank = [];
 $(document).ready(function () {
     Sortable.create(fe_widgetCtrls, {
         animation: 150,
@@ -45,12 +46,72 @@ $(document).ready(function () {
     $(document).on('WidgetLayoutChanged', function () {
         updateLayout();
     });
+
+    $('.HasSettingOutlet').each(function () {
+        $('<a class="panel-setting"><i class="icon-settings"></i></a>').insertBefore($(this).find('.panel-close').first());
+    });
+
+    $(document).on("click", '.panel-header .panel-setting', function (event) {
+        event.preventDefault();
+        ToggleWidgetUsrSetting($(this), true);
+    });
+    $(document).on("click", '.fe_widget .back .hideUsrSetting', function (event) {
+        event.preventDefault();
+        ToggleWidgetUsrSetting($(this), false);
+    });
+    $(document).on("click", '.fe_widget .back .saveUsrSetting', function (event) {
+        event.preventDefault();
+        SyncWidgetSetting($(this).parents('.fe_widget:first'));
+    });
 });
+
+function SyncWidgetSetting(tar) {
+    userSettings = {};
+    $.each($(tar).find('.form-control').serializeArray(), function (key, em) {
+        userSettings[em.name] = em.value;
+    });
+    updateWidgetSetting($(tar).attr('usrkey'), userSettings);
+}
+
+function ToggleWidgetUsrSetting(tar, status) {
+    var usrkey = $(tar).parents('.fe_widget:first').attr('usrkey');
+    var btn = $(tar).parents('.fe_widget:first').find('.icon-settings:first');
+    if (DashBoardWidgetBank['wg_' + usrkey] !== undefined) {
+        tar = $(tar).parents('.fe_widget:first').find('.panel-content:first');
+        if ($(tar).find('.back').length <= 0) {
+            $(tar).append('<div class="back p-10" style="display:none;">' + InitWidgetUsrSetting(DashBoardWidgetBank['wg_' + usrkey].settings) + '<div class="pull-left btn btn-success saveUsrSetting">Update</div> <div class="pull-right btn btn-danger hideUsrSetting">Cancel</div> </div>');
+            $(tar).flip({
+                trigger: 'manual',
+                speed: 300,
+                front: $(tar).find('.wg_main_cnt:first')
+            }, function () {
+                $(tar).flip(status, function () {
+                    if (status) {
+                        $(tar).find('.back').fadeIn(200); $(btn).fadeOut(100);
+                    } else {
+                        $(tar).find('.back').fadeOut(200); $(btn).fadeIn(100);
+                    }
+
+                });
+            });
+        } else {
+            $(tar).flip(status, function () {
+                if (status) {
+                    $(tar).find('.back').fadeIn(200); $(btn).fadeOut(100);
+                } else {
+                    $(tar).find('.back').fadeOut(200); $(btn).fadeIn(100);
+                }
+
+            });
+        }
+
+    }
+}
 
 function loadWidgetDetails(WidgetName) {
     $('#fe_widget_desc').html('<div class="text-center sm-col-12 m-t-10"><i class= "fa fa-spinner fa-spin fa-3x fa-fw loading" ></i><div class="text-center ">Loading Widget Details...</div></div>');
     SendAjax('/GetWidgetDetails/' + WidgetName, [], 'GET', function (data, status) {
-        $('#fe_widget_desc').fadeOut(700, 'linear', function () {
+        $('#fe_widget_desc').fadeOut(200, 'linear', function () {
             if (data !== undefined && $.isEmptyObject(data) === false) {
                 RoamingWidget = data;
                 data.Description = '<div class="w-100 p-10">' + data.Description + '<hr class="m-0 m-t-5"/></div>';
@@ -63,7 +124,6 @@ function loadWidgetDetails(WidgetName) {
             }
             $('#fe_widget_desc').fadeIn();
         });
-
     });
 }
 
@@ -116,8 +176,8 @@ function loadWidgetList() {
             });
             new_WidgetList += '</select>';
         }
-        $('#fe_widget_list').fadeOut(1000, 'linear', function () {
-            $('#fe_widget_list').html(new_WidgetList).fadeIn(1000).find('select').on('change', function () {
+        $('#fe_widget_list').fadeOut(300, 'linear', function () {
+            $('#fe_widget_list').html(new_WidgetList).fadeIn(300).find('select').on('change', function () {
                 if ($(this).val().length > 0) loadWidgetDetails($(this).val());
             }).select2();
         })
@@ -138,12 +198,14 @@ function clearWidgetWin() {
     RoamingWidget = {};
 }
 
-function add_widget(widget, settings = []) {
+function add_widget(widget, settings) {
+    settings = settings || [];
     if (widget !== undefined && widget.length > 0) {
         SendAjax('/GetWidget/' + widget, { 'userSetting': settings }, 'POST', function (data, status) {
             var new_Widget = data;
             var WidgetSetting = new_Widget.settings;
             $(initNewWidget(new_Widget.html, WidgetSetting)).appendTo($('#fe_widgetCtrls'));
+            $('#' + WidgetSetting.ID).trigger('wg_added', { 'Setting': WidgetSetting });
             if (WidgetSetting.AjaxLoad === true) {
                 if (undefined === window.AjaxWidgetPool) {//load ajax script if not exist
                     $.getScript("/feiron/felaraframe/widgets/WidgetAjax.js")
@@ -177,14 +239,25 @@ function initNewWidget(widget, WidgetSetting) {
     widget = $(widget);
     $(widget).find('.withScroll').css('height', (WidgetSetting.DataHeight + 'px')).mCustomScrollbar();
     $(widget).find('.panel-controls').each(function () {
-        var controls_html = '<div class="control-btn">' + '<a href="#" class="panel-reload hidden"><i class="icon-reload"></i></a>' + '<a href="#" class="panel-popout hidden tt" title="Pop Out/In"><i class="icons-office-58"></i></a>' + '<a href="#" class="panel-maximize hidden"><i class="icon-size-fullscreen"></i></a>' + '<a href="#" class="panel-toggle"><i class="fa fa-angle-down"></i></a>' + '<a href="#" class="panel-close"><i class="icon-trash"></i></a>' + '</div>';
+        var controls_html = '<div class="control-btn">' +
+            '<a href="#" class="panel-reload hidden"><i class="icon-reload"></i></a>' +
+            '<a href="#" class="panel-popout hidden tt" title="Pop Out/In"><i class="icons-office-58"></i></a>' +
+            '<a href="#" class="panel-maximize hidden"><i class="icon-size-fullscreen"></i></a>' +
+            '<a href="#" class="panel-toggle"><i class="fa fa-angle-down"></i></a>' +
+            ((WidgetSetting.usrSettings !== undefined && !$.isEmptyObject(WidgetSetting.usrSettings)) ? '<a class="panel-setting"><i class="icon-settings"></i></a>' : '') +
+            '<a href="#" class="panel-close"><i class="icon-trash"></i></a>' +
+            '</div>';
         $(this).append(controls_html).find('.panel-close').on("click", function () {
             remove_panel($(this));
         });
+        if (WidgetSetting.usrSettings !== undefined && !$.isEmptyObject(WidgetSetting.usrSettings)) {
+            DashBoardWidgetBank['wg_' + WidgetSetting.ID] = { settings: WidgetSetting.usrSettings };
+        }
     });
     $(widget).find('.panel').on('PanelRemoved', function (e) {
         removeWidgetPanel($(this));
     });
+
     if (WidgetSetting.AjaxLoad === true) {
         bindWidgetReloadEvent($(widget).find('.panel-header .panel-reload'));
         bindWidgetReloadResponse($(widget));
@@ -199,7 +272,11 @@ function updateWidgetSetting(tar, setting) {
         dataType: 'json',
         data: { target: tar, Settings: setting },
         complete: function (data, textStatus, jqXHR) {
-            console.log(data.responseJSON);
+            if (data.responseJSON.status == 'success') {
+                Notify('Widget Setting Updated.');
+                $('#' + tar).trigger('wgUserSettingUpdated', { 'Setting': setting, 'ID': tar });
+                ToggleWidgetUsrSetting($('#' + tar).find('.panel-content:first()'), false);
+            }
         }
     });
 }
@@ -215,7 +292,7 @@ function updateLayout() {
         type: 'POST',
         url: '/updateWidgetLayout',
         dataType: 'json',
-        data: { layout },
+        data: { newLayout: layout },
         complete: function (data, textStatus, jqXHR) {
             console.log(data.responseJSON);
         }

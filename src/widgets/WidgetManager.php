@@ -108,13 +108,14 @@ class WidgetManager {
                                                 ($this->AvailableWidgets[$userWidgetName]['widgetParam'] ?? [])
                                             );
         if(!empty($widgetUserSettings))$widget->UpdateWidgetSettings($widgetUserSettings);
-        $resources=[
-            'scripts'=>array_merge($widget->getHeaderScripts(), $widget->getFooterScripts()),
-            'styles'=> array_merge($widget->getHeaderStyle(), $widget->getFooterStyle())
+        $Settings=[
+            'scripts' => array_merge($widget->getHeaderScripts(), $widget->getFooterScripts()),
+            'styles' => array_merge($widget->getHeaderStyle(), $widget->getFooterStyle()),
+            'usrSettings'=> $widget->userSettingOutlet()
         ];
         return (($asResource === false)? $widget->render(): [
             'html' => $widget->render(),
-            'settings' => array_merge($widget->getWidgetSettings(),$resources)
+            'settings' => array_merge($widget->getWidgetSettings(), $Settings)
         ]) ;
     }
 }

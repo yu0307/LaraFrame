@@ -1,13 +1,13 @@
-$(document).ready(function(){
+$(document).ready(function () {
     Noty.overrideDefaults({
         layout: 'topCenter',
-        type:'success',
+        type: 'success',
         theme: 'bootstrap-v3',
         dismissQueue: true,
         closeWith: ['click'],
         maxVisible: 10,
-        timeout:3000,
-        progressBar:true,
+        timeout: 3000,
+        progressBar: true,
         animation: {
             open: 'animated bounceIn',
             close: 'animated bounceOut',
@@ -24,24 +24,27 @@ $(document).ready(function(){
         }
     });
     $("#quickview-sidebar form").submit(function (e) {
-        var tar_form=$(this);
+        var tar_form = $(this);
         var method = tar_form.find('input[name="method"]').val();
         e.preventDefault();
         SendAjax(
-            tar_form.prop('action'), 
-            tar_form.serialize(), 
-            method, 
+            tar_form.prop('action'),
+            tar_form.serialize(),
+            method,
             function (data, status) {
                 tar_form.trigger('quickview_form_submited');
-                if (tar_form.attr('form_type').length>0){
-                    tar_form.trigger((tar_form.attr('form_type') +'_'+ method).toLowerCase());
+                if (tar_form.attr('form_type').length > 0) {
+                    tar_form.trigger((tar_form.attr('form_type') + '_' + method).toLowerCase());
                 }
             });
         tar_form.find('input[name="method"]').val('POST');
     });
 });
 
-function SendAjax(URL,DATA,TYPE='POST',callback=null,suppress=false){
+function SendAjax(URL, DATA, TYPE, callback, suppress) {
+    TYPE = TYPE || 'POST';
+    callback = callback || null;
+    suppress = suppress || false;
     $.ajax({
         type: TYPE,
         url: URL,
@@ -49,15 +52,15 @@ function SendAjax(URL,DATA,TYPE='POST',callback=null,suppress=false){
         data: DATA,
         complete: function (jqXHR, status) {
             var data = jqXHR.responseJSON;
-            if(!suppress){
-                if(data.message!==undefined){
+            if (!suppress) {
+                if (data.message !== undefined) {
                     message = jQuery.map(data.message, function (n, i) {
                         return ('<div>' + n + '</div>');
                     }).join("");
-                    Notify(message, (data.status!==undefined?data.status:'info'));
+                    Notify(message, (data.status !== undefined ? data.status : 'info'));
                 }
             }
-            if (typeof callback === 'function'){
+            if (typeof callback === 'function') {
                 callback(data, status);
             }
         }
@@ -76,12 +79,17 @@ function toggleQuickview() {
         $('#quickview-sidebar').addClass('open').trigger('sidebarShown');
 }
 
-function Notify(content, type = 'success', position = 'topCenter', container = '', confirm = false, method = 3000) {
+function Notify(content, type, position, container, confirm, method) {
+    type = type || 'success';
+    position = position || 'topCenter';
+    container = container || '';
+    confirm = confirm || false;
+    method = method || 3000;
     if (position == 'bottom') {
         openAnimation = 'animated fadeInUp';
         closeAnimation = 'animated fadeOutDown';
     }
-    else if (position == 'top' || container.length>1) {
+    else if (position == 'top' || container.length > 1) {
         openAnimation = 'animated fadeIn';
         closeAnimation = 'animated fadeOut';
     }
@@ -107,7 +115,7 @@ function Notify(content, type = 'success', position = 'topCenter', container = '
         ] : '',
         callback: {
             onShow: function () {
-                if (container==''){
+                if (container == '') {
                     leftNotfication = $('.sidebar').width();
                     if ($('body').hasClass('rtl')) {
                         if (position == 'top' || position == 'bottom') {
