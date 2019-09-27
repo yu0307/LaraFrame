@@ -59,7 +59,19 @@ $(document).ready(function () {
         event.preventDefault();
         ToggleWidgetUsrSetting($(this), false);
     });
+    $(document).on("click", '.fe_widget .back .saveUsrSetting', function (event) {
+        event.preventDefault();
+        SyncWidgetSetting($(this).parents('.fe_widget:first'));
+    });
 });
+
+function SyncWidgetSetting(tar) {
+    userSettings = {};
+    $.each($(tar).find('.form-control').serializeArray(), function (key, em) {
+        userSettings[em.name] = em.value;
+    });
+    updateWidgetSetting($(tar).attr('usrkey'), userSettings);
+}
 
 function ToggleWidgetUsrSetting(tar, status) {
     var usrkey = $(tar).parents('.fe_widget:first').attr('usrkey');
@@ -67,7 +79,7 @@ function ToggleWidgetUsrSetting(tar, status) {
     if (DashBoardWidgetBank['wg_' + usrkey] !== undefined) {
         tar = $(tar).parents('.fe_widget:first').find('.panel-content:first');
         if ($(tar).find('.back').length <= 0) {
-            $(tar).append('<div class="back p-10" style="display:none;">' + InitWidgetUsrSetting(DashBoardWidgetBank['wg_' + usrkey].settings) + '<div class="pull-left btn btn-success">Update</div> <div class="pull-right btn btn-danger hideUsrSetting">Cancel</div> </div>');
+            $(tar).append('<div class="back p-10" style="display:none;">' + InitWidgetUsrSetting(DashBoardWidgetBank['wg_' + usrkey].settings) + '<div class="pull-left btn btn-success saveUsrSetting">Update</div> <div class="pull-right btn btn-danger hideUsrSetting">Cancel</div> </div>');
             $(tar).flip({
                 trigger: 'manual',
                 speed: 300,
@@ -193,6 +205,7 @@ function add_widget(widget, settings) {
             var new_Widget = data;
             var WidgetSetting = new_Widget.settings;
             $(initNewWidget(new_Widget.html, WidgetSetting)).appendTo($('#fe_widgetCtrls'));
+            $('#' + WidgetSetting.ID).trigger('wg_added', { 'Setting': WidgetSetting });
             if (WidgetSetting.AjaxLoad === true) {
                 if (undefined === window.AjaxWidgetPool) {//load ajax script if not exist
                     $.getScript("/feiron/felaraframe/widgets/WidgetAjax.js")
@@ -244,6 +257,7 @@ function initNewWidget(widget, WidgetSetting) {
     $(widget).find('.panel').on('PanelRemoved', function (e) {
         removeWidgetPanel($(this));
     });
+
     if (WidgetSetting.AjaxLoad === true) {
         bindWidgetReloadEvent($(widget).find('.panel-header .panel-reload'));
         bindWidgetReloadResponse($(widget));
@@ -258,7 +272,11 @@ function updateWidgetSetting(tar, setting) {
         dataType: 'json',
         data: { target: tar, Settings: setting },
         complete: function (data, textStatus, jqXHR) {
-            console.log(data.responseJSON);
+            if (data.responseJSON.status == 'success') {
+                Notify('Widget Setting Updated.');
+                $('#' + tar).trigger('wgUserSettingUpdated', { 'Setting': setting, 'ID': tar });
+                ToggleWidgetUsrSetting($('#' + tar).find('.panel-content:first()'), false);
+            }
         }
     });
 }

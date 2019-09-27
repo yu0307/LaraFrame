@@ -18,6 +18,13 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on("wgUserSettingUpdated", '.fe_widget', function (event, data, ID) {
+        event.preventDefault();
+        weatherControl.setLocation(data.Setting.location);
+        weatherControl.getForecast();
+        weatherControl.get5days();
+    });
+
     $(window).resize(function () {
         setTimeout(function () {
             $('.widget-weather').height($('.widget-weather .panel-header').height() + $('.weather').height() + 12);
