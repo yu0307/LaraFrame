@@ -48,10 +48,11 @@
             </div>
         </div>
     </div>
-
+    
     @stack('footerscripts')
     @stack('footerstyles')
     <script type="text/javascript">
+        @stack('JsBeforeReady')
         $(document).ready(function(){
             @stack('DocumentReady')
         });

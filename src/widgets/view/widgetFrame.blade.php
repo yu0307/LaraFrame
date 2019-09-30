@@ -45,6 +45,15 @@
 </div>
 
 
+@push('JsBeforeReady')
+    @if ((!empty($usrSettings)===true) || (!empty($widgetConfig)===true))
+        DashBoardWidgetBank['{{'wg_'.$usr_key}}']={
+                        settings:@json($usrSettings??[]),
+                        widgetConfig:@json($widgetConfig??[])};
+    @endif
+    @yield('Widget_JsBeforeReady');
+@endpush
+
 @push('headerscripts')
     @foreach ($headerscripts as $script)
         <script type="text/javascript" src="{{$script['file']}}"></script>
@@ -67,10 +76,5 @@
 @endpush
 
 @push('DocumentReady')
-    @if ((!empty($usrSettings)===true))
-        DashBoardWidgetBank['{{'wg_'.$usr_key}}']={
-                        settings:@json($usrSettings)
-                    };
-    @endif
     @yield('Widget_DocumentReady')
 @endpush

@@ -38,7 +38,7 @@ class WidgetManager {
     public function addWidget($widgetName,$Param=[]){
         $Param= $Param ?? [];
         $Param['widgetParam']['WidgetName']= $widgetName;
-        $this->AvailableWidgets[$widgetName]= array_merge(['widgetType' => 'WidgetGeneric', 'Description' => ''], $Param) ;
+        $this->AvailableWidgets[$widgetName]= array_merge(['widgetType' => 'WidgetGeneric', 'Description' => ''], $Param);
     }
 
     //remove widgets from site's available widgets pool

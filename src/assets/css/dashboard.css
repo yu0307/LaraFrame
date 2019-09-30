@@ -32,6 +32,10 @@
 }
 #fe_widgetArea .fe_widget{
     max-height: 99%;
+    padding: 5px;
+}
+#fe_widgetArea .fe_widget .panel {
+    margin-bottom: 0px;
 }
 
 #fe_widgetArea .fe_widget .panel-header{

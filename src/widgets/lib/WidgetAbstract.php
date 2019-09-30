@@ -168,6 +168,7 @@ abstract class WidgetAbstract implements Widget{
         $this->viewParameters['footerscripts'] = $this->getFooterScripts();
         $this->viewParameters['footerstyles'] = $this->getFooterStyle();
         $this->viewParameters['usrSettings']= $this->userSettingOutlet();
+        $this->viewParameters['widgetConfig'] = $this->getWidgetSettings();
         $this->viewParameters['ID'] = $this->viewParameters['usr_key']?? $this->viewParameters['ID'];
 
         return (false=== $this->view? View::make('fe_widgets::widgetFrame', $this->viewParameters): $this->view->with($this->viewParameters))->render();
@@ -192,8 +193,7 @@ abstract class WidgetAbstract implements Widget{
     }
 
     //responsible for polymorphic classes to build their ajax data
-    public function getAjaxData($request)
-    {
+    public function getAjaxData($request){
         return $this->dataFunction();
     }
 
