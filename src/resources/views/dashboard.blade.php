@@ -43,7 +43,7 @@
             <div id="fe_widget_desc" class="f-18 p-10"></div>
         </div>
     @endfeModal
-    <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown">
+    <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown" style="z-index: 1000;">
         <div class="front text-center" id="widget_add">
             <div class="text-center m-5"><i class="fa fa-plus-circle fa-3x faa-float animated"></i></div>
             <h4 class="m-t-0"><strong>Add</strong> Widgets</h4>
