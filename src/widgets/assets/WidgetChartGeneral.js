@@ -3,9 +3,10 @@ $(document).ready(function () {
 
     activate($('.fe_widget .wg_Charts'));
 
-    $(document).on("wg_added", '.fe_widget .wg_Charts', function (event, data, ID) {
-        activate($(this));
+    $(document).on("wg_added", '.fe_widget ', function (event, data, ID) {
+        activate($(this).find('.wg_Charts'));
     });
+
     function activate(tar) {
         $(tar).each(function (index, elm) {
             if (false !== $.inArray('widgetConfig', Object.keys(DashBoardWidgetBank['wg_' + $(elm).attr('wg_id')]))) {

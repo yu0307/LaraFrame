@@ -69,6 +69,9 @@
     -webkit-animation-name: fadeOutDown !important;
     animation-name: fadeOutDown !important;
 }
+#fe_widgetArea .fe_widget .panel .panel-header h3{
+    max-width: 70%;
+}
 
 .fe_widget .bg-transparent{
     box-shadow: none !important;
