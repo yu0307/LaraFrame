@@ -32,6 +32,10 @@
 }
 #fe_widgetArea .fe_widget{
     max-height: 99%;
+    padding: 5px;
+}
+#fe_widgetArea .fe_widget .panel {
+    margin-bottom: 0px;
 }
 
 #fe_widgetArea .fe_widget .panel-header{
@@ -64,6 +68,9 @@
 #dashboardWidgetControl.in ~#new_widget_area {
     -webkit-animation-name: fadeOutDown !important;
     animation-name: fadeOutDown !important;
+}
+#fe_widgetArea .fe_widget .panel .panel-header h3{
+    max-width: 70%;
 }
 
 .fe_widget .bg-transparent{

@@ -205,6 +205,17 @@ function add_widget(widget, settings) {
             var new_Widget = data;
             var WidgetSetting = new_Widget.settings;
             $(initNewWidget(new_Widget.html, WidgetSetting)).appendTo($('#fe_widgetCtrls'));
+            $(WidgetSetting.scripts).each(function (indx, elm) {
+                loadWidgetResource(elm);
+            });
+            delete WidgetSetting.scripts;
+            $(WidgetSetting.styles).each(function (indx, elm) {
+                loadWidgetResource(elm);
+            });
+            delete WidgetSetting.styles;
+            var usrSetting = (undefined == WidgetSetting.usrSettings) ? [] : WidgetSetting.usrSettings;;
+            delete WidgetSetting.usrSettings;
+            DashBoardWidgetBank['wg_' + WidgetSetting.ID] = { settings: usrSetting, widgetConfig: WidgetSetting };
             $('#' + WidgetSetting.ID).trigger('wg_added', { 'Setting': WidgetSetting });
             if (WidgetSetting.AjaxLoad === true) {
                 if (undefined === window.AjaxWidgetPool) {//load ajax script if not exist
@@ -220,12 +231,7 @@ function add_widget(widget, settings) {
                     $.getScript(WidgetSetting.Ajax.AjaxJS);
                 }
             }
-            $(WidgetSetting.scripts).each(function (indx, elm) {
-                loadWidgetResource(elm);
-            });
-            $(WidgetSetting.styles).each(function (indx, elm) {
-                loadWidgetResource(elm);
-            });
+
             // $(document).trigger('WidgetLayoutChanged');
         });
     }

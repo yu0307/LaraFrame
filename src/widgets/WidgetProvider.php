@@ -35,7 +35,7 @@ class WidgetProvider {
         }
         $pos = strrpos($abstract, '\\');
         $className= false === $pos ? $abstract : substr($abstract, $pos + 1);
-        $this->widgetMaps[$className] = $abstract;
+        if(array_key_exists($className, $this->widgetMaps)===false) $this->widgetMaps[$className] = $abstract;
     }
 
     public function getWidgetSettingOutlet($widgetName){
