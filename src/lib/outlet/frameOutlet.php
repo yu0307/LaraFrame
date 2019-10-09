@@ -23,6 +23,10 @@ class frameOutlet implements feOutletManagerContract
         return $this;
     }
 
+    public function getOutlet($outletName){
+        return $this->OutletList[$outletName]??[];
+    }
+
     public function getAvailableOutlets(){
         return array_keys($this->OutletList);
     }
@@ -57,7 +61,7 @@ class frameOutlet implements feOutletManagerContract
         if(false===$this->hasOutlet($outletName)){
             $this->registerOutlet($outletName);
         }
-        $this->bindOutlet($outletName, new feOutlet($outletParams));
+        $this->bindOutlet($outletName, new feOutletContract($outletParams));
         return $this;
     }
 

@@ -14,5 +14,5 @@
         Route::get('MyPrivacy',function(){
             return view('felaraframe::terms');
         })->name('PrivacyPolicy');
-    });  
+    }); 
 ?>
