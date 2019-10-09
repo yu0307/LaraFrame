@@ -37,8 +37,9 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $this->publishes([
             __DIR__ . '/widgets/assets' => public_path('feiron/' . $PackageName. "/widgets/"),
         ], ($PackageName . '_widgets'));
-        
 
+        resolve('frameOutlet')->registerOutlet('Fe_FrameOutlet');
+    
         // Event::listen('feiron\fe_login\lib\events\UserCreated', '\felaraframe\lib\Listeners\UserCreated');
     }
 
@@ -46,6 +47,7 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
         $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
         $this->app->register( '\feiron\felaraframe\widgets\Fe_WidgetServiceProvider');
+        $this->app->register( '\feiron\felaraframe\FrameOutletProvider');
     }
 
     private function registerBladeComponents(){
@@ -56,7 +58,7 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         Blade::component('felaraframe::components.Modal', 'feModal');
         Blade::component('felaraframe::components.DataTable', 'feDataTable');
         Blade::component('felaraframe::components.form.DatePicker', 'feDatePicker');
-
+        Blade::component('felaraframe::components.layout.Portlet', 'fePortlet');
 
         Blade::directive('pushonce', function ($expression) {
             // $expression = substr(substr($expression, 0, -1), 1);

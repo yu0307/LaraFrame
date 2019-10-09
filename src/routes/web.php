@@ -6,7 +6,10 @@
 
         Route::get('getUsersByRole/{roleName}','LF_Role_Controller@getUsersByRole')->name('getUserByRoles');
         Route::post('lf_uploadfiles','LF_FileUpload_Controller@processUploads')->name('LF_FileUploads');
+
+        Route::get('controlpanel','fe_controlpanel@show')->name('controlpanel');
     });
+
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers'], function () {
         Route::get('MyPrivacy',function(){
             return view('felaraframe::terms');
