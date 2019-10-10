@@ -56,12 +56,28 @@
     @endfePortlet
 
     @feModal([
-        'modal_ID'=>'control_CRUD'
-        ])
-        <div class="LF_CRUD row" id="General_CRUD">
+        'modal_ID'=>'control_CRUD',
+        'footer'=>'
+            <div class="buttonSlot col-md-8 col-sm-12">
+
+            </div>
+            <div class="col-md-4 col-sm-12">
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+            </div>
             
+        '
+        ])
+        <div class="loading text-center">
+            <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+            <span><h4 class="text-center t-center">Loading Contents ...</h4></span>
         </div>
-        @stack('LF_CRUD')
+        <div class="CRUD_ctr_Area">
+            <div class="LF_CRUD row" id="General_CRUD">
+                
+            </div>
+            @stack('LF_CRUD')
+        </div>
     @endfeModal
+
 @endsection
 

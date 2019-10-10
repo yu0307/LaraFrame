@@ -20,3 +20,12 @@
 .invalid-feedback{
     display: none;
 }
+#control_CRUD .modal-footer .btn{
+    min-width: 120px;
+}
+#control_CRUD .loading{
+    display: none;
+}
+#control_CRUD .loading.show{
+    display: block;
+}
