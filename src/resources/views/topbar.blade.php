@@ -44,6 +44,13 @@
                         <a href="{{route('user_setting')}}"><i class="icon-settings"></i><span>Account Settings</span></a>
                     </li>
                     @endif
+
+                    @if (Route::has('LF_controlpanel'))
+                    <li>
+                        <a href="{{route('LF_controlpanel')}}"><i class="icon-settings"></i><span>Control Panel</span></a>
+                    </li>
+                    @endif
+
                     @if (Route::has('logout') || Route::has('Fe_Logout'))
                     <li>
                         <a href="{{route('Fe_Logout')??route('logout')}}"><i class="icon-logout"></i><span>Logout</span></a>

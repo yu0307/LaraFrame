@@ -7,7 +7,9 @@
         Route::get('getUsersByRole/{roleName}','LF_Role_Controller@getUsersByRole')->name('getUserByRoles');
         Route::post('lf_uploadfiles','LF_FileUpload_Controller@processUploads')->name('LF_FileUploads');
 
-        Route::get('controlpanel','fe_controlpanel@show')->name('controlpanel');
+        Route::group(['middleware' => ['auth']], function () {
+            Route::get('controlpanel','fe_controlpanel@show')->name('LF_controlpanel');
+        });
     });
 
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers'], function () {
