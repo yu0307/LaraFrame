@@ -29,3 +29,9 @@
 #control_CRUD .loading.show{
     display: block;
 }
+#control_CRUD .loading.show ~.CRUD_ctr_Area{
+    display: none;
+}
+#usr_ID:not([value=""]) ~.form-row .whenUpdate{
+    display: block;
+}
