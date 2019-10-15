@@ -1,38 +1,38 @@
-$(document).ready(function(){
+$(document).ready(function () {
     $('#control_CRUD').on('hidden.bs.modal', function (e) {
         $('#control_CRUD').find('.LF_CRUD').removeClass('show');
-        $('#control_CRUD input, #control_CRUD textarea, #control_CRUD select').val('').removeClass('checked');
+        $('#control_CRUD input, #control_CRUD textarea, #control_CRUD select').val('').removeClass('checked').trigger('change');
     })
-    $('button.outlet_CRUD').on('click',function(){
-        if($(this).attr('outlet-target').length>0){
+    $('button.outlet_CRUD').on('click', function () {
+        if ($(this).attr('outlet-target').length > 0) {
             showCRUD($(this).attr('outlet-target'));
         }
     });
 });
 
-function hideCRUD(callback){
+function hideCRUD(callback) {
     $('#control_CRUD').modal('hide');
-    if(typeof(callback)=='function'){
+    if (typeof (callback) == 'function') {
         callback();
     }
 }
 
-function showCRUD(tar,preload=false){
-    $('#control_CRUD').find('.'+tar).addClass('show');
-    if(preload){
+function showCRUD(tar, preload = false) {
+    $('#control_CRUD').find('.' + tar).addClass('show');
+    if (preload) {
         $('#control_CRUD .loading').addClass('show');
-    }else{
+    } else {
         $('#control_CRUD .loading').removeClass('show');
     }
     $('#control_CRUD').modal('show');
 }
 
-function buildData(tar,callback){
+function buildData(tar, callback) {
     var data = {};
     $.each($(tar).find('.form-control').serializeArray(), function (idx, elm) {
         data[elm['name']] = elm['value'];
     });
-    if(typeof(callback)==='function'){
+    if (typeof (callback) === 'function') {
         callback(data);
     }
     return data;

@@ -35,3 +35,9 @@
 #usr_ID:not([value=""]) ~.form-row .whenUpdate{
     display: block;
 }
+.select2-search--inline input.select2-search__field{
+    width: 100% !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li{
+    color: #464646;
+}
