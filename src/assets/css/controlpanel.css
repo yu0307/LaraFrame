@@ -1,0 +1,43 @@
+#control_CRUD .modal-content{
+    box-shadow: none;
+}
+#controlPanel{
+    height: 95%;
+}
+#controlPanel .panel-content{
+    height: 95%;
+}
+#control_CRUD .LF_CRUD{
+    display: none;
+}
+
+#control_CRUD .LF_CRUD.show{
+    display: block;
+}
+#control_CRUD .input-group{
+    width: 100%;
+}
+.invalid-feedback{
+    display: none;
+}
+#control_CRUD .modal-footer .btn{
+    min-width: 120px;
+}
+#control_CRUD .loading{
+    display: none;
+}
+#control_CRUD .loading.show{
+    display: block;
+}
+#control_CRUD .loading.show ~.CRUD_ctr_Area{
+    display: none;
+}
+#usr_ID:not([value=""]) ~.form-row .whenUpdate{
+    display: block;
+}
+.select2-search--inline input.select2-search__field{
+    width: 100% !important;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li{
+    color: #464646;
+}
