@@ -28,9 +28,13 @@
     @endforeach
 @endsection
 
+@push('OutletResource')
+    {!! join(app()->frameOutlet->OutletResources('Fe_FrameOutlet')) !!}
+@endpush
+
 @push('footerscripts')
     <script type="text/javascript" src="{{asset('/feiron/felaraframe/js/controlpanel.js')}}"></script> <!-- controlpanel script -->
-    {!! join(app()->frameOutlet->OutletResources('Fe_FrameOutlet')) !!}
+    @stack('OutletResource')
 @endpush
 
 @push('headerstyles')
