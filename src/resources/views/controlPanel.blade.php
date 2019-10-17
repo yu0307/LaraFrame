@@ -16,7 +16,7 @@
             @php
                 $view=$OutletItem->getView();
                 if ($__env->exists($view->Name(),$view->getData())){
-                        echo $__env->make($view->Name(),$view->getData(), \Illuminate\Support\Arr::except(get_defined_vars(), ["__data", "__path"]))->render(); 
+                        echo $__env->make($view->Name(),$view->getData())->render(); 
                 }
             @endphp
         </div>

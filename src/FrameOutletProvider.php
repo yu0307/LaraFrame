@@ -36,7 +36,7 @@ class FrameOutletProvider extends ServiceProvider implements DeferrableProvider
                         $__env->startSection(' . $section . '); 
                         foreach(('. $Manager. '->OutletRenders('. $section . ')) as $view){
                             if ($__env->exists($view->Name(),$view->getData())){
-                                 echo $__env->make($view->Name(),$view->getData(), \Illuminate\Support\Arr::except(get_defined_vars(), ["__data", "__path"]))->render(); 
+                                 echo $__env->make($view->Name(),$view->getData())->render(); 
                             }
                         }
                         $__env->stopSection();
