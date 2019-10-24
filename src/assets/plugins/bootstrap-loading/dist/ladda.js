@@ -2,7 +2,7 @@
     if (typeof exports === "object") {
         module.exports = factory();
     } else if (typeof define === "function" && define.amd) {
-        define([ "spin" ], factory);
+        define([ "./spin" ], factory);
     } else {
         root.Ladda = factory(root.Spinner);
     }
@@ -47,6 +47,13 @@
                 }, 1e3);
                 return this;
             },
+            remove: function() {
+                if (this.isLoading()) {
+                    this.stop();
+                }
+                spinnerWrapper.parentNode.removeChild(spinnerWrapper);
+                return this;
+            },
             toggle: function() {
                 if (this.isLoading()) {
                     this.stop();
@@ -80,6 +87,9 @@
             },
             isLoading: function() {
                 return button.hasAttribute("data-loading");
+            },
+            getTarget: function() {
+                return button;
             }
         };
         ALL_INSTANCES.push(instance);
@@ -137,8 +147,8 @@
             length: length,
             width: width,
             zIndex: "auto",
-            top: "auto",
-            left: "auto",
+            top: "50%",
+            left: "50%",
             className: ""
         });
     }
