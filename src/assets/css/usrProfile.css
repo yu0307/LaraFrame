@@ -1,0 +1,10 @@
+#Profile_Panel .panel-content{
+    height: 100%;
+}
+#Profile_Panel .tab-pane .panel{
+    height: 90%;
+}
+
+#Profile_Panel .tab-pane .btn{
+    min-width: 120px;
+}

@@ -111,3 +111,30 @@
 .bg-transparent{
     background: none !important;
 }
+.h-100p{
+    height: 100%;
+}
+.h-80p{
+    height: 80%;
+}
+.h-70p{
+    height: 70%;
+}
+.h-60p{
+    height: 60%;
+}
+.h-50p{
+    height: 50%;
+}
+.h-40p{
+    height: 40%;
+}
+.h-30p{
+    height: 30%;
+}
+.h-20p{
+    height: 20%;
+}
+.h-10p{
+    height: 10%;
+}

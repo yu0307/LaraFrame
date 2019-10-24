@@ -48,7 +48,9 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
         $this->app->register( '\feiron\felaraframe\widgets\Fe_WidgetServiceProvider');
         $this->app->register( '\feiron\felaraframe\FrameOutletProvider');
-        resolve('frameOutlet')->registerOutlet('Fe_FrameOutlet');
+        resolve('frameOutlet')
+        ->registerOutlet('Fe_FrameOutlet')
+        ->registerOutlet('Fe_FrameProfileOutlet');
     }
 
     private function registerBladeComponents(){
