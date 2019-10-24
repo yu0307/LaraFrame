@@ -29,8 +29,9 @@
             <li class="dropdown" id="user-header">
                 <!-- USER DROPDOWN MENU -->
                 <a href="#" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                    <img src="{{$user_profile_pic??asset('/feiron/felaraframe/images/avatars/avatar7.png')}}" alt="user image">
-                    <span class="username">Hi @yield('user_name','')</span>
+                    <img src="{{app()->FeFrame->GetProfileImage()}}" alt="user image">
+                    
+                    <span class="username">Hi, @yield('user_name',(auth()->user()->name??''))</span>
                 </a>
                 @auth
                 <ul class="dropdown-menu">

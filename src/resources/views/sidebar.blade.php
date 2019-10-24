@@ -11,7 +11,7 @@
             <div class="userlogged clearfix">
                 <i class="icon icons-faces-users-01"></i>
                 <div class="user-details">
-                    <h4>@yield('user_name','Unknown')</h4>
+                    <h4>@yield('user_name',(auth()->user()->name??''))</h4>
                 </div>
             </div>
         </div>
