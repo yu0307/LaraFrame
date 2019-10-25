@@ -75,8 +75,8 @@
                     </div>
                 </div>
             </div>
+            @yield('ExtraContents')
         @endempty
     @endfePortlet
-    
 @endsection
 

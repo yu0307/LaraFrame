@@ -11,4 +11,8 @@ class fe_profileController extends Controller
         $userProvider = config('auth.providers.' . config('auth.guards.web.provider') . '.model');
         return view('felaraframe::profile',['User'=> (empty($uid)? auth()->user(): $userProvider::find($uid)), 'Editable'=> empty($uid)]);
     }
+
+    public function UploadProfImg(Request $request){
+        
+    }
 }
