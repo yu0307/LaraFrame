@@ -7,10 +7,11 @@ use feiron\felaraframe\lib\outlet\feOutletContract;
 class frameOutlet implements feOutletManagerContract
 {
     private $OutletList;
-
+    private $resourceList;
     public function __construct(){
         //Outlets are array of arrays that when called will loop through and implement all in turn. 
         $this->OutletList=[];
+        $this->resourceList=[];
         return $this;
     }
 
@@ -37,6 +38,8 @@ class frameOutlet implements feOutletManagerContract
 
     public function bindOutlet($outletName, feOutletContract $outlet){
         $name= ($outlet->MyName()?? $outlet->setName(($outletName.'_'.count($this->OutletList[$outletName])+1))->MyName());
+        $outlet->setResource(array_diff($outlet->getResource(), $this->resourceList));
+        $this->resourceList = array_merge($this->resourceList, $outlet->getResource());
         $this->OutletList[$outletName][$name]=$outlet;
         return $outlet;
     }
