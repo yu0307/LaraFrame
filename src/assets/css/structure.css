@@ -101,3 +101,7 @@ table.dataTable thead .sorting_desc:after,table.dataTable thead .sorting_asc:aft
     padding: 0px !important;
 }
 
+#user-header img{
+    width: 40px !important;
+    height: 40px !important;
+}
