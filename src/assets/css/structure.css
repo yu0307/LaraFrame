@@ -105,3 +105,8 @@ table.dataTable thead .sorting_desc:after,table.dataTable thead .sorting_asc:aft
     width: 40px !important;
     height: 40px !important;
 }
+
+.icheck-list input[type="radio"],
+.icheck-inline input[type="radio"]{
+    display: none;
+}
