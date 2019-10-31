@@ -9,6 +9,7 @@
 
         Route::group(['middleware' => ['auth']], function () {
             Route::get('controlpanel','fe_controlpanel@show')->name('LF_controlpanel');
+            Route::get('profile/{uid?}','fe_profileController@show')->name('Profile');
         });
     });
 
@@ -17,4 +18,5 @@
             return view('felaraframe::terms');
         })->name('PrivacyPolicy');
     }); 
+    
 ?>

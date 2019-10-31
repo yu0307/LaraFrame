@@ -5,6 +5,7 @@ namespace feiron\felaraframe;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use feiron\felaraframe\lib\helper\FeFrameHelper;
 
 class FeLaraFrameServiceProvider extends ServiceProvider {
 
@@ -48,7 +49,12 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
         $this->app->register( '\feiron\felaraframe\widgets\Fe_WidgetServiceProvider');
         $this->app->register( '\feiron\felaraframe\FrameOutletProvider');
-        resolve('frameOutlet')->registerOutlet('Fe_FrameOutlet');
+        $this->app->singleton('FeFrame', function ($app) {
+            return new FeFrameHelper();
+        });
+        resolve('frameOutlet')
+        ->registerOutlet('Fe_FrameOutlet')
+        ->registerOutlet('Fe_FrameProfileOutlet');
     }
 
     private function registerBladeComponents(){

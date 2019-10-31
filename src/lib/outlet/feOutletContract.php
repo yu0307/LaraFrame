@@ -9,7 +9,7 @@ interface feOutletContract{
 
     public function setResource($reousrce);
 
-    public function getResource();
+    public function getResource():array;
 
     public function setView(\Illuminate\View\View $view);
 

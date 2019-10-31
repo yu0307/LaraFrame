@@ -1,0 +1,41 @@
+#Profile_Panel .panel-content{
+    height: 100%;
+}
+#Profile_Panel .tab-pane .panel{
+    height: 90%;
+}
+
+#Profile_Panel .tab-pane .btn{
+    min-width: 120px;
+}
+#Profile_Panel i{
+    z-index: 1000;
+}
+#Profile_Panel .container-fluid{
+    overflow-y: auto;
+}
+#Profile_Panel .usrProfile.editable{
+    cursor: pointer;
+    overflow: hidden;
+    display: block;
+    max-width: 120px;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#Profile_Panel .usrProfile.editable .ctrls{
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: #0000008c;
+    height: 40%;
+    color: white;
+    text-align: center;
+    display: none;
+}
+#Profile_Panel .editable:hover > .ctrls{
+    display: block;
+}

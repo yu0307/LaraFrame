@@ -10,7 +10,7 @@
     </div>
     
     @isset($footerText)
-    <div class="panel-footer bg-{{$headerBackground??'primary'}}">
+    <div class="panel-footer bg-{{$footerBackground??'none'}}">
         {!!$footerText??''!!} 
     </div>
     @endisset
