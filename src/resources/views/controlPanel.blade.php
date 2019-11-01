@@ -57,6 +57,7 @@
             </div>
             @yield('control_tab_contents')
         </div>
+        <div class="clear-fix"></div>
     @endfePortlet
 
     @feModal([

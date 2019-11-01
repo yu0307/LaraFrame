@@ -1,4 +1,4 @@
-<div class="panel {{$class??''}}" {{empty($id)?'':"id=$id"}}>
+<div class="panel portlet {{$class??''}}" {{empty($id)?'':"id=$id"}} {!!empty($attr)?'':$attr!!}>
     @isset($headerText)
     <div class="panel-header bg-{{$headerBackground??'primary'}} {{(($headercontrols??false)===true)?'panel-controls':''}}">
         {!!$headerText??''!!}

@@ -138,3 +138,11 @@
 .h-10p{
     height: 10%;
 }
+
+.portlet.fullHeight{
+    height: 100%;
+}
+
+.portlet.fullHeight .panel-content{
+    height: 100%;
+}

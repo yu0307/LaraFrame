@@ -2,7 +2,7 @@
     box-shadow: none;
 }
 #controlPanel{
-    height: 95%;
+    min-height: 95%;
 }
 #controlPanel .panel-content{
     height: 95%;
