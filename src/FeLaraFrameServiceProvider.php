@@ -5,7 +5,8 @@ namespace feiron\felaraframe;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
-use feiron\felaraframe\lib\helper\FeFrameHelper;
+use Illuminate\Support\Facades\View;
+use feiron\felaraframe\lib\FeFrame;
 
 class FeLaraFrameServiceProvider extends ServiceProvider {
 
@@ -39,9 +40,16 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
             __DIR__ . '/widgets/assets' => public_path('feiron/' . $PackageName. "/widgets/"),
         ], ($PackageName . '_widgets'));
 
-        
-    
-        // Event::listen('feiron\fe_login\lib\events\UserCreated', '\felaraframe\lib\Listeners\UserCreated');
+        View::share('theme', ((app()->FeFrame->GetCurrentTheme())->name())?? 'felaraframe');
+        View::share('themeSettings', app()->FeFrame->GetSiteSettings() ?? []);
+
+        app()->frameOutlet->bindOutlet('Fe_FrameOutlet', new \feiron\felaraframe\lib\outlet\feOutlet([
+            'view' => 'felaraframe::ThemeManagement',
+            'myName' => 'Theme Management',
+            'reousrce' => [
+                asset('/feiron/felaraframe/js/ThemeManagement.js'),
+            ]
+        ]));
     }
 
     public function register(){
@@ -50,11 +58,13 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $this->app->register( '\feiron\felaraframe\widgets\Fe_WidgetServiceProvider');
         $this->app->register( '\feiron\felaraframe\FrameOutletProvider');
         $this->app->singleton('FeFrame', function ($app) {
-            return new FeFrameHelper();
+            return new FeFrame();
         });
+        
         resolve('frameOutlet')
         ->registerOutlet('Fe_FrameOutlet')
         ->registerOutlet('Fe_FrameProfileOutlet');
+        
     }
 
     private function registerBladeComponents(){

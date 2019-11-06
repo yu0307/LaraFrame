@@ -29,11 +29,12 @@
 <script src="{{asset('/feiron/felaraframe/plugins/visible/jquery.visible.min.js')}}"></script> <!-- Visible in Viewport -->
 <script src="{{asset('/feiron/felaraframe/js/widgets/notes.js')}}"></script> <!-- Notes Script -->
 <script src="{{asset('/feiron/felaraframe/js/quickview.js')}}"></script> <!-- Quickview Script -->
-
+@if ($themeSettings['sb_showon']=='Hover')
+    <script src="{{asset('/feiron/felaraframe/js/sidebar_hover.js')}}"></script>
+@endif
+<script src="{{asset('/feiron/felaraframe/js/layoutAPI.js')}}"></script>
 <script src="{{asset('/feiron/felaraframe/js/application.js')}}"></script> <!-- Main Application Script -->
 <script src="{{asset('/feiron/felaraframe/js/plugins.js')}}"></script> <!-- Main Plugin Initialization Script -->
-
-<script src="{{asset('/feiron/felaraframe/js/layoutAPI.js')}}"></script> <!-- Main Plugin Initialization Script -->
 <script src="{{asset('/feiron/felaraframe/js/laraframe.js')}}"></script> <!-- Main Plugin Initialization Script -->
 <script type="text/javascript" src="{{asset('/feiron/felaraframe/js/global.js')}}"></script> <!-- global js -->
 @endprepend

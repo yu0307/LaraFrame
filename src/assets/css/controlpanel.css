@@ -41,3 +41,26 @@
 .select2-container--default .select2-selection--multiple .select2-selection__rendered li{
     color: #464646;
 }
+
+/* For theme management */
+
+#FeThemeSettings h3{
+    font-size: 20px;
+    margin: 15px;
+    margin-left: 0px;
+    padding: 5px;
+    border-bottom: 1px solid #c3c3c3;
+}
+
+#FeThemeSettings h4{
+    font-size: 18px;
+    font-style: italic;
+    font-variant: petite-caps;
+    margin-left: 10px;
+}
+#FeThemeSettings h5{
+    margin-left: 15px;
+}
+#FeThemeSettings .form-row{
+    clear: both;
+}

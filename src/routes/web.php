@@ -1,6 +1,10 @@
 <?php
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers', 'middleware' => ['web']], function () {
 
+        if(!Route::has('home')){
+            Route::get('home', function () { return view('felaraframe::dashboard'); })->name('home');
+        }        
+        
         Route::post('savenote', 'fe_notesController@saveNotes')->name('LF_SaveNotes');
         Route::get('getNotesFilterSelect/{column}', 'fe_notesController@getNotesSelect')->name('LF_GetNotesSelect');
 
@@ -13,13 +17,16 @@
             Route::get('notifications','fe_NotificationController@show')->name('LF_Notifications');
             Route::post('notifications/{MID}','fe_NotificationController@loadNotification')->where('MID', '[0-9]+');
             Route::post('notifications/remove/{MID}', 'fe_NotificationController@removeNotification')->where('MID', '[0-9]+');
+            Route::post('thememanagement', 'fe_controlpanel@UpdateTheme')->name('updateThemeSetting');
+            Route::get('thememanagement/load/{ThemeName}', 'fe_controlpanel@LoadThemeInfo')->name('LoadThemeInfo');
+        });
+        Route::get('test',function(){
+            dd(config());
         });
     });
 
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers'], function () {
-        Route::get('MyPrivacy',function(){
-            return view('felaraframe::terms');
-        })->name('PrivacyPolicy');
+        Route::get('MyPrivacy',function(){ return view('felaraframe::terms'); })->name('PrivacyPolicy');
     }); 
     
 ?>
