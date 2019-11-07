@@ -16,7 +16,7 @@ class CreateSiteSettings extends Migration
         Schema::create('lf_site_metainfo', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('meta_name',225);
-            $table->text('meta_value');
+            $table->text('meta_value')->nullable();
             $table->timestamps();
         });
     }

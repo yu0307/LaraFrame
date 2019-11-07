@@ -1,7 +1,8 @@
 @includeIf('felaraframe::topbar')
 @includeIf('felaraframe::sidebar')
+@includeIf('felaraframe::footer')
 
-<body class="{{($themeSettings['page_display']??'')=='Boxed'?'boxed':''}} bg-{{strtolower($themeSettings['page_bgcolor']??'Light-blue')}} {{($themeSettings['sb_structure']??'')=='Light'?'sidebar-light theme-sltl':('sidebar-'.(strtolower(trim($themeSettings['sb_structure']??'normal'))))}} {{($themeSettings['sb_style']??'')=='Fixed'?'fixed-sidebar':''}} {{($themeSettings['sb_subshowon']??'')=='Hover'?'submenu-hover':''}} {{($themeSettings['sb_showon']??'')=='Hover'?('sidebar-hover '.((($themeSettings['sb_style']??'')=='Fixed')?'':'fixed-sidebar')):''}} {{($themeSettings['sb_initbh']??'')=='Collapsed'?'sidebar-collapsed':''}} color-{{($themeSettings['page_color']??'')=='Dark'?'default':(strtolower(trim($themeSettings['page_color']))??'default')}} {{($themeSettings['tb_location']??'')=='Fixed'?'fixed-topbar':'fluid-topbar'}}
+<body class="{{($themeSettings['page_display']??'')=='Boxed'?'boxed':''}} bg-{{strtolower($themeSettings['page_bgcolor']??'Light-blue')}} {{($themeSettings['sb_structure']??'')=='Light'?'sidebar-light theme-sltl':('sidebar-'.(strtolower(trim($themeSettings['sb_structure']??'normal'))))}} {{($themeSettings['sb_style']??'Fixed')=='Fixed'?'fixed-sidebar':''}} {{($themeSettings['sb_subshowon']??'')=='Hover'?'submenu-hover':''}} {{($themeSettings['sb_showon']??'')=='Hover'?('sidebar-hover '.((($themeSettings['sb_style']??'')=='Fixed')?'':'fixed-sidebar')):''}} {{($themeSettings['sb_initbh']??'')=='Collapsed'?'sidebar-collapsed':''}} color-{{($themeSettings['page_color']??'')=='Dark'?'default':(strtolower(trim($themeSettings['page_color']??''))??'default')}} {{($themeSettings['tb_location']??'Fixed')=='Fixed'?'fixed-topbar':'fluid-topbar'}}
     @switch(($themeSettings['page_template']??'Dark 1'))
         @case('Dark 2')
             theme-sdtd
