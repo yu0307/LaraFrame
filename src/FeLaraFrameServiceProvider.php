@@ -39,9 +39,11 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $this->publishes([
             __DIR__ . '/widgets/assets' => public_path('feiron/' . $PackageName. "/widgets/"),
         ], ($PackageName . '_widgets'));
-
-        View::share('theme', ((app()->FeFrame->GetCurrentTheme())->name())?? 'felaraframe');
-        View::share('themeSettings', app()->FeFrame->GetSiteSettings() ?? []);
+        View::share('siteInfo', [
+            'Setting'=> app()->FeFrame->GetSiteSettings(),
+            'themeSettings'=> (app()->FeFrame->GetThemeSettings() ?? []),
+            'theme'=>(((app()->FeFrame->GetCurrentTheme())->name())?? 'felaraframe')
+        ]);
 
         app()->frameOutlet->bindOutlet('Fe_FrameOutlet', new \feiron\felaraframe\lib\outlet\feOutlet([
             'view' => 'felaraframe::ThemeManagement',

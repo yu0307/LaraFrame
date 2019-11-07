@@ -4,6 +4,7 @@ namespace feiron\felaraframe\lib;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use feiron\felaraframe\lib\contracts\feTheme;
+use feiron\felaraframe\lib\contracts\feSettingControls;
 use feiron\felaraframe\lib\felaraframeTheme;
 use feiron\felaraframe\models\LF_MetaInfo;
 
@@ -12,9 +13,12 @@ class FeFrame {
     private $theme; //feTheme
     private $themeList; //array of feTheme
     private $themeSetting;
+    private $siteSetting;
+    private $siteSettingList;
     public function __construct(){
         $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??config('felaraframe.appconfig.theme');
         $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
+        $this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? [];
         $theme = new $theme();
         if ($theme instanceof feTheme) {
             $this->theme = $theme;
@@ -22,6 +26,7 @@ class FeFrame {
             $this->theme =new felaraframeTheme();
         }
         $this->themeList[$this->theme->name()]=$this->theme;
+        $this->AppendGeneralSetting(new \feiron\felaraframe\lib\FeGeneralSetting());
     }
 
     public function GetProfileImage($size=60,$sourceOnly=false, $user_profile_pic = null){
@@ -46,12 +51,20 @@ class FeFrame {
         $this->themeList[$theme->name()]= $theme;
     }
 
+    public function AppendGeneralSetting(feSettingControls $setting){
+        $this->siteSettingList[$setting->name()] = $setting;
+    }
+
     public function RemoveTheme($themeName){
         unset($this->themeList[$themeName]);
     }
 
-    public function GetSiteSettings(){
+    public function GetThemeSettings(){
         return $this->themeSetting;
+    }
+    
+    public function GetSiteSettings(){
+        return $this->siteSetting;
     }
 
     public function GetCurrentTheme(){
@@ -67,21 +80,29 @@ class FeFrame {
     }
 
     public function RenderThemeSettings(){
-        return $this->RenderSettings($this->theme->ThemeSettings());
+        return $this->RenderSettings($this->theme->ThemeSettings(), $this->themeSetting);
     }
 
-    private function RenderSettings($settingList, $heading = 3):string{//html
+    public function RenderSiteSettings(){
+        $SettingList='';
+        foreach($this->siteSettingList as $name=>$Setting){
+            $SettingList .= '<div class="SiteSettingGroup"><h2>'.$name.'</h2>'.($this->RenderSettings($Setting->Settings(), $this->siteSetting))."</div>";
+        }
+        return $SettingList;
+    }
+
+    private function RenderSettings($settingList,$valueList, $heading = 3):string{//html
         $html='';
         foreach($settingList as $key=>$settings){
             $heading=($heading>5)?5:$heading;
             if((false === array_key_exists('type', $settings))){
-                $html.= '<div class="form-row"><h'.$heading.'><strong>'.$key. '</strong></h' . $heading . '>'.$this->RenderSettings($settings, $heading+1). '</div>';
+                $html.= '<div class="form-row"><h'.$heading.'><strong>'.$key. '</strong></h' . $heading . '>'.$this->RenderSettings($settings, $valueList, $heading+1). '</div>';
             }else{
                 $html .= '<div class="ThemeSettings col-md-4 col-sm-12">
                             <div class="ThemeSettingHeading">
-                                <h6>'. $key.'</h6>
+                                <h6>'. ($settings['label']??$key).'</h6>
                             </div>      
-                            ' . $this->BuildFormControl($settings, ($this->themeSetting[$settings['name']]??null)).'
+                            ' . $this->BuildFormControl($settings, ($valueList[$settings['name']]??null)).'
                           </div>';
             }
         }
@@ -118,7 +139,7 @@ class FeFrame {
                 if (!empty($control['options']) && is_array($control['options'])) {
                     foreach ($control['options'] as $option) {
                         $options .= '<label>
-                                        <input type="checkbox" '. ($option == $value ? 'checked' : ''). ' name="' . $control['name'] . '" class="form-control" data-radio="icheckbox_square-blue" value="' . $option . '">' . $option . '</label>';
+                                        <input type="checkbox" '. ((is_array($value)?(in_array($option, $value)):($option == $value)) ? 'checked' : ''). ' name="' . $control['name'] . '" class="form-control" data-radio="icheckbox_square-blue" value="' . $option . '">' . $option . '</label>';
                     }
                 }
                 return '<div class="icheck-inline">

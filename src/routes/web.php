@@ -13,6 +13,7 @@
 
         Route::group(['middleware' => ['auth']], function () {
             Route::get('controlpanel','fe_controlpanel@show')->name('LF_controlpanel');
+            Route::post('controlpanel','fe_controlpanel@SaveSettings');
             Route::get('profile/{uid?}','fe_profileController@show')->name('Profile');
             Route::get('notifications','fe_NotificationController@show')->name('LF_Notifications');
             Route::post('notifications/{MID}','fe_NotificationController@loadNotification')->where('MID', '[0-9]+');

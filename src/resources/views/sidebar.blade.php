@@ -6,7 +6,7 @@
         <a class="logoText" href="{{Route::has('home')?route('home'):'/'}}">{{config('app.name')}}</a>
     </div>
     <div class="sidebar-inner">
-        @switch(($themeSettings['sb_topdisplay']??'None'))
+        @switch(($siteInfo['themeSettings']['sb_topdisplay']??'None'))
             @case('Profile Image')
                 <div class="sidebar-top big-img" style="display: block;">
                     <div class="user-image">

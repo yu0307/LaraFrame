@@ -37,6 +37,16 @@ class fe_controlpanel extends Controller
         }else{
             $themeInfo= $themeInfo->ThemeSettings();
         }
-        return ['status' => 'success', 'message' => ['Theme loaded'],'settingList'=> $themeInfo,'siteDefaults'=>($ThemeName== app()->FeFrame->GetCurrentTheme()->name()? app()->FeFrame->GetSiteSettings():[])];
+        return ['status' => 'success', 'message' => ['Theme loaded'],'settingList'=> $themeInfo,'siteDefaults'=>($ThemeName== app()->FeFrame->GetCurrentTheme()->name()? app()->FeFrame->GetThemeSettings():[])];
+    }
+
+    public function SaveSettings(Request $request){
+        if ($request->filled('Setting')) {
+            LF_MetaInfo::updateOrCreate(
+                ['meta_name' => 'SiteSetting'],
+                ['meta_value' => $request->input('Setting')]
+            );
+        }
+        return ['status' => 'success', 'message' => ['Site Settings updated']];
     }
 }

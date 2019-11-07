@@ -52,8 +52,11 @@
             {!!$menu!!}
         </ul>
         <div class="tab-content">
-            <div class="tab-pane fade active in" id="General">
-                <p class="light">General configuration goes here. sort of as a catch it all.</p>
+            <div class="tab-pane fade active in" id="General" data_target="{!!route('LF_controlpanel')!!}">
+                <p class="light alert alert-info">General configuration goes here. sort of as a catch it all.</p>
+                {!!app()->FeFrame->RenderSiteSettings()!!}
+                <div class="clearfix"></div>
+                <button class="btn btn-primary pull-right btn_site_settings_save">Update Site Settings</button>
             </div>
             @yield('control_tab_contents')
         </div>
