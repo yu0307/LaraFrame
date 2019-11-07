@@ -37,12 +37,12 @@
                 <ul class="dropdown-menu">
                     @if (Route::has('Profile'))
                     <li>
-                        <a href="{{route('Profile')}}"><i class="icon-user"></i><span>My Profile</span></a>
+                        <a href="{{route('Profile')}}"><i class="icon-user"></i><span>Account Settings</span></a>
                     </li>
                     @endif
-                    @if (Route::has('user_setting'))
+                    @if (Route::has('LF_Notifications'))
                     <li>
-                        <a href="{{route('user_setting')}}"><i class="icon-settings"></i><span>Account Settings</span></a>
+                        <a href="{{route('LF_Notifications')}}"><i class="fa fa-envelope-o"></i><span>Notifications</span></a>
                     </li>
                     @endif
 

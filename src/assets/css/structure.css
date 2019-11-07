@@ -2,10 +2,15 @@ body>section>div.main-content{
     height: 100%;
 }
 
-body>section>div.main-content>div.page-content {
+body.fixed-topbar>section>div.main-content>div.page-content {
     padding-top: 110px;
     margin-top: -30px;
     bottom: 10px;
+}
+body.fluid-topbar>section>div.main-content> div.footer {
+    position: relative;
+    width: 100%;
+    bottom: 0px;
 }
 
 body>section>div.main-content> div.footer{
