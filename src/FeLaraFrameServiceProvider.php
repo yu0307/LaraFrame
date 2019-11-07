@@ -47,7 +47,8 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
             'view' => 'felaraframe::ThemeManagement',
             'myName' => 'Theme Management',
             'reousrce' => [
-                asset('/feiron/felaraframe/js/ThemeManagement.js'),
+                asset('/feiron/felaraframe/js/sidebar_hover.js'),
+                asset('/feiron/felaraframe/js/ThemeManagement.js')
             ]
         ]));
     }
