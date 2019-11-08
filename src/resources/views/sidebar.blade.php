@@ -41,14 +41,7 @@
         @endswitch
         <ul class="nav nav-sidebar">
             <!-- SIDEBAR MENU -->
-            @if(config('felaraframe.appconfig.use_route_as_menu'))
-                @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
-                    @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])
-                        {{$Menu['title']}}
-                    @endfesidebarMenu
-                @endforeach
-            @endif
-            @yield('sidebar_menu')
+            @yield('main_menu')
         </ul>
         <div class="sidebar-widgets">
             <!-- SIDEBAR WIDGET -->

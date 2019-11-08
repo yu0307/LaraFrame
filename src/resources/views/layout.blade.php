@@ -1,43 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
+@section('main_menu')
+    @if(config('felaraframe.appconfig.use_route_as_menu'))
+        @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
+            @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])
+                {{$Menu['title']}}
+            @endfesidebarMenu
+        @endforeach
+    @endif
+@endsection
+
+@if(($siteInfo['theme']!='felaraframe') && isset($siteInfo['Setting']['tm_force_bootstrap']))    
+
+    @if (in_array('Jquery',$siteInfo['Setting']['tm_force_bootstrap']))
+        @php
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-3.1.0.min.js'),'footerscripts',true);
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-migrate-3.0.0.min.js'),'footerscripts',true);
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.js'),'footerscripts',true);
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/global.js'),'footerscripts',true);
+        @endphp
+    @endif
+
+    @if (in_array('JqueryUI',$siteInfo['Setting']['tm_force_bootstrap']))
+        @php
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.css'),'headerstyles',true);
+        @endphp
+        @php
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.js'),'footerscripts',true);
+        @endphp
+    @endif
+    
+    @if (in_array('Bootstrap',$siteInfo['Setting']['tm_force_bootstrap']))
+        @php
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/bootstrap/css/bootstrap.min.css'),'headerstyles',true);
+        @endphp
+        @php
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/bootstrap/js/bootstrap.min.js'),'footerscripts',true);
+        @endphp
+    @endif
+    
+    @if (in_array('fontAwesome',$siteInfo['Setting']['tm_force_bootstrap']))
+        @php
+            app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/icons/font-awesome/font-awesome.min.css'),'headerstyles',true);
+        @endphp
+    @endif
+@endif
+
 @includeIf($siteInfo['theme'].'::header')
 @includeIf($siteInfo['theme'].'::footer')
 @includeIf($siteInfo['theme'].'::sidebar')
 
-@if(($siteInfo['theme']!='felaraframe') && isset($siteInfo['Setting']['tm_force_bootstrap']))    
-
-    @if (in_array('fontAwesome',$siteInfo['Setting']['tm_force_bootstrap']))
-        @push('headerstyles')
-            <link href="{{asset('/feiron/felaraframe/css/icons/font-awesome/font-awesome.min.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-        @endpush
-    @endif
-
-    @if (in_array('Bootstrap',$siteInfo['Setting']['tm_force_bootstrap']))
-        @prepend('footerscripts')
-            <script src="{{asset('/feiron/felaraframe/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
-        @endprepend
-        @prepend('headerstyles')
-            <link href="{{asset('/feiron/felaraframe/plugins/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-        @endprepend
-    @endif
-
-    @if (in_array('JqueryUI',$siteInfo['Setting']['tm_force_bootstrap']))
-        @prepend('footerscripts')
-            <script src="{{asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
-        @endprepend
-        @prepend('headerstyles')
-            <link href="{{asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-        @endprepend
-    @endif
-
-    @if (in_array('Jquery',$siteInfo['Setting']['tm_force_bootstrap']))
-        @prepend('footerscripts')
-            <script src="{{asset('/feiron/felaraframe/plugins/jquery/jquery-3.1.0.min.js')}}"></script>
-            <script src="{{asset('/feiron/felaraframe/plugins/jquery/jquery-migrate-3.0.0.min.js')}}"></script>
-            <script type="text/javascript" src="{{asset('/feiron/felaraframe/js/global.js')}}"></script> <!-- global js -->
-        @endprepend
-    @endif
-@endif
+@foreach (app()->FeFrame->getResources() as $Location=>$Resources)
+        @if ($Location=='push')
+            @foreach ($Resources as $section=>$assets)
+                @push($section)
+                    @foreach ($assets as $key=>$asset)
+                        {!!$asset!!}
+                    @endforeach
+                @endpush
+            @endforeach
+        @else
+            @foreach ($Resources as $section=>$assets)
+                @prepend($section)
+                    @foreach ($assets as $key=>$asset)
+                        {!!$asset!!}
+                    @endforeach
+                @endprepend
+            @endforeach
+        @endif
+@endforeach
 
 <head>
     <title>@yield('title')</title>
@@ -65,5 +97,4 @@
     </script>
 </body>
 @endif
-
 </html>

@@ -25,6 +25,7 @@
         </div>
     </div>
 @endfePortlet
+
 @fePortlet([
     'id'=>'FeThemeSettings',
     'headerText'=>'<h2>Theme <strong>Settings</strong></h2>'

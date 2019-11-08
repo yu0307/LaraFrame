@@ -4201,12 +4201,12 @@ body:not(.fixed-sidebar):not(.fixed-topbar):not(.sidebar-top) .sidebar .logopane
     width: 100%;
   }
 }
-.main-content {
+.felaraframe .main-content {
   background: #F5F5F5;
   margin-left: 240px;
   min-height: 750px;
 }
-.main-content .page-content {
+.felaraframe .main-content .page-content {
   background: #F5F5F5;
   margin-top: 50px;
   overflow: hidden;
@@ -4214,14 +4214,14 @@ body:not(.fixed-sidebar):not(.fixed-topbar):not(.sidebar-top) .sidebar .logopane
   position: relative;
   height: 100%;
 }
-.main-content .page-content h3 {
+.felaraframe .main-content .page-content h3 {
   font-family: 'Open Sans', sans-serif;
   font-size: 15px;
   margin-bottom: 15px;
   margin-top: 25px;
   text-transform: uppercase;
 }
-.main-content .page-content::after {
+.felaraframe .main-content .page-content::after {
   clear: both;
   content: '';
   display: block;

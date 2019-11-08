@@ -1,18 +1,24 @@
 @extends('felaraframe::layout')
+@php
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/style.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/ui.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/mcustom-scrollbar/jquery.mCustomScrollbar.concat.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/application.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/plugins.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/laraframe.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/global.js'),'footerscripts');
 
-@prepend('footerscripts')
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/SortableMaster/Sortable.min.js')}}"></script> <!-- Sortable  MANDATORY-->
-<script type="text/javascript" src="{{asset('feiron/felaraframe/plugins/select2/dist/js/select2.full.min.js')}}"></script> <!-- Select2 -->
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/js/dashboard.js')}}"></script> <!-- DashBoard driver MANDATORY -->
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/widgets/WidgetAjax.js')}}"></script> <!-- Widget control script -->
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/flip-master/jquery.flip.min.js')}}"></script> <!-- Widget control script -->
-
-@endprepend
-
-@push('headerstyles')
-<link href="{{asset('feiron/felaraframe/plugins/select2/dist/css/select2.min.css')}}" rel="stylesheet">
-<link href="{{asset('/feiron/felaraframe/css/dashboard.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-@endpush
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/SortableMaster/Sortable.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/select2/dist/js/select2.full.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/dashboard.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/widgets/WidgetAjax.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/flip-master/jquery.flip.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/select2/dist/css/select2.min.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/dashboard.css'),'headerstyles');
+@endphp
 
 @section('content')
 <div class="widgetArea" id="fe_widgetArea">
@@ -43,12 +49,13 @@
             <div id="fe_widget_desc" class="f-18 p-10"></div>
         </div>
     @endfeModal
-    <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown" style="z-index: 1000;">
+    <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown" style="z-index: 1010;">
         <div class="front text-center" id="widget_add">
             <div class="text-center m-5"><i class="fa fa-plus-circle fa-3x faa-float animated"></i></div>
             <h4 class="m-t-0"><strong>Add</strong> Widgets</h4>
         </div>
     </div>
+    <div class="clearfix"></div>
 </div>
 @endsection
 

@@ -1,10 +1,19 @@
 @extends('felaraframe::layout')
-
-
-@push('footerscripts')
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/plugins/quicksearch/quicksearch.min.js')}}"></script> <!-- Search Filter -->
-<script type="text/javascript" src="{{asset('/feiron/felaraframe/js/mailbox.js')}}"></script>
-@endpush
+@php
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/style.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/ui.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/mcustom-scrollbar/jquery.mCustomScrollbar.concat.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/application.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/laraframe.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/global.js'),'footerscripts');
+    
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/quicksearch/quicksearch.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/mailbox.js'),'footerscripts');
+    
+@endphp
 
 
 @section('content')
