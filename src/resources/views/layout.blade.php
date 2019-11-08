@@ -12,7 +12,9 @@
 @endsection
 
 @if(($siteInfo['theme']!='felaraframe') && isset($siteInfo['Setting']['tm_force_bootstrap']))    
-
+    @php
+        $siteInfo['Setting']['tm_force_bootstrap']=(is_array($siteInfo['Setting']['tm_force_bootstrap'])===false?[$siteInfo['Setting']['tm_force_bootstrap']]:$siteInfo['Setting']['tm_force_bootstrap']);
+    @endphp
     @if (in_array('Jquery',$siteInfo['Setting']['tm_force_bootstrap']))
         @php
             app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-3.1.0.min.js'),'footerscripts',true);
@@ -84,9 +86,12 @@
 @if($siteInfo['theme']!='felaraframe')
 <body>
 @endif
-    @include($siteInfo['theme'].'::index')   
+@include($siteInfo['theme'].'::index')   
 
 @if($siteInfo['theme']!='felaraframe')
+    @push('footerscripts')
+        @stack('OutletResource')
+    @endpush
     @stack('footerscripts')
     @stack('footerstyles')
     <script type="text/javascript">

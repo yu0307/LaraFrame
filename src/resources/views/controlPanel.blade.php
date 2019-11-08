@@ -4,6 +4,12 @@
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/ui.css'),'headerstyles');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.css'),'headerstyles');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/controlpanel.css'),'headerstyles');
+
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-3.1.0.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-migrate-3.0.0.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/bootstrap/js/bootstrap.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/icheck/icheck.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/select2/dist/js/select2.full.min.js'),'footerscripts');
@@ -12,6 +18,11 @@
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/plugins.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/laraframe.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/global.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/controlpanel.js'),'footerscripts');
+
+    foreach(app()->frameOutlet->OutletResources('Fe_FrameOutlet') as $asset){
+        app()->FeFrame->enqueueResource($asset,'OutletResource');
+    }
 @endphp
 @section('control_tab_contents')
     @php
@@ -40,19 +51,6 @@
         @endpush
     @endforeach
 @endsection
-
-@push('OutletResource')
-    {!! join(app()->frameOutlet->OutletResources('Fe_FrameOutlet')) !!}
-@endpush
-
-@push('footerscripts')
-    <script type="text/javascript" src="{{asset('/feiron/felaraframe/js/controlpanel.js')}}"></script> <!-- controlpanel script -->
-    @stack('OutletResource')
-@endpush
-
-@push('headerstyles')
-<link href="{{asset('/feiron/felaraframe/css/controlpanel.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-@endpush
 
 @section('content')
     @fePortlet([

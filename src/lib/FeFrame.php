@@ -16,6 +16,7 @@ class FeFrame {
     private $siteSetting;
     private $siteSettingList;
     private $resourceList;
+    private $resourceBank;
     public function __construct(){
         $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??config('felaraframe.appconfig.theme');
         $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
@@ -35,6 +36,7 @@ class FeFrame {
             'prepend'=>[],
             'push'=>[]
         ];
+        $this->resourceBank=[];
     }
 
     public function enqueueResource($resource,$location= 'headerstyles',$prepend=false){
@@ -42,7 +44,7 @@ class FeFrame {
         if (false === array_key_exists($location, $this->resourceList[$tar])) {
             $this->resourceList[$tar][$location] = [];
         }
-        if(false=== array_key_exists($resource, $this->resourceList[$tar][$location])){
+        if(false=== in_array($resource, $this->resourceBank)){
             $extension  = explode(".", $resource);
             $extension  = end($extension);
             if ($extension == 'js') {
@@ -51,6 +53,7 @@ class FeFrame {
                 $asset = '<link href="' . $resource . '" rel="stylesheet">';
             }
             $this->resourceList[$tar][$location][$resource]= $asset;
+            array_push($this->resourceBank,$resource);
         }
     }
 

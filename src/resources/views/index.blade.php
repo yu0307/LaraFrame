@@ -47,7 +47,9 @@
             </div>
         </div>
     </div>    
-
+    @push('footerscripts')
+        @stack('OutletResource')
+    @endpush
     @stack('footerscripts')
     @stack('footerstyles')
     <script type="text/javascript">
