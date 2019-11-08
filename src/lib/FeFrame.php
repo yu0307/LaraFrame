@@ -26,6 +26,9 @@ class FeFrame {
             $this->theme =new felaraframeTheme();
         }
         $this->themeList[$this->theme->name()]=$this->theme;
+        if(false===array_key_exists('felaraframe', $this->themeList)){
+            $this->AppendTheme(new felaraframeTheme());
+        }
         $this->AppendGeneralSetting(new \feiron\felaraframe\lib\FeGeneralSetting());
     }
 

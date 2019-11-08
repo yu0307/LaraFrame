@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+@section('main_menu')
+    @if(config('felaraframe.appconfig.use_route_as_menu'))
+        @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
+            @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])
+                {{$Menu['title']}}
+            @endfesidebarMenu
+        @endforeach
+    @endif
+@endsection
+
 @includeIf($siteInfo['theme'].'::header')
 @includeIf($siteInfo['theme'].'::footer')
 @includeIf($siteInfo['theme'].'::sidebar')
