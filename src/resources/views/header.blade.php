@@ -1,3 +1,14 @@
+@php
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/style.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/theme.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/ui.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/extension.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/animation-css/animate.min.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/font-awesome-animation/font-awesome-animation.min.css'),'headerstyles',true);
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/structure.css'),'headerstyles',true);
+@endphp
 @prepend('headerscripts')
 <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!--[if lt IE 9]>
@@ -7,15 +18,6 @@
 
 @prepend('headerstyles')
 <link href="https://fonts.googleapis.com/css?family=Nothing+You+Could+Do" rel="stylesheet" type="text/css">
-<link href="{{asset('/feiron/felaraframe/css/style.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/css/theme.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/css/ui.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/css/extension.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/plugins/noty/noty.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/plugins/animation-css/animate.min.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/plugins/font-awesome-animation/font-awesome-animation.min.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-<link href="{{asset('/feiron/felaraframe/css/structure.css')}}" rel="stylesheet"> <!-- MANDATORY -->
 @endprepend
 
 @section('header')

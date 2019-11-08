@@ -15,6 +15,7 @@ class FeFrame {
     private $themeSetting;
     private $siteSetting;
     private $siteSettingList;
+    private $resourceList;
     public function __construct(){
         $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??config('felaraframe.appconfig.theme');
         $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
@@ -30,6 +31,35 @@ class FeFrame {
             $this->AppendTheme(new felaraframeTheme());
         }
         $this->AppendGeneralSetting(new \feiron\felaraframe\lib\FeGeneralSetting());
+        $this->resourceList=[
+            'prepend'=>[],
+            'push'=>[]
+        ];
+    }
+
+    public function enqueueResource($resource,$location= 'headerstyles',$prepend=false){
+        $tar= $prepend? 'prepend': 'push';
+        if (false === array_key_exists($location, $this->resourceList[$tar])) {
+            $this->resourceList[$tar][$location] = [];
+        }
+        if(false=== array_key_exists($resource, $this->resourceList[$tar][$location])){
+            $extension  = explode(".", $resource);
+            $extension  = end($extension);
+            if ($extension == 'js') {
+                $asset = '<script type="text/javascript" src="' . $resource . '"></script>';
+            } else {
+                $asset = '<link href="' . $resource . '" rel="stylesheet">';
+            }
+            $this->resourceList[$tar][$location][$resource]= $asset;
+        }
+    }
+
+    public function requireResource($resource, $location = 'headerstyles'){
+        $this->enqueueResource($resource, $location,true);
+    }
+
+    public function getResources(){
+        return $this->resourceList;
     }
 
     public function GetProfileImage($size=60,$sourceOnly=false, $user_profile_pic = null){
