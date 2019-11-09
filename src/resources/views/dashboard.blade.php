@@ -24,9 +24,7 @@
 <div class="widgetArea" id="fe_widgetArea">
     <div class="list-group" id="fe_widgetCtrls">
         @yield('Widget_Area')
-        @php
-            echo app()->WidgetManager->renderUserWidgets(Auth::user());
-        @endphp      
+        {!!app()->WidgetManager->renderUserWidgets(Auth::user())!!}    
     </div>
 
     @feModal([
