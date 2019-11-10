@@ -52,13 +52,20 @@
 @includeIf($siteInfo['theme'].'::header')
 @includeIf($siteInfo['theme'].'::footer')
 @includeIf($siteInfo['theme'].'::sidebar')
-
+@php
+    $resoucesList=[];
+@endphp
 @foreach (app()->FeFrame->getResources() as $Location=>$Resources)
         @if ($Location=='push')
             @foreach ($Resources as $section=>$assets)
                 @push($section)
                     @foreach ($assets as $key=>$asset)
-                        {!!$asset!!}
+                        @if (false=== in_array($key,$resoucesList))
+                            @php
+                                array_push($resoucesList,$key)
+                            @endphp
+                            {!!$asset!!}
+                        @endif
                     @endforeach
                 @endpush
             @endforeach
@@ -66,7 +73,12 @@
             @foreach ($Resources as $section=>$assets)
                 @prepend($section)
                     @foreach ($assets as $key=>$asset)
-                        {!!$asset!!}
+                        @if (false=== in_array($key,$resoucesList))
+                            @php
+                                array_push($resoucesList,$key)
+                            @endphp
+                            {!!$asset!!}
+                        @endif
                     @endforeach
                 @endprepend
             @endforeach

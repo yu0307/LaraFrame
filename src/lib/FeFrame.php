@@ -16,11 +16,17 @@ class FeFrame {
     private $siteSetting;
     private $siteSettingList;
     private $resourceList;
-    private $resourceBank;
     public function __construct(){
-        $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??config('felaraframe.appconfig.theme');
-        $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
-        $this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? [];
+        if (\Schema::hasTable('lf_site_metainfo')) {
+            $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??(config('felaraframe.appconfig.theme')??felaraframeTheme::class);
+            $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
+            $this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? [];
+        }else{
+            $theme =felaraframeTheme::class;
+            $this->themeSetting=[];
+            $this->siteSetting=[];
+        }
+        
         $theme = new $theme();
         if ($theme instanceof feTheme) {
             $this->theme = $theme;
@@ -36,7 +42,6 @@ class FeFrame {
             'prepend'=>[],
             'push'=>[]
         ];
-        $this->resourceBank=[];
     }
 
     public function enqueueResource($resource,$location= 'headerstyles',$prepend=false){
@@ -44,7 +49,7 @@ class FeFrame {
         if (false === array_key_exists($location, $this->resourceList[$tar])) {
             $this->resourceList[$tar][$location] = [];
         }
-        if(false=== in_array($resource, $this->resourceBank)){
+        if(false=== in_array($resource, $this->resourceList[$tar][$location])){
             $extension  = explode(".", $resource);
             $extension  = end($extension);
             if ($extension == 'js') {
@@ -53,26 +58,11 @@ class FeFrame {
                 $asset = '<link href="' . $resource . '" rel="stylesheet">';
             }
             $this->resourceList[$tar][$location][$resource]= $asset;
-            array_push($this->resourceBank,$resource);
         }
     }
 
     public function requireResource($resource, $location = 'headerstyles'){
         $this->enqueueResource($resource, $location,true);
-    }
-
-    public function getResources(){
-        return $this->resourceList;
-    }
-
-    public function GetProfileImage($size=60,$sourceOnly=false, $user_profile_pic = null){
-        $user=Auth::user();
-        
-        $rst= !empty($user->profile_image) ? Storage::url($user->profile_image) : ($user_profile_pic ?? ("https://www.gravatar.com/avatar/".md5(strtolower( trim($user->email ) ))."?d=".(asset('/feiron/felaraframe/images/avatars/avatar7.png'))."&s=".($size??60)));
-        if($sourceOnly===true){
-            $rst= '<img src="'. $rst. '" alt="user image">';
-        }
-        return $rst;
     }
 
     public function ThemeSetting($name){
@@ -113,6 +103,20 @@ class FeFrame {
 
     public function getThemeByName($name){
         return $this->themeList[$name];
+    }
+
+    public function getResources(){
+        return $this->resourceList;
+    }
+
+    public function GetProfileImage($size=60,$sourceOnly=false, $user_profile_pic = null){
+        $user=Auth::user();
+        
+        $rst= !empty($user->profile_image) ? Storage::url($user->profile_image) : ($user_profile_pic ?? ("https://www.gravatar.com/avatar/".md5(strtolower( trim($user->email ) ))."?d=".(asset('/feiron/felaraframe/images/avatars/avatar7.png'))."&s=".($size??60)));
+        if($sourceOnly===true){
+            $rst= '<img src="'. $rst. '" alt="user image">';
+        }
+        return $rst;
     }
 
     public function RenderThemeSettings(){
