@@ -41,6 +41,6 @@ class fe_BluePrints extends Command
      */
     public function handle()
     {
-        $this->blueprintHandle->build();
+        $this->blueprintHandle->start();
     }
 }
