@@ -128,12 +128,12 @@ class BluePrints {
     private function build(){
         if($this->check()){
             try {
-                $factory= new BluePrintsFactory($this->targetFile,$this->storage);
+                $factory= new BluePrintsFactory($this->targetFile,$this->storage,$this->command);
                 $this->command->line("-->Building Page templates...");
                 // if(true===$factory->buildPageTemplate()){
+                //     $this->command->line("-->Building Models ...");
                 //     $factory->buildModels();
                 // }
-                $this->command->line("-->Building Models ...");
                 $factory->buildModels();
             } catch (Exception $e) {
                 $this->command->error($e->getMessage());
