@@ -1,8 +1,8 @@
 <?php
 
-namespace feiron\felaraframe\lib\helper;
+namespace feiron\felaraframe\lib\BluePrints;
 use Illuminate\Support\Facades\Storage;
-use feiron\felaraframe\lib\helper\BluePrintsFactory;
+use feiron\felaraframe\lib\BluePrints\BluePrintsFactory;
 class BluePrints {
     private $command;
     private $storage;
@@ -134,7 +134,7 @@ class BluePrints {
                 //     $this->command->line("-->Building Models ...");
                 //     $factory->buildModels();
                 // }
-                $factory->buildModels();
+                $factory->ImportModels();
             } catch (Exception $e) {
                 $this->command->error($e->getMessage());
             }

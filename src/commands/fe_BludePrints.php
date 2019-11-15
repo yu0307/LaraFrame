@@ -3,11 +3,10 @@
 namespace feiron\felaraframe\commands;
 
 use Illuminate\Console\Command;
-use feiron\felaraframe\lib\helper\BluePrints;
+use feiron\felaraframe\lib\BluePrints\BluePrints;
 
 class fe_BluePrints extends Command
 {
-    private $blueprintHandle;
     /**
      * The name and signature of the console command.
      *
@@ -30,8 +29,6 @@ class fe_BluePrints extends Command
     public function __construct()
     {
         parent::__construct();
-
-        $this->blueprintHandle = new BluePrints($this);
     }
 
     /**
@@ -41,6 +38,6 @@ class fe_BluePrints extends Command
      */
     public function handle()
     {
-        $this->blueprintHandle->start();
+        (new BluePrints($this))->start();
     }
 }
