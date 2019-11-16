@@ -101,7 +101,7 @@ class BluePrints {
         }
 
         $this->command->comment("=====Welcome to BluePrints Site building utility.======");
-        $this->command->info( "Loading blueprints from target => ". $this->storage->path($this->targetFile));
+        $this->command->info( "Loading blueprints from target => ". str_replace("\\",'/',$this->storage->path($this->targetFile)));
         if(false===$this->storage->exists($this->targetFile)){
             $this->command->error('We were unable to find a blueprint file in the target location.');
             if($this->command->confirm("Would you like to create one? It would be stored at:\n". $this->storage->path($this->targetFile))!==false){
@@ -131,10 +131,11 @@ class BluePrints {
                 $factory= new BluePrintsFactory($this->targetFile,$this->storage,$this->command);
                 $this->command->line("-->Building Page templates...");
                 // if(true===$factory->buildPageTemplate()){
-                //     $this->command->line("-->Building Models ...");
-                //     $factory->buildModels();
+                    $this->command->line("-->Building Models ...");
+                    // $factory->ImportModels();
+                    $this->command->line("-->Building BluePrints Views ...");
+                    $factory->BuildViews();
                 // }
-                $factory->ImportModels();
             } catch (Exception $e) {
                 $this->command->error($e->getMessage());
             }

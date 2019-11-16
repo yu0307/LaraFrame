@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Artisan;
 use feiron\felaraframe\lib\BluePrints\BluePrintsModelFactory;
+use feiron\felaraframe\lib\BluePrints\BluePrintsViewFactory;
+use feiron\felaraframe\lib\BluePrints\BluePrintsControllerFactory;
 class BluePrintsFactory {
 
     private $blueprint; //stores the contents of the target blueprint.
@@ -15,7 +17,7 @@ class BluePrintsFactory {
     private $command;
     private $ModelList;
     private $relations;
-
+    private $ViewList;
     
     private const migrationPath="database/migrations/";
 
@@ -26,16 +28,16 @@ class BluePrintsFactory {
         $this->projectPath = str_replace($this->BlueprintStorage->getAdapter()->getPathPrefix(), '', dirname($this->BlueprintStorage->path($target)));
         $this->ModelList=[];
         $this->relations=[];
+        $this->ViewList=[];
 
-
-        $this->reverseRelations = [];
-        $this->MtoMRelations=[];
         try{
             $this->blueprint = json_decode($this->BlueprintStorage->get($target));
         }catch(Exception $e){
             throw new Exception("Error Processing blueprint file. Please make sure it's in a correct format.", 1);
         }
     }
+
+    //=================================Model Related Operations=============================
 
     private function getInverseRelation($relationSource,$target,$targetReference){
         $relation = clone $relationSource;
@@ -52,15 +54,44 @@ class BluePrintsFactory {
         return $relation;
     }
 
+    public function ImportModels(){
+        if(false=== $this->RootStorage->exists('app/model')){
+            $this->RootStorage->makeDirectory('app/model');
+        }
+        $modelFiles= preg_grep('/^.*\.(mbp)$/i',$this->BlueprintStorage->files($this->projectPath.'/models'));
+        if(empty($modelFiles)){
+            $this->command->info("There are no model files in the sub direcotry [models]");
+        }else{
+            foreach($modelFiles as $model){
+                $m =json_decode($this->BlueprintStorage->get($model));
+                foreach ($m as $model) {
+                    if (isset($model->modelName)) {
+                        $this->processModels($model);
+                    }
+                }  
+            }
+            $this->command->line("Model blueprints imported. Now generating files...");
+            $this->BuildModel();
+            try {
+                $this->command->info('-->Now Migrating database to the server...');
+                Artisan::call('migrate');
+            } catch (Exception $e) {
+                throw $e;
+            }
+            
+        }
+    }
+
     public function processModels($model){
         $fieldDefinitions= $model->modelFields??[];
         unset($model->modelFields);
         $views = $model->view??[];
+        //<------------------------------------Handle Model Views Definition, Deferred implementation, Needs attention later. 
         unset($model->view);
         $MyModel= new BluePrintsModelFactory((array) $model);
         $this->ModelList[$model->modelName]=$MyModel;
         foreach($fieldDefinitions as $field){
-            if(isset($field->relation)){
+            if(isset($field->relation) && isset($field->relation->target) && isset($field->relation->type)){
                 $field->index=true;
                 $field->relation->sourceReference = $field->name;
                 $MyModel->addRelation($field->relation);//add relation defined in the blueprint
@@ -82,66 +113,20 @@ class BluePrintsFactory {
         }
     }
 
-    public function ImportModels(){
-        if(false=== $this->RootStorage->exists('app/model')){
-            $this->RootStorage->makeDirectory('app/model');
-        }
-        $modelFiles= preg_grep('/^.*\.(mbp)$/i',$this->BlueprintStorage->files($this->projectPath.'/models'));
-        if(empty($modelFiles)){
-            $this->command->info("There are no model files in the sub direcotry [models]");
-        }else{
-            foreach($modelFiles as $model){
-                $m =json_decode($this->BlueprintStorage->get($model));
-                foreach ($m as $model) {
-                    if (isset($model->modelName)) {
-                        $this->processModels($model);
-                    }
-                }  
-            }
-            $this->command->line("Model blueprints imported. Now generating migrations...");
-            // dd($this->ModelList);
-            $this->BuildMigrations();
-            // dd($this->ModelList);
-            dd();
-            // $this->command->info('-->Now Migrating database to the server...');
-            // try {
-            //     // Artisan::call('migrate');
-            // } catch (Exception $e) {
-            //     throw $e;
-            // }
-            
-        }
-    }
-
-    private function BuildMigrations(){
+    private function BuildModel(){
         $relations=[];
         foreach ($this->ModelList as $modelName => $model) {
             $model->buildMigrations();
+            $this->command->line("Migration created for " . $modelName);
             $relation=$model->getRelations();
             if(!empty($relation)){
                 $relations[$modelName]=$relation;
             }
-            $this->command->line("Migration created for " . $modelName);
+            $model->BuildModel();
+            $this->command->line("Model File created for " . $modelName);
+            
         }
         $this->createRelationMigration($relations);
-    }
-
-    private function getRelationModifier($relation,$reverse=false){
-        switch($relation->type){
-            case "OneToOne":
-                return ($reverse? "belongsTo": 'hasOne') . ('("App\model\\' . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourcekey . '" )');
-                break;
-            case "OneToMany":
-                return ($reverse ? "belongsTo" : "hasMany") . ('("App\model\\' . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourcekey . '" )');
-                break;
-            case "ManyToOne":
-                return ($reverse ? "hasMany" : "belongsTo") . ('("App\model\\' . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourcekey . '" )');
-                break;
-            case "ManyToMany":
-                return "belongsToMany";
-                break;
-        }
-        return false;
     }
 
     private function createRelationMigration($models){
@@ -172,6 +157,7 @@ class BluePrintsFactory {
                             sort($tableName);
                             $tableName = 'MtoM_' . join('_', $tableName);
                             if(!in_array($tableName, $M2MTables)){
+                                $newField= $this->ModelList[$relation->target]->renderDBField($relation->targetReference, $relation->target . '_', true);
                                 $M2MList .= '
                                 if(false===Schema::hasTable("' . $tableName . '")){
                                         Schema::create("' . $tableName . '", function (Blueprint $table) {
@@ -179,8 +165,8 @@ class BluePrintsFactory {
                                             $table->charset = "' . ($this->ModelList[$model]->getModelDefition('charset') ?? 'utf8') . '";
                                             $table->collation = "' . ($this->ModelList[$model]->getModelDefition('collation') ?? 'utf8_unicode_ci') . '";
                                             $table->bigIncrements("id");
-                                            ' . $this->ModelList[$model]->renderDBField($relation->sourceReference, $model . '_', true, ($this->ModelList[$relation->target]->getFieldDefinition($relation->targetReference)['dataType'])) . '
-                                            ' . $this->ModelList[$relation->target]->renderDBField($relation->targetReference, $relation->target . '_', true) . '
+                                            ' . str_replace(($relation->target . '_' . $relation->targetReference), ($model . '_' . $relation->sourceReference), $newField) . '
+                                            ' . $newField . '
                                             
                                             $table->foreign("' . $model . '_' . $relation->sourceReference . '") 
                                                     ->references("' . $relation->sourceReference . '")
@@ -246,65 +232,27 @@ class BluePrintsFactory {
         $this->command->line("Migration created for table relations. ");
     }
 
-    private function createModel($model){
+    //=================================End Related Operation Section=========================
 
-        $className = 'fe_bp_' . $model->modelName;
-        $target = 'app/model/' . $className . '.php';
-        $guarded=[$model->primaryKey];
-        $hidden=[];
-        $relations="";
-        foreach($model->modelFields as $field){
-            if(($field->visible??true)==false){
-                if (in_array($field->name, $hidden) === false) 
-                    array_push($hidden, $field->name);
+
+
+    //=================================View Related Operations=============================
+    public function BuildViews(){
+        $this->command->line("-->Building View Files and Controllers");
+        foreach($this->blueprint->Views as $viewDefinition){
+            $view=new BluePrintsViewFactory($viewDefinition,$this->ModelList);
+            if(!array_key_exists(($viewDefinition->name??''),$this->ViewList)){
+                $this->ViewList[$viewDefinition->name]=$view;
             }
-            if (($field->editable ?? true) == false) {
-                if(in_array($field->name,$guarded)===false) 
-                    array_push($guarded, $field->name);
-            }
-            if(isset($field->relation) && array_key_exists('target', $field->relation) && array_key_exists('type', $field->relation)){
-                $field->relation->source= $model->modelName;
-                $field->relation->sourcekey = $field->name;
-                $modifier= $this->getRelationModifier($field->relation);
-                if(false!== $modifier){
-                    $relations.='
-                        public function '.$field->relation->target.'s()
-                        {
-                            return $this->'. $modifier.'
-                        }
-                    ';
+            if(false!==$view->buildView()){
+                $this->command->line("view File created for " . $viewDefinition->name);
+                $controller = new BluePrintsControllerFactory($viewDefinition, $this->ModelList);
+                if(false!== $controller->buildController()){
+                    $this->command->line("controller File created for " . $viewDefinition->name);
                 }
-                // if (array_key_exists($model->modelName, $this->reverseRelations)) {
-                //     $modifier = $this->getRelationModifier($reverseRelations[$model->modelName],true);
-                //     if (false !== $modifier) { 
-                //         $relations .= '
-                //                 public function ' . $reverseRelations[$model->modelName]['target'] . 's()
-                //                 {
-                //                     return $this->' . $modifier . '
-                //                 }
-                //             ';
-                //     }
-                // }
             }
         }
-        $contents= '<?php
-        namespace App\model;
-
-        use Illuminate\Database\Eloquent\Model;
-
-        class '. $className.' extends Model
-        {
-            protected $table = "'. $model->modelName. '";
-            protected $primaryKey = "' . $model->primaryKey .'";
-            '.(($model->withTimeStamps??false)?"": 'public $timestamps = false;').'
-            '.(!empty($guarded)?('protected $guarded = ['. join(',',array_map(function($g){return ("'".$g."'"); },$guarded)).'];'):"").'
-            '.(!empty($hidden)?('protected $hidden = ['. join(',',array_map(function($h){return ("'".$h."'"); }, $hidden)).'];'):"").'
-        }
-        ';
-        $this->RootStorage->put($target, $contents);
-        $this->command->line("Model File created for " . $model->modelName);
     }
-
 
     public function buildPageTemplate(){
         $path='resources/views/';
@@ -360,5 +308,6 @@ class BluePrintsFactory {
         }
         return true;
     }
+    //=================================End View Operation Section=========================
 }
 ?>

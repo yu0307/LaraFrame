@@ -21,6 +21,13 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         $PackageName='felaraframe';
         //locading package route files
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+
+        //loading route files for blueprints defined route if any
+        if(file_exists(base_path('routes/BluePrints/').'BluePrintsRoute.php')){
+            $this->loadRoutesFrom(base_path('routes/BluePrints/') . 'BluePrintsRoute.php');
+        }
+        
+
         //location package view files
         $this->loadViewsFrom(__DIR__ . '/resources/views', $PackageName);
         //loading migration scripts

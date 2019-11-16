@@ -35,6 +35,7 @@ class BluePrintsModelFactory {
         'editable' => true
     ];
 
+    private const ModelClassPrefix= 'fe_bp_';
     private const migrationPath = "database/migrations/";
     private const modelPath = "app/model/";
 
@@ -63,6 +64,28 @@ class BluePrintsModelFactory {
     
     public function getRelations(){
         return $this->myRelations;
+    }
+
+    private function getRelationModifier($relation,$reverse=false){
+        switch($relation->type){
+            case "OneToOne":
+                return ($reverse? "belongsTo": 'hasOne') . ('("App\model\\' . self::ModelClassPrefix.$relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
+                break;
+            case "OneToMany":
+                return ($reverse ? "belongsTo" : "hasMany") . ('("App\model\\' . self::ModelClassPrefix . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
+                break;
+            case "ManyToOne":
+                return ($reverse ? "hasMany" : "belongsTo") . ('("App\model\\' . self::ModelClassPrefix . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
+                break;
+            case "ManyToMany":
+                $tableName = [];
+                array_push($tableName, $this->ModelDefinition['modelName'], $relation->target);
+                sort($tableName);
+                $tableName = 'MtoM_' . join('_', $tableName);
+                return "belongsToMany('App\model\\" . self::ModelClassPrefix . $relation->target."', '$tableName', '" . $relation->sourceReference . "','" . $relation->targetReference . "')";
+                break;
+        }
+        return false;
     }
 
     public function addField($definition){
@@ -194,6 +217,52 @@ class BluePrintsModelFactory {
         return $this->ModelDefinition[$definitionName]??'';
     }
 
+    public function BuildModel(){
+        $className = self::ModelClassPrefix . $this->ModelDefinition['modelName'];
+        $target = self::modelPath . $className . '.php';
+        $this->PrimaryKey=($this->PrimaryKey ?? 'idx');
+        $guarded = [$this->PrimaryKey];
+        $hidden = [];
+        $relations = "";
+        foreach ($this->FieldList as $field) {
+            if (($field['visible'] ?? true) == false) {
+                if (in_array($field['name'], $hidden) === false)
+                    array_push($hidden, $field['name']);
+            }
+            if (($field['editable'] ?? true) == false) {
+                if (in_array($field['name'], $guarded) === false)
+                    array_push($guarded, $field['name']);
+            }
+        }
+
+        foreach ($this->myRelations as $relation) {
+            $modifier = $this->getRelationModifier($relation);
+            if (false !== $modifier) {
+                $relations .= '
+                        public function ' . $relation->target . 's()
+                        {
+                            return $this->' . $modifier . ';
+                        }
+                    ';
+            }
+        }
+        $contents = '<?php
+        namespace App\model;
+
+        use Illuminate\Database\Eloquent\Model;
+
+        class ' . $className . ' extends Model
+        {
+            protected $table = "' . $this->ModelDefinition['modelName'] . '";
+            protected $primaryKey = "' . $this->PrimaryKey . '";
+            ' . (($this->ModelDefinition['withTimeStamps'] ?? false) ? "" : 'public $timestamps = false;') . '
+            ' . (!empty($guarded) ? ('protected $guarded = [' . join(',', array_map(function ($g) { return ("'" . $g . "'"); }, $guarded)) . '];') : "") . '
+            ' . (!empty($hidden) ? ('protected $hidden = [' . join(',', array_map(function ($h) { return ("'" . $h . "'"); }, $hidden)) . '];') : "") . '
+            '. $relations.'
+        }
+        ';
+        $this->RootStorage->put($target, $contents);
+    }
 }
 
 ?>
