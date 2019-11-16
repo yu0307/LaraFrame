@@ -15,22 +15,27 @@ class BluePrintsBaseFactory {
     protected const controllerPath = "app/Http/Controllers/BluePrints/";
     protected const Defaults = [
         'routes' => [
+            //  {
             //  "name": "Route_Name",
             //  "slug": used as URL(optional),
             //  "type": POST | GET(default),
             //  "input"(optional): [
             //                 {
             //                     "name": "field_name",
+            //                     "fromModel": "modal_name"(optional),
             //                     "optional": false | true
             //                 },
             //                 ...
             //             ]
+            //  }
+            //   ...
         ],
         'style' => 'normal', //normal, table, accordian 
         'content' => [
+            "usage"=>"display"
             //usage: display | CRUD
             //models: [
-            //             model:[
+            //             (modelName):[
             //                      {
             //                            name:field_name,
             //                            label:formlabel(optional),

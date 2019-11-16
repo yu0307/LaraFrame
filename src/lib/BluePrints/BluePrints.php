@@ -24,73 +24,50 @@ class BluePrints {
             "siteFooter" => [
                 "footerText"=> '<div class="footer_text" style="text-align: center;"><span>Copyright <span class="copyright">©</span> {{date("Y")}} </span> <span>{{config("app.name")}}</span>. <span>All rights reserved. </span></div>'
             ],
-            "SiteResources"=>[
-                "inHeader"=>[
-                    'css/bootstrap.min.css',
-                    'js/jquery-3.1.0.min.js',
-                    'js/jquery-migrate-3.0.0.min.js',
-                    'js/bootstrap.min.js'
-                ],
+            "siteResources"=>[
+                "inHeader"=>[],
                 "inFooter"=>[]
             ],
-            "Views" => [
-                "name" => "myClients",
-                "route" => 'my_clients',
-                "Input" => [
-                    [
-                        "name" => 'CID',
-                        "optional" => false
+            "pages" => [
+                [
+                    "name" => "",
+                    "title"=>'',
+                    "subtext"=>'',
+                    'style' => 'normal', //normal, table, accordian 
+                    'content' => [
+                        //usage: display | CRUD
+                        //models: [
+                        //             model:[
+                        //                      {
+                        //                            name:field_name,
+                        //                            label:formlabel(optional),
+                        //                            caption:description(optional),
+                        //                            attr: tag attr(optional),
+                        //                            class: tag class(optional),
+                        //                            container_attr: tag attr appied on the container(optional)
+                        //                            container_class: tag class appied on the container(optional)
+                        //                      },
+                        //                            ...
+                        //                 ],
+                        //             ...
+                        //         ]
                     ],
-                    [
-                        "name" => 'age',
-                        "optional" => true
-                    ]
-                ],
-                "visible" => [
-                    "name",
-                    "city"
-                ],
-                "style" => "normal" //table,according,gallary,normal
-            ]
-            // "Models"=>[
-            //     "client.mbp",
-            //     [
-            //         "modelName"=>'MyModel',
-            //         "modelFields"=>[
-            //             [
-            //                 "name"=>'id',
-            //                 "dataType"=> 'bigIncrements', //refer to laravel migration datatypes https://laravel.com/docs/master/migrations
-            //                 "size"=>100,
-            //                 "default"=>0,
-            //                 "nullable"=>false,
-            //                 "autoIncrement"=>true,
-            //                 "primary"=>true,
-            //                 "withTimeStamps"=>true,
-            //                 "unsigned"=>true,
-            //                 "visible"=>true,
-            //                 "editable"=>false
-            //             ],
-            //             [
-            //                 "name" => 'name',
-            //                 "dataType" => 'string',
-            //                 "size" => 175,
-            //             ],
-            //             [
-            //                 "name"=>'age',
-            //                 "dataType" => 'integer',
-            //             ],
-            //             [
-            //                 "name"=>'city',
-            //                 "dataType" => 'string'
-            //             ]
-            //         ],
-            //         "withCRUD"=> true, //or false, this will create view,route and controller for this model. Also will overwrite view object if defined.
-            //         "View"=>[//or false, for retriving the info and display in a page only
-                        
-            //         ],
-            //     ]
-            // ],
-            
+                    'routes' => [
+                        //  "name": "Route_Name",
+                        //  "slug": used as URL(optional),
+                        //  "type": POST | GET(default),
+                        //  "input"(optional): [
+                        //                 {
+                        //                     "name": "field_name",
+                        //                     "optional": false | true
+                        //                 },
+                        //                 ...
+                        //             ]
+                    ],
+                    'html' => '',
+                    "visible" => [ ]
+                ]
+            ]            
         ];
     }
 
@@ -104,13 +81,13 @@ class BluePrints {
         $this->command->info( "Loading blueprints from target => ". str_replace("\\",'/',$this->storage->path($this->targetFile)));
         if(false===$this->storage->exists($this->targetFile)){
             $this->command->error('We were unable to find a blueprint file in the target location.');
-            if($this->command->confirm("Would you like to create one? It would be stored at:\n". $this->storage->path($this->targetFile))!==false){
+            if($this->command->confirm("Would you like to create one? It would be stored at:\n". str_replace("\\",'/',$this->storage->path($this->targetFile)))!==false){
                 if ($this->command->confirm("Would you like to use the wizard? This will walk you through all the options needed to create your site.") === false) {
                     $this->buildTemplate();                    
                 }else{
                     $this->Wizard();
                 }
-                $this->command->info("A blueprint is generated by the template and stored at:" . $this->storage->path($this->targetFile));
+                $this->command->info("A blueprint is generated by the template and stored at:" . str_replace("\\",'/',$this->storage->path($this->targetFile)));
                 $this->command->info("Please head over to that file and make the adjustments needed. Run this command again when finished.");
             }
         }else{
@@ -130,12 +107,12 @@ class BluePrints {
             try {
                 $factory= new BluePrintsFactory($this->targetFile,$this->storage,$this->command);
                 $this->command->line("-->Building Page templates...");
-                // if(true===$factory->buildPageTemplate()){
+                if(true===$factory->buildPageTemplate()){
                     $this->command->line("-->Building Models ...");
-                    // $factory->ImportModels();
+                    $factory->ImportModels();
                     $this->command->line("-->Building BluePrints Views ...");
                     $factory->BuildViews();
-                // }
+                }
             } catch (Exception $e) {
                 $this->command->error($e->getMessage());
             }
