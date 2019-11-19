@@ -23,7 +23,7 @@ class BluePrintsBaseFactory {
             //  "input"(optional): [
             //                 {
             //                     "name": "field_name",
-            //                     "fromModel": "modal_name"(optional),
+            //                     "onModel": "modal_name"(optional),
             //                     "optional": false | true
             //                 },
             //                 ...

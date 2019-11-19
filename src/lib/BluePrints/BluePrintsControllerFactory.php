@@ -12,8 +12,7 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
     private $MyRoutes;
     private $MyModels;
 
-    public function __construct($definition = null, $ModelList)
-    {
+    public function __construct($definition = null, $ModelList){
         parent::__construct($definition, $ModelList);
         $this->ControllerClassPostfix = '_FeBp_Controller';
         $this->MyRoutes=[];
@@ -47,50 +46,6 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
         return false;
     }
 
-    private function BuildDisplayMethodContent($routeDefinition){
-        $this->MyRoutes[$routeDefinition->name]->targetFunction = ('S_' . $routeDefinition->name);
-        $whereModel=[];
-        $with=[];
-        $functionContent = '';
-        $paramRegister=[];
-        foreach($routeDefinition->input as $input){
-            array_push($paramRegister, ('$' . $input->name . (($input->optional ?? false) == false ? '' : '=null')));
-            if(isset($input->fromModel)){
-                if(false===in_array($input->fromModel, $whereModel)){
-                    array_push($whereModel, $input->fromModel);
-                    $functionContent = '
-                $where_' . $input->fromModel . '=[];
-                '. $functionContent;
-                }
-                $functionContent .= '
-                if(isset($'. $input->name. ')){array_push($where_'. $input->fromModel.',["' . $input->name . '",$' . $input->name . ']);}
-                ';
-            }else{
-                array_push($with, ('"' . $input->name . '"=>($' . $input->name . '??"")'));
-            }
-        }
-
-        $filter='';
-        if(!empty($with)){
-            $filter.='['.join(',', $with).']';
-        }
-        if (!empty($whereModel)) {
-            $filter= "array_merge(".$filter;
-            $filter.=(strlen($filter)>0?',':'').join(',',array_map(function($modelName){
-                return ('(empty($where_'. $modelName. ')?[]:((fe_bp_'. $modelName. '::where($where_'. $modelName. ')->first()??new Collection([]))->toArray()))');
-            }, $whereModel)).')';
-        }
-        if(strlen($filter)>0){
-            $filter= "->with(". $filter. ")";
-        }
-        return '
-            public function ' . ('S_' . $routeDefinition->name) . ' (Request $request'.((empty($paramRegister)?'':(','.join(',', $paramRegister)))).'){
-                '.(!empty($whereModel)? $functionContent:'').'
-                return view("fe_generated.' . $routeDefinition->targetView . '")' . $filter . ';
-            }
-        ';
-    }
-
     private function buildControllerMethods(){
         
         foreach($this->MyRoutes as $routeName=>$route){
@@ -100,10 +55,21 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
 
                 case "GET":
                 default: //Show
-                    return $this->BuildDisplayMethodContent($route);
+                    return $this->buildMethod('DisplaySingularInfo',$route);
             }
         }
+        return '';
+    }
 
+    private function buildMethod($methodName,$routeDefinition){
+        $methodName='feiron\\felaraframe\\lib\\BluePrints\\builders\\'.$methodName;
+        if (class_exists($methodName)) {
+            $method=(new $methodName($routeDefinition,$this->AvailableModels))->BuildControllerMethod();
+            if(!empty($method['functionName'])){
+                $this->MyRoutes[$routeDefinition->name]->targetFunction = $method['functionName'];
+                return $method['content'];
+            }
+        }        
         return '';
     }
 
