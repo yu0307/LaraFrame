@@ -6,7 +6,6 @@ use feiron\felaraframe\lib\BluePrints\BluePrintsBaseFactory;
 
 class BluePrintsViewFactory extends BluePrintsBaseFactory {
 
-    private $ViewClassPrefix;
     private const FormControlGroups=[
         'textarea' => [],
         'options' => []
@@ -14,7 +13,6 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
 
     public function __construct($definition = null,$ModelList){
         parent::__construct($definition, $ModelList);
-        $this->ViewClassPrefix='fe_view_';
     }
 
     private function GenerateFormComponent($contrlDefinition){
@@ -45,10 +43,10 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         ';
     }
 
-    private function generateNormalPage($PageDefinition){
+    private function generateNormalPage(){
         $content = '';
-        if(strtolower($PageDefinition->usage??'display')=== 'display'){
-            foreach($PageDefinition->models as $model=>$fields){
+        if(strtolower($this->Definition['usage']??'display')=== 'display'){
+            foreach($this->Definition['models'] as $model=>$fields){
                 foreach($fields as $field){
                     $content.=$this->GenerateDisplayComponent($field);
                 }
@@ -60,7 +58,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         return $content;
     }
 
-    private function getPageContents($ContentDefinition){
+    private function getPageContents(){
 
         switch($this->Definition['style']??'normal'){
             case "table":
@@ -68,14 +66,14 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
             case "accordian":
                 break;
             default://normal
-                return $this->generateNormalPage($ContentDefinition);
+                return $this->generateNormalPage();
         }
         return "";
     }
 
     public function buildView(){
         if(!empty($this->Definition['name'])){
-            $viewName = $this->ViewClassPrefix . $this->Definition['name'];
+            $viewName = self::ViewClassPrefix . $this->Definition['name'];
             $target = self::viewPath . $viewName . '.blade.php';
             $contents = "
             @extends('page')
@@ -85,7 +83,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                             ".(empty($this->Definition['title'])?'': (",'headerText'=>'<h3>". $this->Definition['title']."</h3>'")). "
                             ])
                     " . (empty($this->Definition['subtext']) ? '' : ("<h5 class='alert alert-info'>" . $this->Definition['subtext'] . "</h5>")) . "
-                    " . $this->getPageContents($this->Definition['content']) . "
+                    " . $this->getPageContents() . "
                 @endfePortlet
             @endsection
             ";

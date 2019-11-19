@@ -13,6 +13,7 @@ class BluePrintsBaseFactory {
     protected const viewPath = "resources/views/fe_generated/";
     protected const routePath = "routes/BluePrints/BluePrintsRoute.php";
     protected const controllerPath = "app/Http/Controllers/BluePrints/";
+    protected const ViewClassPrefix = 'fe_view_';
     protected const Defaults = [
         'routes' => [
             //  {
@@ -31,25 +32,23 @@ class BluePrintsBaseFactory {
             //   ...
         ],
         'style' => 'normal', //normal, table, accordian 
-        'content' => [
-            "usage"=>"display"
-            //usage: display | CRUD
-            //models: [
-            //             (modelName):[
-            //                      {
-            //                            name:field_name,
-            //                            label:formlabel(optional),
-            //                            caption:description(optional),
-            //                            attr: tag attr(optional),
-            //                            class: tag class(optional),
-            //                            container_attr: tag attr appied on the container(optional)
-            //                            container_class: tag class appied on the container(optional)
-            //                      },
-            //                            ...
-            //                 ],
-            //             ...
-            //         ]
-        ],
+        "usage"=>"display",
+        //usage: display | CRUD
+        //models: [
+        //             (modelName):[
+        //                      {
+        //                            name:field_name,
+        //                            label:formlabel(optional),
+        //                            caption:description(optional),
+        //                            attr: tag attr(optional),
+        //                            class: tag class(optional),
+        //                            container_attr: tag attr appied on the container(optional)
+        //                            container_class: tag class appied on the container(optional)
+        //                      },
+        //                            ...
+        //                 ],
+        //             ...
+        //         ]
         'title' => '',
         'subtext' => '',
         'html' => ''
