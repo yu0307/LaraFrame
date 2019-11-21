@@ -28,6 +28,7 @@ class BluePrintsFactory {
     
     private const migrationPath="database/migrations/";
     protected const routePath = "routes/BluePrints/BluePrintsRoute.php";
+    protected const ControllerClassPostfix = '_FeBp_Controller';
 
     public function __construct($target,$storage,$command){
         $this->BlueprintStorage=$storage;
@@ -52,7 +53,7 @@ class BluePrintsFactory {
     public function ExtractInfo(){
         // $this->command->info("--> Extracting information and putting things together <--");
         foreach ($this->blueprint->pages as $pageDefinition) {
-            // dd($pageDefinition);
+            
             $pageRouteList=[];
             $controllerDefinition = [
                 'name' => $pageDefinition->name,
@@ -122,6 +123,7 @@ class BluePrintsFactory {
                     'view'=> $pageDefinition->name,
                     'type' => ($route->type ?? 'GET'),
                     'style'=> ($pageDefinition->style??'singular'),
+                    'model'=> $pageDefinition->model,
                     'params'=>[],
                     'useModel'=>[]
                 ];
@@ -130,7 +132,7 @@ class BluePrintsFactory {
                     'type' => ($route->type ?? 'GET'),
                     'url' => ($route->slug ?? $route->name),
                     'targetMethod'=> $methodName,
-                    'targetController' => $pageDefinition->name,
+                    'targetController' => $pageDefinition->name.self::ControllerClassPostfix,
                     'input'=>[]
                 ];
                 $optionalParamList=[];
