@@ -51,9 +51,9 @@ class BluePrintsFactory {
     }
 
     public function ExtractInfo(){
+        // dd($this->ModelList);
         // $this->command->info("--> Extracting information and putting things together <--");
         foreach ($this->blueprint->pages as $pageDefinition) {
-            
             $pageRouteList=[];
             $controllerDefinition = [
                 'name' => $pageDefinition->name,
@@ -77,6 +77,9 @@ class BluePrintsFactory {
             }
 
             if (isset($pageDefinition->model) && array_key_exists($pageDefinition->model->name, $this->ModelList)) {
+
+                if (!in_array($pageDefinition->model->name, $controllerDefinition['useModels'])) array_push($controllerDefinition['useModels'], $pageDefinition->model->name);
+
                 if (is_string($pageDefinition->model->fields) === true && strtolower($pageDefinition->model->fields) == 'all') {
                     $pageDefinition->model->fields = $this->ModelList[$pageDefinition->model->name]->getFieldNames();
                 }

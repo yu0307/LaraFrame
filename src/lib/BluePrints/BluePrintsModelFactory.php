@@ -84,7 +84,7 @@ class BluePrintsModelFactory {
                 array_push($tableName, $this->ModelDefinition['modelName'], $relation->target);
                 sort($tableName);
                 $tableName = 'MtoM_' . join('_', $tableName);
-                return "belongsToMany('App\model\\" . self::ModelClassPrefix . $relation->target."', '$tableName', '" . $relation->sourceReference . "','" . $relation->targetReference . "')";
+                return "belongsToMany('App\model\\" . self::ModelClassPrefix . $relation->target."', '$tableName', '" . $relation->sourceReference . "','" . $relation->target.'_'.$relation->targetReference . "')";
                 break;
         }
         return false;

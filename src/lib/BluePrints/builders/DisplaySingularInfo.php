@@ -14,7 +14,7 @@ class DisplaySingularInfo extends BluePrintsMethodBuilderBase {
 
         return $this->PrepareModels().'
         '. $this->PrepareInputs(). '
-                        $withData=array_merge($withData,(($query->first??new Collection([]))->toArray()));
+                        $withData=array_merge($withData,(($query->first()??new Collection([]))->toArray()));
         ';
     }
 

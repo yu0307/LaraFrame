@@ -67,7 +67,7 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
 
                         $withData=[];
                         ' . (new $methodName($methodDefinition, $this->AvailableModels))->BuildMethod() . '
-                        ' . ((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)')) . ';
+                        return ' . ((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' .self::ViewClassPrefix . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)')) . ';
                     }
                 ';
             }            

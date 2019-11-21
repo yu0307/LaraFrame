@@ -8,7 +8,7 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
 
     protected $MethodDefinition;
     protected $ModelList;
-    protected const modelClassPrefix= 'App\model\fe_bp_';
+    protected const modelClassPrefix= 'fe_bp_';
     private const DEFAULT=[
         "name" => "",
         "view" => "",
