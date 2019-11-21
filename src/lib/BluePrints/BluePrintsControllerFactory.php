@@ -8,23 +8,15 @@ use feiron\felaraframe\lib\BluePrints\BluePrintsBaseFactory;
 
 class BluePrintsControllerFactory extends BluePrintsBaseFactory{
 
-    private $ControllerClassPostfix;
-    private $MyRoutes;
-    private $MyModels;
+    private $ControllerName;
 
-    public function __construct($definition = null, $ModelList){
-        parent::__construct($definition, $ModelList);
-        $this->ControllerClassPostfix = '_FeBp_Controller';
-        $this->MyRoutes=[];
-        $this->MyModels=[];
-        $this->ControllerName = ($this->Definition['name']??'').$this->ControllerClassPostfix;
-        if(empty($this->Definition['routes']))
-            $this->Definition['routes']=[(object)["name"=>$this->Definition['name']]]; //if route's not defined, create one for the page
-        $this->ExtractInfo();
+    public function __construct($definition = null, $ModelList=null){
+        parent::__construct((array) $definition, $ModelList);
+        $this->ControllerName = ($this->Definition['name']??'').self::ControllerClassPostfix;
     }
 
     public function buildController(){
-        
+        $this->ControllerName = ($this->Definition['name'] ?? '') . self::ControllerClassPostfix;
         if (!empty($this->Definition['name'])) {
             $target = self::controllerPath . $this->ControllerName . '.php';
             $contents = '<?php
@@ -32,8 +24,10 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
         use Illuminate\Http\Request;
         use App\Http\Controllers\Controller;
         use Illuminate\Support\Collection;
-        '.(empty($this->MyModels)?'':(join('',array_map(function($model){return '
-        use App\model\fe_bp_'. $model.';';},array_keys($this->MyModels))))).'
+
+        '.(empty($this->Definition['useModels'])?'':(join('',array_map(function($model){return '
+        use App\model\\'.self::ModelClassPrefix. $model.';';}, $this->Definition['useModels'])))).'
+
         class '. $this->ControllerName.' extends Controller
         {
                     '. $this->buildControllerMethods().'
@@ -47,82 +41,37 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
     }
 
     private function buildControllerMethods(){
-        
-        foreach($this->MyRoutes as $routeName=>$route){
-            switch (strtoupper($route->type ?? 'GET')) {
-                case "POST":
+        $method='';
+        foreach(($this->Definition['methods']??[]) as $methodDefinition){
+            switch (strtolower($methodDefinition['style'] ?? 'singular')) {
+                case "collection":
+                    $method.=$this->buildMethod('DisplayCollection', $methodDefinition);
                     break;
-
-                case "GET":
+                case "singular":
                 default: //Show
-                    return $this->buildMethod('DisplaySingularInfo',$route);
+                    $method.=$this->buildMethod('DisplaySingularInfo',$methodDefinition);
             }
         }
-        return '';
+        return $method;
     }
 
-    private function buildMethod($methodName,$routeDefinition){
+    private function buildMethod($methodName,$methodDefinition){
         $methodName='feiron\\felaraframe\\lib\\BluePrints\\builders\\'.$methodName;
         if (class_exists($methodName)) {
-            $method=(new $methodName($routeDefinition,$this->AvailableModels))->BuildControllerMethod();
-            if(!empty($method['functionName'])){
-                $this->MyRoutes[$routeDefinition->name]->targetFunction = $method['functionName'];
-                return $method['content'];
-            }
+            if (!empty($methodDefinition['name'])) {
+                return '
+                    public function ' . ($methodDefinition['name']) . ' (Request $request ' . (empty($methodDefinition['params']) ? ''
+                        : (',' . join(',', array_map(function ($p) {
+                            return ('$' . $p->name.(($p->optional??false)===false?'':'=null'));
+                        }, $methodDefinition['params'])))) . '){
+
+                        $withData=[];
+                        ' . (new $methodName($methodDefinition, $this->AvailableModels))->BuildMethod() . '
+                        ' . ((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)')) . ';
+                    }
+                ';
+            }            
         }        
         return '';
-    }
-
-    private function ExtractInfo(){
-        foreach(($this->Definition['routes']??[]) as $route){
-            $route->targetView= (self::ViewClassPrefix . $this->Definition['name']);
-            $route->name= ($route->name ?? $this->Definition['name']);
-            $this->registerRoute($route);
-        }
-        
-        foreach (($this->Definition['models'] ?? []) as $ModelName=>$ModelInfo){
-            if (false === array_key_exists($ModelName, $this->MyModels)) {
-                $this->MyModels[$ModelName] = [];
-            }
-            $this->MyModels[$ModelName]= $ModelInfo ?? [];
-        }
-    }
-
-    public function registerRoute($routeDefinition){
-        if(false===array_key_exists($routeDefinition->name,$this->MyRoutes)){
-            $this->MyRoutes[$routeDefinition->name]= $routeDefinition;
-        }else{
-            $this->MyRoutes[$routeDefinition->name] = $routeDefinition;
-        }
-    }    
-
-    private function GetURLwithInputs($RouteDefinition){
-        if(strtoupper($RouteDefinition->type??'GET')=='GET'){
-            $route='/';
-            foreach($RouteDefinition->input as $inputDef){
-                $route.=('{'.$inputDef->name.(($inputDef->optional??false)===false?'':'?').'}/');
-            }
-            return rtrim($route,'/');
-        }
-        return '';
-    }
-
-    private function url($url){
-        $url = preg_replace('~[^\\pL0-9_]+~u', '-', $url);
-        $url = trim($url, "-");
-        $url = iconv("utf-8", "us-ascii//TRANSLIT", $url);
-        $url = strtolower($url);
-        $url = preg_replace('~[^-a-z0-9_]+~', '', $url);
-        return $url;
-    }
-
-    public function buildRoutes(){
-        $routes='';
-        foreach($this->MyRoutes as $routeName=>$Definition){
-            $routes.='
-                Route::'.strtolower($Definition->type??'GET'.'("'.$this->url($Definition->slug??$routeName)).$this->GetURLwithInputs($Definition).'", "'.$this->ControllerName.'@'.$Definition->targetFunction.'")->name("bp_'.$Definition->name.'");
-            ';
-        }
-        return $routes;
-    }
+    }  
 }

@@ -6,20 +6,39 @@ use feiron\felaraframe\lib\BluePrints\BluePrintsBaseFactory;
 
 class BluePrintsViewFactory extends BluePrintsBaseFactory {
 
+    protected const Defaults =[
+        "name" => "",
+        "style" => "singular",
+        "usage" => "display",
+        "title" => "",
+        "subtext" => "",
+        "html" => "",
+        "FieldList"=>[]
+    ];
     private const FormControlGroups=[
         'textarea' => [],
         'options' => []
     ];
 
-    public function __construct($definition = null,$ModelList){
-        parent::__construct($definition, $ModelList);
+    public function __construct($definition = null,$ModelList=null){
+        parent::__construct(array_merge(self::Defaults, (array)$definition), $ModelList);
     }
 
     private function GenerateFormComponent($contrlDefinition){
 
     }
 
-    private function GenerateDisplayComponent($contrlDefinition){
+    private function GenerateCollectionComponent($contrlDefinition,$prefix){
+        return '
+                            <td class="collection_component ' . ($contrlDefinition->container_class ?? '') . '" ' . ($contrlDefinition->container_attr ?? '') . '>
+                                <div class="collection_item ' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . ' >
+                                    {{$' . $prefix . $contrlDefinition->name . '??""}}
+                                </div>
+                            </td>
+        ';
+    }
+
+    private function GenerateSingularComponent($contrlDefinition){
         return '
             <div class="page_component '. ($contrlDefinition->container_class ?? 'col-md-6 col-sm-12').'" ' . ($contrlDefinition->container_attr??'') . '>
                 <div class="row ' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . ' >
@@ -36,20 +55,60 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                         </label>
                     </div>
                     <div class="col-md-8 col-sm-12">
-                        {{$'. $contrlDefinition->name. '??""}}
+                        {{$'.$contrlDefinition->name. '??""}}
                     </div>
                 </div>
             </div>
         ';
     }
 
-    private function generateNormalPage(){
+    private function generateCollectionlPage(){
+        $content = '';
+        $header='';
+        if (strtolower($this->Definition['usage'] ?? 'display') === 'display') {
+            foreach ($this->Definition['models'] as $model => $fields) {
+                if (is_string($fields) === true && strtolower($fields) == 'all') {
+                    $fields = $this->AvailableModels[$model]->getFieldNames();
+                }
+                foreach ($fields as $field) {
+                    $header .= ('<th>' . ($field->label ?? $field->name). '</th>');
+                    $content .= $this->GenerateCollectionComponent($field,'row->');
+                }
+            }
+        } else { //CRUD
+
+        }
+
+        $content= '
+        <div class="container-fluid">
+            <div class="row col-md-12 col-sm-12">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            '.$header. '
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($collection as $row)
+                            <tr>
+                                '. $content. '
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        ';
+        
+        return $content;
+    }
+
+    private function generateSingularlPage(){
         $content = '';
         if(strtolower($this->Definition['usage']??'display')=== 'display'){
-            foreach($this->Definition['models'] as $model=>$fields){
-                foreach($fields as $field){
-                    $content.=$this->GenerateDisplayComponent($field);
-                }
+            foreach(($this->Definition['FieldList']??[]) as $fieldDefinition){
+                foreach($fieldDefinition['Fields'] as $field)
+                $content .= $this->GenerateSingularComponent($field);
             }
             $content= '<div class="container-fluid"><div class="row">'. $content. '</div></div>';
         }else{//CRUD
@@ -60,13 +119,16 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
 
     private function getPageContents(){
 
-        switch($this->Definition['style']??'normal'){
+        switch(strtolower($this->Definition['style'])??'singular'){
             case "table":
                 break;
             case "accordian":
                 break;
-            default://normal
-                return $this->generateNormalPage();
+            case "collection":
+                return $this->generateCollectionlPage();
+                break;
+            default://singular
+                return $this->generateSingularlPage();
         }
         return "";
     }

@@ -15,10 +15,16 @@ class BluePrintsFactory {
     private $BlueprintStorage;
     private $RootStorage;
     private $command;
+
     private $ModelList;
     private $relations;
     private $PageList;
     private $routeList;
+    private $ViewList;
+    private $ControllerList;
+
+    private $ViewFactory;
+    private $ControllerFactory;
     
     private const migrationPath="database/migrations/";
     protected const routePath = "routes/BluePrints/BluePrintsRoute.php";
@@ -26,12 +32,16 @@ class BluePrintsFactory {
     public function __construct($target,$storage,$command){
         $this->BlueprintStorage=$storage;
         $this->RootStorage = Storage::createLocalDriver(['root' => base_path()]);
-        $this->command= $command;
+        // $this->command= $command;
         $this->projectPath = str_replace($this->BlueprintStorage->getAdapter()->getPathPrefix(), '', dirname($this->BlueprintStorage->path($target)));
         $this->ModelList=[];
         $this->relations=[];
         $this->PageList=[];
-        $this->routeList='';
+        $this->ViewList = [];
+        $this->ControllerList = [];
+        $this->routeList=[];
+        $this->ViewFactory = new BluePrintsViewFactory();
+        $this->ControllerFactory = new BluePrintsControllerFactory();
         try{
             $this->blueprint = json_decode($this->BlueprintStorage->get($target));
         }catch(Exception $e){
@@ -39,7 +49,123 @@ class BluePrintsFactory {
         }
     }
 
-    //=================================Model Related Operations=============================
+    public function ExtractInfo(){
+        // $this->command->info("--> Extracting information and putting things together <--");
+        foreach ($this->blueprint->pages as $pageDefinition) {
+            // dd($pageDefinition);
+            $pageRouteList=[];
+            $controllerDefinition = [
+                'name' => $pageDefinition->name,
+                'useModels' => [],
+                'methods' => []
+            ];
+
+            if (false == array_key_exists($pageDefinition->name, $this->ViewList)) {
+                $this->ViewList[$pageDefinition->name] = [
+                    'name'=> $pageDefinition->name,
+                    "style" => $pageDefinition->style,
+                    "usage" => ($pageDefinition->usage?? 'display'),
+                    'title' => ($pageDefinition->title ?? ''),
+                    'subtext' => ($pageDefinition->subtext ?? ''),
+                    'html' => ($pageDefinition->html ?? ''),
+                    "FieldList" => [],
+                ];
+            }
+            if (false == array_key_exists($pageDefinition->name, $this->ControllerList)) {
+                $this->ControllerList[$pageDefinition->name] = $controllerDefinition;
+            }
+
+            if (isset($pageDefinition->model) && array_key_exists($pageDefinition->model->name, $this->ModelList)) {
+                if (is_string($pageDefinition->model->fields) === true && strtolower($pageDefinition->model->fields) == 'all') {
+                    $pageDefinition->model->fields = $this->ModelList[$pageDefinition->model->name]->getFieldNames();
+                }
+                array_push($this->ViewList[$pageDefinition->name]['FieldList'], [
+                    "modelName" => $pageDefinition->model->name,
+                    "Fields" => $pageDefinition->model->fields
+                ]);
+
+                foreach ($pageDefinition->model->with ?? [] as $withModel) {
+                    if (true === array_key_exists($withModel->name, $this->ModelList) && $this->ModelList[$pageDefinition->model->name]->isRelatedTo($withModel->name) === true) {
+                        if (is_string($withModel->fields) === true && strtolower($withModel->fields) == 'all') {
+                            $withModel->fields = $this->ModelList[$withModel->name]->getFieldNames();
+                        }
+                        array_push($this->ViewList[$pageDefinition->name]['FieldList'], [
+                            "modelName" => $withModel->name,
+                            "Fields" => $withModel->fields,
+                            "type" => 'with'
+                        ]);
+                    }
+                }
+                foreach ($pageDefinition->model->join ?? [] as $joinModel) {
+                    if (isset($joinModel->on) && is_array($joinModel->on) && !empty($joinModel->on) && true === array_key_exists($joinModel->name, $this->ModelList)) {
+                        if (is_string($joinModel->fields) === true && strtolower($joinModel->fields) == 'all') {
+                            $joinModel->fields = $this->ModelList[$joinModel->name]->getFieldNames();
+                        }
+                        array_push($this->ViewList[$pageDefinition->name]['FieldList'], [
+                            "modelName" => $joinModel->name,
+                            "Fields" => $joinModel->fields,
+                            "type" => 'join',
+                            "on" => $joinModel->on,
+                            "modifier" => ($joinModel->modifier ?? '')
+                        ]);
+                    }
+                }
+            }
+            $counter=1;
+            foreach(($pageDefinition->routes??([(object)['name'=> ($pageDefinition->name.'_'. $counter)]])) as $route){
+                $counter++;
+                $route->name= $route->name?? ($pageDefinition->name . '_' . $counter);
+                $methodName=(is_string($route->name)? $route->name: $pageDefinition->name);
+                $methodName= strtoupper(($route->type??'GET')[0]).'_'. $methodName;
+                $method=[
+                    'name'=>$methodName,
+                    'view'=> $pageDefinition->name,
+                    'type' => ($route->type ?? 'GET'),
+                    'style'=> ($pageDefinition->style??'singular'),
+                    'params'=>[],
+                    'useModel'=>[]
+                ];
+                $routeDefinition=[
+                    'name'=> $route->name,
+                    'type' => ($route->type ?? 'GET'),
+                    'url' => ($route->slug ?? $route->name),
+                    'targetMethod'=> $methodName,
+                    'targetController' => $pageDefinition->name,
+                    'input'=>[]
+                ];
+                $optionalParamList=[];
+                foreach(($route->input ?? []) as $in){
+                    $in->optional= ($in->optional??false);
+                    if(array_key_exists(($in->onModel??''), $this->ModelList)){
+                        if(is_string($in->onModel) && !empty($in->onModel)){
+                            if (!in_array($in->onModel, $controllerDefinition['useModels'])) array_push($controllerDefinition['useModels'], $in->onModel);
+                            if (!in_array($in->onModel, $method['useModel'])) array_push($method['useModel'], $in->onModel);
+                        }
+                    }
+                    if($in->optional===false){
+                        array_push($method['params'], $in);
+                    }else{
+                        array_push($optionalParamList,$in);
+                    }
+                }
+                $method['params']=array_merge($method['params'], $optionalParamList);
+                $routeDefinition['input']=$method['params'];
+                array_push($this->routeList, $routeDefinition);
+                array_push($pageRouteList, $routeDefinition);
+                array_push($controllerDefinition['methods'], $method);
+            }
+            $this->ControllerList[$pageDefinition->name]=$controllerDefinition;
+
+            $this->PageList[$pageDefinition->name]= [
+                'controller' => $controllerDefinition,
+                'view' => $this->ViewList[$pageDefinition->name],
+                'routes' => $pageRouteList,
+            ];
+        }
+        return $this->PageList;
+    }
+
+//=================================Model Related Operations=============================
 
     private function getInverseRelation($relationSource,$target,$targetReference){
         $relation = clone $relationSource;
@@ -62,7 +188,7 @@ class BluePrintsFactory {
         }
         $modelFiles= preg_grep('/^.*\.(mbp)$/i',$this->BlueprintStorage->files($this->projectPath.'/models'));
         if(empty($modelFiles)){
-            $this->command->info("There are no model files in the sub direcotry [models]");
+            // $this->command->info("There are no model files in the sub direcotry [models]");
         }else{
             foreach($modelFiles as $model){
                 $m =json_decode($this->BlueprintStorage->get($model));
@@ -72,10 +198,10 @@ class BluePrintsFactory {
                     }
                 }  
             }
-            $this->command->line("Model blueprints imported. Now generating files...");
+            // $this->command->line("Model blueprints imported. Now generating files...");
             $this->BuildModel();
             try {
-                $this->command->info('Now Migrating database to the server...');
+                // $this->command->info('Now Migrating database to the server...');
                 Artisan::call('migrate');
             } catch (Exception $e) {
                 throw $e;
@@ -87,7 +213,6 @@ class BluePrintsFactory {
     public function processModels($model){
         $fieldDefinitions= $model->modelFields??[];
         unset($model->modelFields);
-        $views = $model->view??[];
         //<------------------------------------Handle Model Views Definition, Deferred implementation, Needs attention later. 
         unset($model->view);
         $MyModel= new BluePrintsModelFactory((array) $model);
@@ -119,16 +244,18 @@ class BluePrintsFactory {
         $relations=[];
         foreach ($this->ModelList as $modelName => $model) {
             $model->buildMigrations();
-            $this->command->line("*migration created for " . $modelName);
+            // $this->command->line("*migration created for " . $modelName);
             $relation=$model->getRelations();
             if(!empty($relation)){
                 $relations[$modelName]=$relation;
             }
             $model->BuildModel();
-            $this->command->line("*model file created for " . $modelName);
+            // $this->command->line("*model file created for " . $modelName);
             
         }
         $this->createRelationMigration($relations);
+        $this->ViewFactory->setModelList($this->ModelList);
+        $this->ControllerFactory->setModelList($this->ModelList);
     }
 
     private function createRelationMigration($models){
@@ -231,37 +358,38 @@ class BluePrintsFactory {
                 throw new Exception("Error Creating Migration Relations " . $e->getMessage(), 1);
             }
         }
-        $this->command->line("*migration created for table relations. ");
+        // $this->command->line("+ migration created for table relations. ");
     }
 
-    //=================================End Related Operation Section=========================
+//=================================End Model Operation Section=========================
 
 
+//=================================View and Controller Related Operations=============================
 
-    //=================================View and Controller Related Operations=============================
+
     public function BuildViews(){
-        $this->command->line("-->Building View Files and Controllers");
-        foreach($this->blueprint->pages as $pageDefinition){
-            $page=new BluePrintsViewFactory($pageDefinition,$this->ModelList);
-            if(!array_key_exists(($pageDefinition->name??''),$this->PageList)){
-                $this->PageList[$pageDefinition->name]=$page;
-            }
-            if(false!==$page->buildView()){
-                $this->command->line("*view file created for " . $pageDefinition->name);
-                $controller = new BluePrintsControllerFactory($pageDefinition, $this->ModelList);
-                if(false!== $controller->buildController()){
-                    $this->command->line("*controller File created for " . $pageDefinition->name);
-                    $this->routeList.=$controller->buildRoutes();
-                }
-            }
-        }
-        $this->command->info("All Controller and View files are built, Now generating route file.");
-        $this->buildRoutes();
-        $this->command->line("Route file is generated and stored at: ".self::routePath);
+        // $this->command->line("-->Building View Files ...");
+        foreach($this->ViewList as $viewDefinition){
+            $this->ViewFactory->loadDefinition($viewDefinition);
+            $this->ViewFactory->buildView();
+            // $this->command->line("+ View file generated: ".self::routePath.$viewDefinition['name']);
+        }        
     }
 
-    public function buildRoutes(){
+    public function BuildControllers(){
+        // $this->command->line("-->Building Controller Files ...");
+        foreach ($this->ControllerList as $controllerDefinition) {
+            $this->ControllerFactory->loadDefinition($controllerDefinition);
+            $this->ControllerFactory->buildController();
+            // $this->command->line("+ Controller file generated: ".self::controllerPath.$controllerDefinition['name']);
+        }    
+    }
 
+//=================================End View and Controller Related Operations=============================
+
+//=================================Route Building Section=========================
+    public function BuildRoutes(){
+        // $this->command->info("Now generating route file ...");
         $this->RootStorage->put(self::routePath, "<?php
         /*
         |--------------------------------------------------------------------------
@@ -276,11 +404,20 @@ class BluePrintsFactory {
         */
 
         Route::group(['namespace' => 'App\Http\Controllers\BluePrints', 'middleware' => ['web']], function () {
-            $this->routeList
+            ".join('',array_map(function($routeDefinition){
+                return '
+                Route::'.strtolower($routeDefinition['type']??'GET').'("'. $this->url(strtolower($routeDefinition['url'])).(count($routeDefinition['input'] ?? [])>0?'/':'').join('/',
+                    array_map(function($in){
+                        return ('{'. $this->url($in->name).(($in->optional??false)===false?'':'?') .'}');
+                    },($routeDefinition['input']??[]))
+                ).'", "'. $routeDefinition['targetController']. '@' . $routeDefinition['targetMethod'] . '")->name("bpr_' . $routeDefinition['name'] . '");
+                ';
+            },($this->routeList??[])))."
         });
-
         ");
+        // $this->command->line("Route file is generated and stored at: ".self::routePath);
     }
+//=================================End Route Building Section=========================
 
     public function buildPageTemplate(){
         $path='resources/views/';
@@ -336,6 +473,13 @@ class BluePrintsFactory {
         }
         return true;
     }
-    //=================================End View and Controller Operation Section=========================
+
+    private function url($url){
+        $url = trim($url, "-");
+        $url = iconv("utf-8", "us-ascii//TRANSLIT", $url);
+        $url = preg_replace('/[^0-9_a-z?]+/iu', '', $url);
+        return $url;
+    }
+    
 }
 ?>

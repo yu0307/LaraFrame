@@ -9,6 +9,7 @@ class BluePrintsModelFactory {
     private $ModelDefinition;
     private $FieldList;
     private $myRelations;
+    private $RelatedModels;
     private $PrimaryKey;
     private $RootStorage;
     private const FieldsWithSize = [
@@ -42,6 +43,7 @@ class BluePrintsModelFactory {
     public function __construct($definition=null){
         $this->FieldList=[];
         $this->myRelations=[];
+        $this->RelatedModels=[];
         $this->PrimaryKey=null;
         $this->RootStorage = Storage::createLocalDriver(['root' => base_path()]);
         $ModelDefinition=[
@@ -97,6 +99,7 @@ class BluePrintsModelFactory {
 
     public function addRelation($relation){
         array_push($this->myRelations,$relation);
+        array_push($this->RelatedModels, $relation->target);
     }
 
     private function SetPrimary($keyName){
@@ -262,6 +265,14 @@ class BluePrintsModelFactory {
         }
         ';
         $this->RootStorage->put($target, $contents);
+    }
+
+    public function getFieldNames(){
+        return array_map(function($f){return (object)['name'=> $f,''];}, array_keys($this->FieldList));
+    }
+
+    public function isRelatedTo($modelName){
+        return in_array($modelName,$this->RelatedModels);
     }
 }
 
