@@ -52,7 +52,6 @@ class BluePrintsFactory {
 
     public function ExtractInfo(){
         // dd($this->ModelList);
-        // $this->command->info("--> Extracting information and putting things together <--");
         foreach ($this->blueprint->pages as $pageDefinition) {
             $pageRouteList=[];
             $controllerDefinition = [
@@ -373,7 +372,6 @@ class BluePrintsFactory {
 
 
     public function BuildViews(){
-        // $this->command->line("-->Building View Files ...");
         foreach($this->ViewList as $viewDefinition){
             $this->ViewFactory->loadDefinition($viewDefinition);
             $this->ViewFactory->buildView();
@@ -382,7 +380,6 @@ class BluePrintsFactory {
     }
 
     public function BuildControllers(){
-        // $this->command->line("-->Building Controller Files ...");
         foreach ($this->ControllerList as $controllerDefinition) {
             $this->ControllerFactory->loadDefinition($controllerDefinition);
             $this->ControllerFactory->buildController();
@@ -394,7 +391,7 @@ class BluePrintsFactory {
 
 //=================================Route Building Section=========================
     public function BuildRoutes(){
-        // $this->command->info("Now generating route file ...");
+        
         $this->RootStorage->put(self::routePath, "<?php
         /*
         |--------------------------------------------------------------------------

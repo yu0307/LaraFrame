@@ -32,7 +32,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         return '
                             <td class="collection_component ' . ($contrlDefinition->container_class ?? '') . '" ' . ($contrlDefinition->container_attr ?? '') . '>
                                 <div class="collection_item ' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . ' >
-                                    {{$' . $prefix . $contrlDefinition->name . '??""}}
+                                    {{$' . $prefix .'["'. $contrlDefinition->name . '"]??""}}
                                 </div>
                             </td>
         ';
@@ -65,20 +65,17 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
     private function generateCollectionlPage(){
         $content = '';
         $header='';
+        $tableContent='';
         if (strtolower($this->Definition['usage'] ?? 'display') === 'display') {
-            foreach ($this->Definition['models'] as $model => $fields) {
-                if (is_string($fields) === true && strtolower($fields) == 'all') {
-                    $fields = $this->AvailableModels[$model]->getFieldNames();
-                }
-                foreach ($fields as $field) {
-                    $header .= ('<th>' . ($field->label ?? $field->name). '</th>');
-                    $content .= $this->GenerateCollectionComponent($field,'row->');
+            foreach (($this->Definition['FieldList'] ?? []) as $fieldDefinition) {
+                foreach ($fieldDefinition['Fields'] as $field){
+                    $header .= ('<th>' . ($field->label ?? $field->name) . '</th>');
+                    $tableContent .= $this->GenerateCollectionComponent($field, 'row');
                 }
             }
         } else { //CRUD
 
         }
-
         $content= '
         <div class="container-fluid">
             <div class="row col-md-12 col-sm-12">
@@ -91,7 +88,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                     <tbody>
                         @foreach($collection as $row)
                             <tr>
-                                '. $content. '
+                                '. $tableContent. '
                             </tr>
                         @endforeach
                     </tbody>

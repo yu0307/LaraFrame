@@ -22,7 +22,7 @@ class BluePrints {
                 '<meta charset="utf-8">'
             ],
             "siteFooter" => [
-                "footerText"=> '<div class="footer_text" style="text-align: center;"><span>Copyright <span class="copyright">©</span> {{date("Y")}} </span> <span>{{config("app.name")}}</span>. <span>All rights reserved. </span></div>'
+                "footerText"=> '<div class="copyright footer_text p-0 pull-right" style="text-align: center;"><span>Copyright <span class="copyright">©</span> {{date("Y")}} </span> <span>{{config("app.name")}}</span>. <span>All rights reserved. </span></div>'
             ],
             "siteResources"=>[
                 "inHeader"=>[],
@@ -106,12 +106,18 @@ class BluePrints {
         if($this->check()){
             try {
                 $factory= new BluePrintsFactory($this->targetFile,$this->storage,$this->command);
-                $this->command->line("-->Building Page templates...");
+                $this->command->info("--> Building Page templates...");
                 if(true===$factory->buildPageTemplate()){
-                    $this->command->line("-->Building Models ...");
+                    $this->command->info("--> Building Models ...");
                     $factory->ImportModels();
-                    $this->command->line("-->Building BluePrints Views ...");
+                    $this->command->info("--> Extracting information and putting things together ...");
+                    $factory->ExtractInfo();
+                    $this->command->info("--> Building View Files ...");
                     $factory->BuildViews();
+                    $this->command->info("--> Building Controller Files ...");
+                    $factory->BuildControllers();
+                    $this->command->info("--> Now generating Route File ...");
+                    $factory->BuildRoutes();
                 }
             } catch (Exception $e) {
                 $this->command->error($e->getMessage());

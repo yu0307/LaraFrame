@@ -47,11 +47,11 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
             foreach ($modelFilter as $filter) {
                 if (($filter->optional ?? false) === true) {
                     $content .= '
-                        if(!empty($' . $filter->name . ') ){array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '"=>$' . $filter->name . ']);}
+                        if(!empty($' . $filter->name . ') ){array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);}
                             ';
                 } else {
                     $content .= ('
-                        array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '"=>$' . $filter->name . ']);');
+                        array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);');
                 }
             }
             $content .= '

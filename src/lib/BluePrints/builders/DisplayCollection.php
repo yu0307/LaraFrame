@@ -2,9 +2,9 @@
 
 namespace feiron\felaraframe\lib\BluePrints\builders;
 
-use feiron\felaraframe\lib\BluePrints\BluePrintsControllerBuilderBase;
+use feiron\felaraframe\lib\BluePrints\BluePrintsMethodBuilderBase;
 
-class DisplayCollection extends BluePrintsControllerBuilderBase {
+class DisplayCollection extends BluePrintsMethodBuilderBase {
 
     public function __construct($MethodDefinition = null, $ModelList){
         parent::__construct(($MethodDefinition??[]), $ModelList);
@@ -15,7 +15,7 @@ class DisplayCollection extends BluePrintsControllerBuilderBase {
 
         return $this->PrepareModels() . '
         ' . $this->PrepareInputs() . '
-                        $withData=($query->get()??new Collection([]))->toArray();
+                        $withData=["collection"=>($query->get()??new Collection([]))->toArray()];
         ';
     }
 
