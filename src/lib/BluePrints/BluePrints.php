@@ -33,7 +33,7 @@ class BluePrints {
                     "name" => "",
                     "title"=>'',
                     "subtext"=>'',
-                    'style' => 'normal', //normal, table, accordian 
+                    'style' => 'normal', //normal, table, accordion 
                     'content' => [
                         //usage: display | CRUD
                         //models: [

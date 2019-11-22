@@ -18,4 +18,9 @@ class DisplaySingularInfo extends BluePrintsMethodBuilderBase {
         ';
     }
 
+    public function BuildCRUD(): string{
+        
+        return '';
+    }
+
 }

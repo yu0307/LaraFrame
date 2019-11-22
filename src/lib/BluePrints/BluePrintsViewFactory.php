@@ -28,6 +28,32 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
 
     }
 
+    private function GenerateAccordionComponent($contrlDefinition){
+        return '
+                            <td class="accordion_component ' . ($contrlDefinition->container_class ?? '') . '" ' . ($contrlDefinition->container_attr ?? '') . '>
+                                <div class="accordion_item ' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . ' >
+                                    <div class="row ' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . ' >
+                                        ' . (empty($contrlDefinition->caption) ? "" : ('
+                                        <div class="col-md-12">
+                                            <h5 class="alert alert-info">
+                                                ' . $contrlDefinition->caption . '
+                                            </h5>
+                                        </div>
+                                        ')) . '
+                                        <div class="col-md-2 col-sm-12">
+                                            <label>
+                                                ' . ($contrlDefinition->label ?? $contrlDefinition->name) . ' :
+                                            </label>
+                                        </div>
+                                        <div class="col-md-10 col-sm-12">
+                                            {{$' . $contrlDefinition->name . '??""}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+        ';
+    }
+
     private function GenerateCollectionComponent($contrlDefinition,$prefix){
         return '
                             <td class="collection_component ' . ($contrlDefinition->container_class ?? '') . '" ' . ($contrlDefinition->container_attr ?? '') . '>
@@ -62,7 +88,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         ';
     }
 
-    private function generateCollectionlPage(){
+    private function generateCollectionPage(){
         $content = '';
         $header='';
         $tableContent='';
@@ -100,12 +126,13 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         return $content;
     }
 
-    private function generateSingularlPage(){
+    private function generateSingularPage(){
         $content = '';
         if(strtolower($this->Definition['usage']??'display')=== 'display'){
             foreach(($this->Definition['FieldList']??[]) as $fieldDefinition){
-                foreach($fieldDefinition['Fields'] as $field)
-                $content .= $this->GenerateSingularComponent($field);
+                foreach($fieldDefinition['Fields'] as $field){
+                    $content .= $this->GenerateSingularComponent($field);
+                }
             }
             $content= '<div class="container-fluid"><div class="row">'. $content. '</div></div>';
         }else{//CRUD
@@ -114,18 +141,61 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         return $content;
     }
 
+    private function generateAccordionPage(){
+        $content = '';
+        foreach (($this->Definition['FieldList'] ?? []) as $fieldDefinition) {
+            $content.= '
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#My_Accordion" href="#AC_' . $fieldDefinition['modelName'] . '"> ' . ($fieldDefinition['label']??$fieldDefinition['modelName']) . '</a>
+                        </h4>
+                    </div>
+                    <div id="AC_' . $fieldDefinition['modelName'] . '" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            '.join('
+                            ',array_map(function($field){ return $this->GenerateAccordionComponent($field);},($fieldDefinition['Fields']??[]))).'
+                        </div>
+                    </div>
+                </div>
+            ';
+        }
+        $content = '<div class="container-fluid">
+                        <div class="row">
+                            <div class="panel-group" id="My_Accordion" class="Accordions">
+                                ' . $content . '
+                            </div>
+                        </div>
+                    </div>';
+        return $content;
+    }
+
+    private function generateTablePage(){
+        $content = '<div class="container-fluid">
+                        <div class="row">
+                            <div class="panel-group" id="My_DataTable">
+                                <table id="my_dataTable">
+                                </table>
+                            </div>
+                        </div>
+                    </div>';
+        return $content;
+    }
+
     private function getPageContents(){
 
         switch(strtolower($this->Definition['style'])??'singular'){
             case "table":
+                return $this->generateTablePage();
                 break;
-            case "accordian":
+            case "accordion":
+                return $this->generateAccordionPage();
                 break;
             case "collection":
-                return $this->generateCollectionlPage();
+                return $this->generateCollectionPage();
                 break;
             default://singular
-                return $this->generateSingularlPage();
+                return $this->generateSingularPage();
         }
         return "";
     }

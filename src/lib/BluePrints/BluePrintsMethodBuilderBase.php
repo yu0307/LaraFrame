@@ -24,6 +24,7 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
     }
 
     public abstract function BuildMethod():string;
+    public abstract function BuildCRUD(): string;
 
     protected function PrepareInputs(){
         $content = '';

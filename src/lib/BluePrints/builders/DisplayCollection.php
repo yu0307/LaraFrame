@@ -19,4 +19,8 @@ class DisplayCollection extends BluePrintsMethodBuilderBase {
         ';
     }
 
+    public function BuildCRUD(): string{
+        return '';
+    }
+
 }
