@@ -102,6 +102,10 @@ class BluePrintsModelFactory {
         array_push($this->RelatedModels, $relation->target);
     }
 
+    public function getPrimary(){
+        return $this->PrimaryKey;
+    }
+
     private function SetPrimary($keyName){
         $this->PrimaryKey=$keyName;
     }

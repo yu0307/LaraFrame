@@ -8,6 +8,8 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
 
     protected $MethodDefinition;
     protected $ModelList;
+    protected $prefixTableName;
+    // protected $madeVisible;
     protected const modelClassPrefix= 'fe_bp_';
     private const DEFAULT=[
         "name" => "",
@@ -21,10 +23,22 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
     public function __construct($MethodDefinition = null, $ModelList){
         $this->MethodDefinition=array_merge(self::DEFAULT,$MethodDefinition);
         $this->ModelList= $ModelList;
+        $this->madeVisible=[];
+        $this->prefixTableName=false;
     }
 
     public abstract function BuildMethod():string;
     public abstract function BuildCRUD(): string;
+
+    // protected function SetVisible($modelName,$fieldName){
+    //     if(!array_key_exists($modelName,$this->madeVisible)){
+    //         $this->madeVisible[$modelName]= [("'" .$fieldName."'")];
+    //     }else{
+    //         if(!in_array($fieldName, $this->madeVisible[$modelName])){
+    //             array_push($this->madeVisible[$modelName], ("'". $fieldName . "'"));
+    //         }
+    //     }
+    // }
 
     protected function PrepareInputs(){
         $content = '';
@@ -39,24 +53,24 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
         }
         if (count($PassInVariables) > 0) {
             $content .= ((count($PassInVariables) > 1) ? ('
-                        $withData=array_merge($withData,' . (join(',', $PassInVariables)) . ')') : '
-                        array_push($withData,' . join('', $PassInVariables) . ')') . ';';
+                    $withData=array_merge($withData,' . (join(',', $PassInVariables)) . ')') : '
+                    array_push($withData,' . join('', $PassInVariables) . ')') . ';';
         }
         if (count($modelFilter) > 0) {
             $content .= '
-                        $whereFilter=[];';
+                    $whereFilter=[];';
             foreach ($modelFilter as $filter) {
                 if (($filter->optional ?? false) === true) {
                     $content .= '
-                        if(!empty($' . $filter->name . ') ){array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);}
+                    if(!empty($' . $filter->name . ') ){array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);}
                             ';
                 } else {
                     $content .= ('
-                        array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);');
+                    array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);');
                 }
             }
             $content .= '
-                        $query->where($whereFilter);';
+                    $query->where($whereFilter);';
         }
         return $content;
     }
@@ -66,8 +80,13 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
         $modelDefinition= $this->MethodDefinition['model']??false;
         if(false!== $modelDefinition){
             $selects = [];
-            $contents='
-                        $query='.self::modelClassPrefix. $modelDefinition->name. '::query();' ;
+            $contents='                    
+                    $query='.self::modelClassPrefix. $modelDefinition->name.'::query();' ;
+            // if(isset($this->madeVisible[$modelDefinition->name]) && !empty(($this->madeVisible[$modelDefinition->name]))){
+            //     $contents .= '
+            //         $query->getModel()->makeVisible([' . join(',', $this->madeVisible[$modelDefinition->name]) . ']);
+            //     ';
+            // }
             foreach(($modelDefinition->fields??[]) as $field){
                 array_push($selects,($modelDefinition->name.'.'. $field->name));
             }
@@ -75,13 +94,13 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
                 $eagerLoad=[];
                 foreach (($modelDefinition->with) as $withModel) {
                     array_push($eagerLoad, ("'".$withModel->name. "s'"));
-                    foreach($withModel->fields??[] as $field){
-                        array_push($selects, ($withModel->name . '.' . $field->name));
-                    }
+                    // foreach($withModel->fields??[] as $field){
+                    //     array_push($selects, ($withModel->name . '.' . $field->name));
+                    // }
                 }
                 if(!empty($eagerLoad)){
                     $contents.= '
-                        $query->with('.(count($eagerLoad)>1?("[".join(',', $eagerLoad)."]"):$eagerLoad[0]).');';
+                    $query->with('.(count($eagerLoad)>1?("[".join(',', $eagerLoad)."]"):$eagerLoad[0]).');';
                 }
             }
 
@@ -114,10 +133,17 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
                 }
                 if (!empty($join)) {
                     $contents .= '
-                        $query'.join('->', $join).';';
+                    $query'.join('->', $join).';';
                 }
             }
-            
+            if($this->prefixTableName && !empty($selects)){
+                $contents .= '
+                    $query->select(['.join(',
+                    ',array_map(function($s){
+                        return ("'".$s." as ".str_replace('.','_', $s)."'");
+                    },$selects)).']);
+                ';
+            }
         }
         return $contents;
     }

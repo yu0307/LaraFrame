@@ -57,6 +57,7 @@ class BluePrintsFactory {
             $controllerDefinition = [
                 'name' => $pageDefinition->name,
                 'useModels' => [],
+                'uses'=>[],
                 'methods' => []
             ];
 
@@ -70,6 +71,17 @@ class BluePrintsFactory {
                     'html' => ($pageDefinition->html ?? ''),
                     "FieldList" => [],
                 ];
+                if(strtolower($pageDefinition->style)=='table'){//creating route for dataTable Ajax source
+                    array_push($pageDefinition->routes,(object)[
+                        'name'=>'dTable_sr_'. $pageDefinition->name,
+                        'type'=>'POST'
+                    ]);
+                    array_push($controllerDefinition['uses'], [
+                        'name'=>"DataTables",
+                        'target'=>'feiron\felaraframe\lib\traits\DataTables'
+                        ]);
+                        $this->ViewList[$pageDefinition->name]['headerSearch']= ($pageDefinition->headerSearch ?? false);
+                }
             }
             if (false == array_key_exists($pageDefinition->name, $this->ControllerList)) {
                 $this->ControllerList[$pageDefinition->name] = $controllerDefinition;
@@ -124,15 +136,18 @@ class BluePrintsFactory {
                     'name'=>$methodName,
                     'view'=> $pageDefinition->name,
                     'type' => ($route->type ?? 'GET'),
-                    'style'=> ($pageDefinition->style??'singular'),
+                    'style'=> ($route->style??$pageDefinition->style??'singular'),
                     'model'=> $pageDefinition->model,
                     'params'=>[],
                     'useModel'=>[]
                 ];
+                if(isset($pageDefinition->tableFilter) && !empty($pageDefinition->tableFilter)){
+                    $method['tableFilter']= $pageDefinition->tableFilter;
+                }
                 $routeDefinition=[
                     'name'=> $route->name,
                     'type' => ($route->type ?? 'GET'),
-                    'url' => ($route->slug ?? $route->name),
+                    'url' => strtolower($route->slug ?? $route->name),
                     'targetMethod'=> $methodName,
                     'targetController' => $pageDefinition->name.self::ControllerClassPostfix,
                     'input'=>[]
@@ -372,6 +387,7 @@ class BluePrintsFactory {
 
 
     public function BuildViews(){
+        
         foreach($this->ViewList as $viewDefinition){
             $this->ViewFactory->loadDefinition($viewDefinition);
             $this->ViewFactory->buildView();

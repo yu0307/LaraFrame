@@ -83,7 +83,30 @@
                         }
                     }
                 @endif
-                $('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
+                var my_dataTable=$('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
+                @if (($enableHeaderSearch??false)===true)
+                    var table=$('#{{$tableID}}');
+                    var timer;
+                    $(table).find('thead tr').clone(false).appendTo($(table).find('thead'));
+                    $(table).find('thead tr:eq(1) th:last-child').html('');
+                    $(table).find('thead tr:eq(1) th').each(function (i) {
+                        var title = $(this).removeClass('sorting').text();
+                        $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                        $('input', this).on('keyup change', function () {
+                            if (my_dataTable.column(i).search() !== this.value) {
+                                clearTimeout(timer);
+                                var tarval = this.value;
+                                timer = setTimeout(function() {
+                                    my_dataTable
+                                        .column(i)
+                                        .search(tarval)
+                                        .draw();
+                                }, 700);
+                            }
+
+                        });
+                    });
+                @endif
             @endpushonce
         @else
             <h3>No table header is set, check component configuration.</h3>

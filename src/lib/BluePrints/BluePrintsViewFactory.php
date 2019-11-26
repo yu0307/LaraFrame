@@ -171,11 +171,42 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
     }
 
     private function generateTablePage(){
+        $headers=[];
+        $headerDef=[];
+        foreach (($this->Definition['FieldList'] ?? []) as $fieldDefinition){
+            if(isset($fieldDefinition['type']) && $fieldDefinition['type']=='with'){
+               //handle multi-view 
+            }else{
+                foreach($fieldDefinition['Fields'] as $field){
+                    array_push($headers, ("'".($field->label ?? $field->name)."'"));
+                    array_push($headerDef, ("
+                                                ['data'=>'". $fieldDefinition['modelName'].'_'. $field->name."']"));
+                }
+            }
+        }
+
         $content = '<div class="container-fluid">
                         <div class="row">
                             <div class="panel-group" id="My_DataTable">
-                                <table id="my_dataTable">
-                                </table>
+                                @feDataTable([
+                                    "tableID"=>"DataTable_'. $this->Definition['name']. '",
+                                    "header_bg"=>"none",
+                                    '.((($this->Definition['headerSearch']??false)===true)? '"enableHeaderSearch"=>true,':'').'
+                                    "headerList"=>[
+                                        '.join(',',$headers). '
+                                    ],
+                                    "JsSettins"=>[
+                                        "serverSide" => true,
+                                        "ajax" => [
+                                            "url" => route("bpr_dTable_sr_'. $this->Definition["name"]. '"),
+                                            "type" => "POST"
+                                        ],
+                                    "columns" => [
+                                                ' . join(',', $headerDef) . '
+                                            ]
+                                    ]
+                                ])
+                                @endfeDataTable
                             </div>
                         </div>
                     </div>';

@@ -19,18 +19,29 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
         $this->ControllerName = ($this->Definition['name'] ?? '') . self::ControllerClassPostfix;
         if (!empty($this->Definition['name'])) {
             $target = self::controllerPath . $this->ControllerName . '.php';
+            $using='';
             $contents = '<?php
         namespace App\Http\Controllers\BluePrints;
         use Illuminate\Http\Request;
         use App\Http\Controllers\Controller;
         use Illuminate\Support\Collection;
 
+        '.(empty($this->Definition['uses'])?'':(join('',array_map(function($use) use (&$using){
+                $using.='
+                use '. $use['name'].';';
+                return '
+        use '. $use['target'].';';
+            }, $this->Definition['uses'])))).'
+
         '.(empty($this->Definition['useModels'])?'':(join('',array_map(function($model){return '
         use App\model\\'.self::ModelClassPrefix. $model.';';}, $this->Definition['useModels'])))).'
 
+        
+
         class '. $this->ControllerName.' extends Controller
         {
-                    '. $this->buildControllerMethods().'
+            '. $using.'
+            '. $this->buildControllerMethods().'
         }
             ';
 
@@ -44,6 +55,9 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
         $method='';
         foreach(($this->Definition['methods']??[]) as $methodDefinition){
             switch (strtolower($methodDefinition['style'] ?? 'singular')) {
+                case "table":
+                    $method .= $this->buildMethod('DisplayTable', $methodDefinition);
+                    break;
                 case "collection":
                     $method.=$this->buildMethod('DisplayCollection', $methodDefinition);
                     break;
@@ -60,15 +74,15 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
         if (class_exists($methodName)) {
             if (!empty($methodDefinition['name'])) {
                 return '
-                    public function ' . ($methodDefinition['name']) . ' (Request $request ' . (empty($methodDefinition['params']) ? ''
-                        : (',' . join(',', array_map(function ($p) {
-                            return ('$' . $p->name.(($p->optional??false)===false?'':'=null'));
-                        }, $methodDefinition['params'])))) . '){
+                public function ' . ($methodDefinition['name']) . ' (Request $request ' . (empty($methodDefinition['params']) ? ''
+                    : (',' . join(',', array_map(function ($p) {
+                        return ('$' . $p->name.(($p->optional??false)===false?'':'=null'));
+                    }, $methodDefinition['params'])))) . '){
 
-                        $withData=[];
-                        ' . (new $methodName($methodDefinition, $this->AvailableModels))->BuildMethod() . '
-                        return ' . ((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' .self::ViewClassPrefix . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)')) . ';
-                    }
+                    $withData=[];
+                    ' . (new $methodName($methodDefinition, $this->AvailableModels))->BuildMethod() . '
+                    return ' . ((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' .self::ViewClassPrefix . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)')) . ';
+                }
                 ';
             }            
         }        
