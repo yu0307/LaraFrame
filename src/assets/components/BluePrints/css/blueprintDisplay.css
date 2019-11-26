@@ -1,3 +1,18 @@
 .blueprints .page_component{
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+}
+.blueprints .singular .page_component label h5{
+    font-size: 16px;
+}
+.blueprints .singular .page_component .field_data{
+    padding: 10px;
+    min-height: 42px;
+    border: 1px solid #cacaca;
+}
+
+.blueprints .singular .page_component .field_label {
+    background: #484848;
+    color: snow;
+    padding: 2px 10px 2px 10px;
+    font-size: 16px;
 }
