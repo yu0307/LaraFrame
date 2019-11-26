@@ -67,19 +67,22 @@ class BluePrintsModelFactory {
     public function getRelations(){
         return $this->myRelations;
     }
+    public function getRelationType($modelName){
+        return (($this->isRelatedTo($modelName)===true)?$this->RelatedModels[$modelName]['type']:null);
+    }
 
     private function getRelationModifier($relation,$reverse=false){
-        switch($relation->type){
-            case "OneToOne":
+        switch(strtolower($relation->type)){
+            case "onetoone":
                 return ($reverse? "belongsTo": 'hasOne') . ('("App\model\\' . self::ModelClassPrefix.$relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
                 break;
-            case "OneToMany":
+            case "onetomany":
                 return ($reverse ? "belongsTo" : "hasMany") . ('("App\model\\' . self::ModelClassPrefix . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
                 break;
-            case "ManyToOne":
+            case "manytoone":
                 return ($reverse ? "hasMany" : "belongsTo") . ('("App\model\\' . self::ModelClassPrefix . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
                 break;
-            case "ManyToMany":
+            case "manytomany":
                 $tableName = [];
                 array_push($tableName, $this->ModelDefinition['modelName'], $relation->target);
                 sort($tableName);
@@ -99,7 +102,12 @@ class BluePrintsModelFactory {
 
     public function addRelation($relation){
         array_push($this->myRelations,$relation);
-        array_push($this->RelatedModels, $relation->target);
+        if(array_key_exists($relation->target,$this->RelatedModels)===false){
+            $this->RelatedModels[$relation->target]=[
+                "target"=> $relation->target,
+                "type"=> $relation->type
+            ];
+        }
     }
 
     public function getPrimary(){
@@ -276,7 +284,7 @@ class BluePrintsModelFactory {
     }
 
     public function isRelatedTo($modelName){
-        return in_array($modelName,$this->RelatedModels);
+        return (array_key_exists($modelName, $this->RelatedModels)===true);
     }
 }
 

@@ -62,6 +62,7 @@ class BluePrintsFactory {
             ];
 
             if (false == array_key_exists($pageDefinition->name, $this->ViewList)) {
+                $pageDefinition->style = $pageDefinition->style ?? 'singular';
                 $this->ViewList[$pageDefinition->name] = [
                     'name'=> $pageDefinition->name,
                     "style" => $pageDefinition->style,
