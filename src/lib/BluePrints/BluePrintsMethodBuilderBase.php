@@ -140,7 +140,7 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
                 $contents .= '
                     $query->select(['.join(',
                     ',array_map(function($s){
-                        return ("'".$s." as ".str_replace('.','_', $s)."'");
+                        return ("'".$s." as ".str_replace('.','~', $s)."'");
                     },$selects)).']);
                 ';
             }

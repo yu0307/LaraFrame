@@ -180,7 +180,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                 foreach($fieldDefinition['Fields'] as $field){
                     array_push($headers, ("'".($field->label ?? $field->name)."'"));
                     array_push($headerDef, ("
-                                                ['data'=>'". $fieldDefinition['modelName'].'_'. $field->name."']"));
+                                                ['data'=>'". $fieldDefinition['modelName'].'~'. $field->name."']"));
                 }
             }
         }
