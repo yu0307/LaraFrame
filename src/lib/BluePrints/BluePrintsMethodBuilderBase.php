@@ -9,6 +9,9 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
     protected $MethodDefinition;
     protected $ModelList;
     protected $prefixTableName;
+    protected $Modelparameters;
+    private $PassInVariables;
+    private $modelFilter;
     // protected $madeVisible;
     protected const modelClassPrefix= 'fe_bp_';
     private const DEFAULT=[
@@ -25,6 +28,7 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
         $this->ModelList= $ModelList;
         $this->madeVisible=[];
         $this->prefixTableName=false;
+        $this->extractParameters();
     }
 
     public abstract function BuildMethod():string;
@@ -40,26 +44,46 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
     //     }
     // }
 
-    protected function PrepareInputs(){
-        $content = '';
-        $modelFilter = [];
-        $PassInVariables = [];
-        foreach (($this->MethodDefinition['params'] ?? []) as $param) {
-            if (isset($param->onModel) && !empty($param->onModel)) {
-                array_push($modelFilter, $param);
-            } else {
-                array_push($PassInVariables, ('["' . $param->name . '"=>$' . $param->name . ']'));
+    private function extractParameters(){
+        $this->PassInVariables = [];
+        $this->modelFilter = [];
+        $withModelList=[];
+        if (isset($this->MethodDefinition['model'])) {
+            foreach (($this->MethodDefinition['model']->with?? []) as &$withModel) {
+                if (!array_key_exists($withModel->name, $withModelList)) {
+                    $withModelList[$withModel->name]= &$withModel;
+                }
             }
         }
-        if (count($PassInVariables) > 0) {
-            $content .= ((count($PassInVariables) > 1) ? ('
-                    $withData=array_merge($withData,' . (join(',', $PassInVariables)) . ')') : '
-                    array_push($withData,' . join('', $PassInVariables) . ')') . ';';
+        foreach ($this->MethodDefinition['params'] ?? [] as $param) {
+            if (isset($param->onModel)) {
+                if (array_key_exists($param->onModel, $withModelList)){
+                    if(!isset($withModelList[$param->onModel]->params)){
+                        $withModelList[$param->onModel]->params=[];
+                    }
+                    array_push($withModelList[$param->onModel]->params,$param);
+                }else{
+                    array_push($this->modelFilter, $param);
+                }
+            }else{
+                array_push($this->PassInVariables, ('["' . $param->name . '"=>$' . $param->name . ']'));
+            }
         }
-        if (count($modelFilter) > 0) {
+    }
+
+    protected function PrepareInputs(){
+        $content = '';
+
+        if (count($this->PassInVariables) > 0) {
+            $content .= ((count($this->PassInVariables) > 1) ? ('
+                    $withData=array_merge($withData,' . (join(',', $this->PassInVariables)) . ')') : '
+                    array_push($withData,' . join('', $this->PassInVariables) . ')') . ';';
+        }
+
+        if (count($this->modelFilter) > 0) {
             $content .= '
                     $whereFilter=[];';
-            foreach ($modelFilter as $filter) {
+            foreach ($this->modelFilter as $filter) {
                 if (($filter->optional ?? false) === true) {
                     $content .= '
                     if(!empty($' . $filter->name . ') ){array_push($whereFilter,["' . $filter->onModel . '.' . $filter->name . '","=",$' . $filter->name . ']);}
@@ -93,10 +117,17 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
             if(isset($modelDefinition->with) && !empty($modelDefinition->with)) {//eager-loading
                 $eagerLoad=[];
                 foreach (($modelDefinition->with) as $withModel) {
-                    array_push($eagerLoad, ("'".$withModel->name. "s'"));
-                    // foreach($withModel->fields??[] as $field){
-                    //     array_push($selects, ($withModel->name . '.' . $field->name));
-                    // }
+                    $eager= ("'" . $withModel->name . "s'");
+                    if(isset($withModel->params) && !empty($withModel->params)){
+                        $using=[];
+                        $eagerContent='';
+                        foreach($withModel->params as $param){
+                            array_push($using,'$'. $param->name);
+                            $eagerContent.= 'if(!empty($' . $param->name . ') ){ $q->where("'. $param->name. '","=",$' . $param->name . ');}';
+                        }
+                        $eager .= '=> function($q) use ('.join(',',$using).'){'. $eagerContent.'}';
+                    }
+                    array_push($eagerLoad, $eager );
                 }
                 if(!empty($eagerLoad)){
                     $contents.= '

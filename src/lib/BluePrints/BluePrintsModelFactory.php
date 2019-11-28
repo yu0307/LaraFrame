@@ -67,6 +67,7 @@ class BluePrintsModelFactory {
     public function getRelations(){
         return $this->myRelations;
     }
+    
     public function getRelationType($modelName){
         return (($this->isRelatedTo($modelName)===true)?$this->RelatedModels[$modelName]['type']:null);
     }
@@ -74,13 +75,13 @@ class BluePrintsModelFactory {
     private function getRelationModifier($relation,$reverse=false){
         switch(strtolower($relation->type)){
             case "onetoone":
-                return ($reverse? "belongsTo": 'hasOne') . ('("App\model\\' . self::ModelClassPrefix.$relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
+                return ($reverse? "belongsTo": 'hasOne') . ("('App\model\\" . self::ModelClassPrefix.$relation->target . "','" . $relation->targetReference . "','" . $relation->sourceReference . "' )");
                 break;
             case "onetomany":
-                return ($reverse ? "belongsTo" : "hasMany") . ('("App\model\\' . self::ModelClassPrefix . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
+                return ($reverse ? "belongsTo" : "hasMany") . ("('App\model\\" . self::ModelClassPrefix.$relation->target . "','" . $relation->targetReference . "','" . $relation->sourceReference . "' )");
                 break;
             case "manytoone":
-                return ($reverse ? "hasMany" : "belongsTo") . ('("App\model\\' . self::ModelClassPrefix . $relation->target . '","' . $relation->targetReference . '","' . $relation->sourceReference . '" )');
+                return ($reverse ? "hasMany" : "belongsTo") . ("('App\model\\" . self::ModelClassPrefix.$relation->target . "','" . $relation->targetReference . "','" . $relation->sourceReference . "' )");
                 break;
             case "manytomany":
                 $tableName = [];
@@ -91,6 +92,35 @@ class BluePrintsModelFactory {
                 break;
         }
         return false;
+    }
+
+    public function getPrimary(){
+        return $this->PrimaryKey;
+    }
+
+    private function getFieldModifier($field){
+
+        if(in_array($field['dataType'], self::FieldsWithSize)){
+            return ("," . ($field['size'] ?? self::Defaults['size']));
+        } elseif(in_array($field['dataType'], self::FieldsWithModifier)){
+            return ("," . ($field['modifier'] ?? '8,2'));
+        } elseif (in_array($field['dataType'], self::FieldsWithCollection)) {
+            $field['modifier']=array_map(function($f){return ("'". $f."'");}, ($field['modifier']??['']));
+            return (",[" . (join(',',$field['modifier'])).']');
+        }
+        return "";
+    }
+
+    public function getFieldDefinition($fieldName){
+        return $this->FieldList[$fieldName]??[];
+    }
+
+    public function getFieldNames(){
+        return array_map(function($f){return (object)['name'=> $f,''];}, array_keys($this->FieldList));
+    }
+
+    public function getModelDefition($definitionName){
+        return $this->ModelDefinition[$definitionName]??'';
     }
 
     public function addField($definition){
@@ -110,24 +140,8 @@ class BluePrintsModelFactory {
         }
     }
 
-    public function getPrimary(){
-        return $this->PrimaryKey;
-    }
-
     private function SetPrimary($keyName){
         $this->PrimaryKey=$keyName;
-    }
-    private function getFieldModifier($field){
-
-        if(in_array($field['dataType'], self::FieldsWithSize)){
-            return ("," . ($field['size'] ?? self::Defaults['size']));
-        } elseif(in_array($field['dataType'], self::FieldsWithModifier)){
-            return ("," . ($field['modifier'] ?? '8,2'));
-        } elseif (in_array($field['dataType'], self::FieldsWithCollection)) {
-            $field['modifier']=array_map(function($f){return ("'". $f."'");}, ($field['modifier']??['']));
-            return (",[" . (join(',',$field['modifier'])).']');
-        }
-        return "";
     }
 
     private function createDBField($field,$namePrefix='',$skipIndex=false, $forceType = false){
@@ -224,14 +238,6 @@ class BluePrintsModelFactory {
         }
     }
 
-    public function getFieldDefinition($fieldName){
-        return $this->FieldList[$fieldName]??[];
-    }
-
-    public function getModelDefition($definitionName){
-        return $this->ModelDefinition[$definitionName]??'';
-    }
-
     public function BuildModel(){
         $className = self::ModelClassPrefix . $this->ModelDefinition['modelName'];
         $target = self::modelPath . $className . '.php';
@@ -277,10 +283,6 @@ class BluePrintsModelFactory {
         }
         ';
         $this->RootStorage->put($target, $contents);
-    }
-
-    public function getFieldNames(){
-        return array_map(function($f){return (object)['name'=> $f,''];}, array_keys($this->FieldList));
     }
 
     public function isRelatedTo($modelName){

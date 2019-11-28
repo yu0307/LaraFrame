@@ -54,38 +54,6 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         ';
     }
 
-    private function GenerateCollectionComponent($contrlDefinition,$prefix){
-        return '
-                            <td class="collection_component ' . ($contrlDefinition->container_class ?? '') . '" ' . ($contrlDefinition->container_attr ?? '') . '>
-                                <div class="collection_item ' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . ' >
-                                    {{$' . $prefix .'["'. $contrlDefinition->name . '"]??""}}
-                                </div>
-                            </td>
-        ';
-    }
-
-    private function GenerateSingularComponent($contrlDefinition){
-        return '
-            <div class="page_component_container '. ($contrlDefinition->container_class ?? (in_array(strtolower($contrlDefinition->dataType ?? ''), ['text', 'longtext', 'mediumtext', 'tinytext']) ? 'col-md-12' : 'col-md-3 col-sm-6')).'" ' . ($contrlDefinition->container_attr??'') . '>
-                <div class="page_component">
-                    <div class="field_label">
-                        ' . ($contrlDefinition->label ?? $contrlDefinition->name) . ' :
-                    </div>
-                    <div class="field_data' . ($contrlDefinition->class ?? '') . '" ' . ($contrlDefinition->attr ?? '') . '>
-                        ' . (empty($contrlDefinition->caption) ? "" : ('
-                        <div>
-                            <h5 class="alert alert-info p-5 m-5">
-                                ' . $contrlDefinition->caption . '
-                            </h5>
-                        </div>
-                        ')) . '
-                        {{$' . $contrlDefinition->name . '??""}}
-                    </div>
-                </div>
-            </div>
-        ';
-    }
-
     private function CreateSubViewComponent($relationName,$fieldList, $type='onetoone',$componentFormater=null){
         $content='';
         $type= strtolower($type);
@@ -123,119 +91,6 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                 </div>
             </div>
         ';
-    }
-
-    private function generateCollectionPage(){
-        $content = '';
-        $header='';
-        $tableContent='';
-        if (strtolower($this->Definition['usage'] ?? 'display') === 'display') {
-            foreach (($this->Definition['FieldList'] ?? []) as $fieldDefinition) {
-                if (isset($fieldDefinition['type']) && $fieldDefinition['type'] == 'with') {
-                    //handle multi-view (Many-to-Many)
-                } else {
-                    foreach ($fieldDefinition['Fields'] as $field){
-                        $header .= ('<th>' . ($field->label ?? $field->name) . '</th>');
-                        $tableContent .= $this->GenerateCollectionComponent($field, 'row');
-                    }
-                }
-            }
-        } else { //CRUD
-
-        }
-        $content= '
-        <div class="container-fluid">
-            <div class="row col-md-12 col-sm-12">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            '.$header. '
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($collection as $row)
-                            <tr>
-                                '. $tableContent. '
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        ';
-        
-        return $content;
-    }
-
-    private function generateSingularPage(){
-        $content = '';
-        $subComponents='';
-        if(strtolower($this->Definition['usage']??'display')=== 'display'){
-            $baseModel=null;
-            foreach(($this->Definition['FieldList']??[]) as $fieldDefinition){
-                if(!isset($baseModel)) $baseModel= $this->AvailableModels[$fieldDefinition['modelName']];
-                if (count($fieldDefinition['Fields'])>0 && isset($fieldDefinition['type']) && $fieldDefinition['type'] == 'with') {
-                    $subComponents.=$this->CreateSubViewComponent(
-                        $fieldDefinition['modelName'],
-                        $fieldDefinition['Fields'], 
-                        $baseModel->getRelationType($fieldDefinition['modelName']),
-                        function($type,$fields) use ($fieldDefinition){
-                            if($type== 'onetoone' || $type== 'manytoone'){
-                                return $this->GenerateSingularComponent($fields);
-                            }else{
-                                $thead='';
-                                $tcontent='';
-                                foreach ($fields as $field) {
-                                    $thead .= '
-                                        <th>
-                                            ' . ($field->label ?? $field->name) . '
-                                        </th>';
-                                    $field = (object)$this->AvailableModels[$fieldDefinition['modelName']]->getFieldDefinition($field->name);
-                                    $tcontent.='
-                                        <td>
-                                            {{$'. ($fieldDefinition['modelName'] . "_row['" . $field->name . "']").'??""}}
-                                        </td>
-                                    ';
-                                }
-                                $thead='
-                                    <tr>
-                                        '. $thead. '
-                                    </tr>';
-                                return ' 
-                                <table class="table table-striped table-hover">
-                                    '. $thead.'
-                                    @foreach($'. strtolower($fieldDefinition['modelName']).'s as $'. $fieldDefinition['modelName'].'_row)
-                                        <tr>
-                                            '. $tcontent. '
-                                        </tr>
-                                    @endforeach
-                                </table>';
-                            }
-                            return '';
-                        }
-                    );
-                }
-                foreach($fieldDefinition['Fields'] as $field){
-                    $definition=$this->AvailableModels[$fieldDefinition['modelName']]->getFieldDefinition($field->name);
-                    $content .= $this->GenerateSingularComponent((object)array_merge((array)($definition??[]),(array)$field));
-                }
-            }
-            $content= '<div class="container-fluid singular"><div class="row">'. $content. '</div></div>';
-        }else{//CRUD
-
-        }
-        if(strlen($subComponents)>0){
-            $content.= '
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="panel-group" id="sub_component_Accordion" class="Accordions">
-                            ' . $subComponents . '
-                        </div>
-                    </div>
-                </div>
-            ';
-        }
-        return $content;
     }
 
     private function generateAccordionPage(){
@@ -311,19 +166,23 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
     }
 
     private function getPageContents(){
-
+        $methodName = 'feiron\\felaraframe\\lib\\BluePrints\\builders\\';
         switch(strtolower($this->Definition['style'])??'singular'){
             case "table":
-                return $this->generateTablePage();
+                // return $this->generateTablePage();
                 break;
             case "accordion":
-                return $this->generateAccordionPage();
+                // return $this->generateAccordionPage();
                 break;
             case "collection":
-                return $this->generateCollectionPage();
+                // return $this->generateCollectionPage();
+                $methodName .= 'ViewCollection';
                 break;
-            default://singular
-                return $this->generateSingularPage();
+            default: //singular
+                $methodName.= 'ViewSingular';
+        }
+        if (class_exists($methodName)) {
+            return (new $methodName($this->Definition, $this->AvailableModels))->BuildView();
         }
         return "";
     }
