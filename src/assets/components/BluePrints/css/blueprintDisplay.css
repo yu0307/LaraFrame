@@ -16,3 +16,7 @@
     padding: 2px 10px 2px 10px;
     font-size: 16px;
 }
+.blueprints .collections tr.hiddenItems td.hidden_content {
+    display: none;
+    border: 1px solid whitesmoke;
+}

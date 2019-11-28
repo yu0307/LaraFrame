@@ -9,6 +9,7 @@ class ViewCollection extends BluePrintsViewBuilderBase {
     public function __construct($MethodDefinition = null, $ModelList){
         parent::__construct(($MethodDefinition??[]), $ModelList);
     }
+
     private function GenerateComponent($contrlDefinition){
         return '
                                 <td class="collection_component ' . ($contrlDefinition->container_class ?? '') . '" ' . ($contrlDefinition->container_attr ?? '') . '>
@@ -40,7 +41,7 @@ class ViewCollection extends BluePrintsViewBuilderBase {
                                     ' . $thead . '
                                 </tr>';
             return '
-                            <tr class="hidden">
+                            <tr class="hiddenItems">
                                 <td class="hidden_content CL_' . $relationName . '" colspan="1000">
                                     <table class="table table-striped table-hover">
                                         ' . $thead . '
@@ -50,6 +51,7 @@ class ViewCollection extends BluePrintsViewBuilderBase {
                                             </tr>
                                         @endforeach
                                     </table>
+                                    <button class="btn btn-sm btn-mini btn-success pull-right closeHidden"> Close </button>
                                 </td>
                             </tr>
         ';
@@ -100,7 +102,7 @@ class ViewCollection extends BluePrintsViewBuilderBase {
 
         }
         $content = '
-        <div class="container-fluid">
+        <div class="container-fluid collections">
             <div class="row col-md-12 col-sm-12">
                 <table class="table table-striped table-hover">
                     <thead>
