@@ -104,38 +104,41 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
         $modelDefinition= $this->MethodDefinition['model']??false;
         if(false!== $modelDefinition){
             $selects = [];
+            $bridge=[];
             $contents='                    
                     $query='.self::modelClassPrefix. $modelDefinition->name.'::query();' ;
-            // if(isset($this->madeVisible[$modelDefinition->name]) && !empty(($this->madeVisible[$modelDefinition->name]))){
-            //     $contents .= '
-            //         $query->getModel()->makeVisible([' . join(',', $this->madeVisible[$modelDefinition->name]) . ']);
-            //     ';
-            // }
             foreach(($modelDefinition->fields??[]) as $field){
                 array_push($selects,($modelDefinition->name.'.'. $field->name));
             }
+            
             if(isset($modelDefinition->with) && !empty($modelDefinition->with)) {//eager-loading
                 $eagerLoad=[];
                 foreach (($modelDefinition->with) as $withModel) {
                     $eager= ("'" . $withModel->name . "s'");
-                    if(isset($withModel->params) && !empty($withModel->params)){
-                        $using=[];
-                        $eagerContent='';
-                        foreach($withModel->params as $param){
+                    $using = [];
+                    $eagerContent = (empty($withModel->fields ?? [])?'':('
+                        $q->select([' . join(',',array_map(function($field){return ("'" . $field->name . "'"); }, $withModel->fields)). ']);
+                        '));
+                    if(!empty($this->MethodDefinition['params']) && isset($withModel->params) && !empty($withModel->params)){
+                        foreach(($withModel->params??[]) as $param){
                             array_push($using,'$'. $param->name);
                             $eagerContent.= 'if(!empty($' . $param->name . ') ){ $q->where("'. $param->name. '","=",$' . $param->name . ');}';
                         }
-                        $eager .= '=> function($q) use ('.join(',',$using).'){'. $eagerContent.'}';
+                    }
+                    if(strlen($eagerContent)>0){
+                        $eager .= '=> function($q) use ($request'.(empty($using)?'': (',' . join(',', $using))).'){' . $eagerContent . '}';
                     }
                     array_push($eagerLoad, $eager );
+                    $target= $this->ModelList[$modelDefinition->name]->getRelationTarget($withModel->name);
+                    array_push($bridge, ("'".$modelDefinition->name . '.' . $target .' as '. $target."'"));
                 }
                 if(!empty($eagerLoad)){
                     $contents.= '
-                    $query->with('.(count($eagerLoad)>1?("[".join(',', $eagerLoad)."]"):$eagerLoad[0]).');';
+                    $query->with(['. join(',', $eagerLoad).']);';
                 }
             }
 
-            if (isset($modelDefinition->join) && !empty($modelDefinition->join)) {
+            if (isset($modelDefinition->join) && !empty($modelDefinition->join)) { //Joining tables
                 $join=[];
                 foreach (($modelDefinition->join) as $joinDefinition) {
                     if(isset($joinDefinition->name) && !empty($joinDefinition->name)){
@@ -167,12 +170,14 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
                     $query'.join('->', $join).';';
                 }
             }
-            if($this->prefixTableName && !empty($selects)){
+
+
+            if($this->prefixTableName && (!empty($selects)|| !empty($bridge))){//Enabling select when duplicated column names are present or eager loading is present.
                 $contents .= '
-                    $query->select(['.join(',
-                    ',array_map(function($s){
-                        return ("'".$s." as ".str_replace('.','~', $s)."'");
-                    },$selects)).']);
+                    $query->select([' . join(',
+                    ', array_map(function ($s) {
+                    return ("'" . $s . " as " . str_replace('.', '~', $s) . "'");
+                }, $selects)).((!empty($selects) && !empty($bridge))?',':''). join(', ', $bridge) . ']);
                 ';
             }
         }

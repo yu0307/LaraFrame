@@ -95,11 +95,12 @@ class ViewSingular extends BluePrintsViewBuilderBase {
 
                     foreach ($fieldDefinition['Fields'] as $field) {
                         $definition = $this->ModelList[$fieldDefinition['modelName']]->getFieldDefinition($field->name);
+                        $newfield = clone ($field);
                         if($prefixModel==true){
-                            $field->label= $field->name;
-                            $field->name= $fieldDefinition['modelName'].'s->'. $field->name;
+                            $newfield->label= $field->name;
+                            $newfield->name= $fieldDefinition['modelName'].'s->'. $newfield->name;
                         }
-                        $content .= $this->GenerateComponent((object) array_merge((array) ($definition ?? []), (array) $field));
+                        $content .= $this->GenerateComponent((object) array_merge((array) ($definition ?? []), (array) $newfield));
                     }
                 } 
             }

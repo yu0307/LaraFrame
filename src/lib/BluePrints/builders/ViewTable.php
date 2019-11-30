@@ -20,17 +20,32 @@ class ViewTable extends BluePrintsViewBuilderBase {
 
     public function BuildView(): string{
         $content ='';
+        $baseModel = null;
         if (strtolower($this->ViewDefinition['usage'] ?? 'display') === 'display') {
             $headers=[];
             $headerDef=[];
             foreach (($this->ViewDefinition['FieldList'] ?? []) as $fieldDefinition){
-                if(isset($fieldDefinition['type']) && $fieldDefinition['type']=='with'){
-                //handle multi-view 
-                }else{
-                    foreach($fieldDefinition['Fields'] as $field){
-                        array_push($headers, ("'".($field->label ?? $field->name)."'"));
-                        array_push($headerDef, ("
-                                                    ['data'=>'". $fieldDefinition['modelName'].'~'. $field->name."']"));
+                $prefixModel = false;
+                if (!isset($baseModel)) $baseModel = $this->ModelList[$fieldDefinition['modelName']];
+                if (count($fieldDefinition['Fields'] ?? []) > 0) {
+                    if (isset($fieldDefinition['type']) && $fieldDefinition['type'] == 'with') {
+                        if (in_array(strtolower($baseModel->getRelationType($fieldDefinition['modelName'])), ['onetomany', 'manytomany'])) {
+                            //many to many 
+                            continue;
+                        }else{
+                            $prefixModel = true;
+                        }
+                    }
+                    foreach ($fieldDefinition['Fields'] as $field) {
+                        if ($prefixModel == true) {
+                            $field->label = $field->name;
+                            array_push($headerDef, ("
+                                                        ['data'=>\"" . strtolower($fieldDefinition['modelName']) . "s.". $field->name."\"]"));
+                        }else{
+                            array_push($headerDef, ("
+                                                        ['data'=>'" . $fieldDefinition['modelName'] . '~' . $field->name . "']"));
+                        }
+                        array_push($headers, ("'" . ($field->label ?? $field->name) . "'"));
                     }
                 }
             }

@@ -19,6 +19,22 @@ class DisplayTable extends BluePrintsMethodBuilderBase {
                     $withData=$this->get_results($request, $query, $searchingFields);
             ';
         }
+        // function ($eagerContent, $baseModel, $withModel) {
+        //     if (!in_array(strtolower($baseModel->getRelationType($withModel->name)), ['onetomany', 'manytomany'])) {
+        //         return $eagerContent .= '
+        //                 if($request->filled("columns")){
+        //                     foreach($request->input("columns") as &$filterColumn){
+        //                         if (isset($filterColumn["search"]["value"])) {
+        //                             if(in_array(strtolower($filterColumn["search"]["data"]),$eagerFilter)){
+        //                                 $q->where($filterColumn["search"]["data"],"=",$filterColumn["search"]["value"]);
+        //                             }
+        //                         }
+        //                     }
+        //                 }
+        //             ';
+        //     }
+        //     return $eagerContent;
+        // }
         return '';
     }
 
@@ -31,14 +47,16 @@ class DisplayTable extends BluePrintsMethodBuilderBase {
         $filterList=[];
         if(isset($this->MethodDefinition['tableFilter']) && is_array($this->MethodDefinition['tableFilter'])){
             foreach($this->MethodDefinition['tableFilter'] as $filter){
-                if($filter->fields!==false){
-                    if($filter->fields=='all'){
-                        foreach(($this->ModelList[$filter->name]->getFieldNames()??[]) as $field){
-                            array_push($filterList, ("'" . $filter->name . "." . $field->name . "'"));
-                        }
-                    }else{
-                        foreach($filter->fields as $field){
-                            array_push($filterList,("'".$filter->name.".".$field."'"));
+                if(!in_array($filter->name, ($this->MethodDefinition['model']->eager??[]))){
+                    if ($filter->fields !== false) {
+                        if ($filter->fields == 'all') {
+                            foreach (($this->ModelList[$filter->name]->getFieldNames() ?? []) as $field) {
+                                array_push($filterList, ("'" . $filter->name . "." . $field->name . "'"));
+                            }
+                        } else {
+                            foreach ($filter->fields as $field) {
+                                array_push($filterList, ("'" . $filter->name . "." . $field . "'"));
+                            }
                         }
                     }
                 }

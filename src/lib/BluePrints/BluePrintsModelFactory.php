@@ -72,6 +72,10 @@ class BluePrintsModelFactory {
         return (($this->isRelatedTo($modelName)===true)?$this->RelatedModels[$modelName]['type']:null);
     }
 
+    public function getRelationTarget($modelName){
+        return (($this->isRelatedTo($modelName)===true)?$this->RelatedModels[$modelName]['on']:null);
+    }
+
     private function getRelationModifier($relation,$reverse=false){
         switch(strtolower($relation->type)){
             case "onetoone":
@@ -135,7 +139,8 @@ class BluePrintsModelFactory {
         if(array_key_exists($relation->target,$this->RelatedModels)===false){
             $this->RelatedModels[$relation->target]=[
                 "target"=> $relation->target,
-                "type"=> $relation->type
+                "type"=> $relation->type,
+                "on" => $relation->sourceReference
             ];
         }
     }

@@ -99,12 +99,13 @@ class ViewAccordion extends BluePrintsViewBuilderBase {
                         <div id="AC_' . $fieldDefinition['modelName'] . '" class="panel-collapse collapse">
                             <div class="panel-body">
                                 '.(strlen($subViewContents)>0?$subViewContents:(join('
-                                ',array_map(function($field) use ($fieldDefinition, $prefixModel){ 
+                                ',array_map(function($field) use ($fieldDefinition, $prefixModel){
+                                        $newfield = clone ($field);
                                         if ($prefixModel == true) {
-                                            $field->label = $field->name;
-                                            $field->name = '["'.strtolower($fieldDefinition['modelName']) . 's"]' . $field->name;
+                                            $newfield->label = $field->name;
+                                            $newfield->name = '["'.strtolower($fieldDefinition['modelName']) . 's"]' . $newfield->name;
                                         }
-                                        return $this->GenerateComponent($field); 
+                                        return $this->GenerateComponent($newfield); 
                                     },($fieldDefinition['Fields']??[]))))).'
                             </div>
                         </div>

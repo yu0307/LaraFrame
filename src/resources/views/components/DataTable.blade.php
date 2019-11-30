@@ -82,6 +82,12 @@
                             {{($tableID.'_setting')}}.ajaxDataFunc(data);
                         }
                     }
+                    {{($tableID.'_setting')}}.ajax.dataSrc=function(json){
+                        if ({{($tableID.'_setting')}}.ajaxDataSrcFunc!=undefined && {{($tableID.'_setting')}}.ajaxDataSrcFunc instanceof Function) {
+                            json.data={{($tableID.'_setting')}}.ajaxDataSrcFunc(data);
+                        }
+                        return json.data;
+                    }
                 @endif
                 var my_dataTable=$('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
                 @if (($enableHeaderSearch??false)===true)

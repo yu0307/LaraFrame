@@ -64,6 +64,7 @@ class ViewCollection extends BluePrintsViewBuilderBase {
         $header = '';
         $tableContent = '';
         $subComponents='';
+        $baseModel=null;
         if (strtolower($this->ViewDefinition['usage'] ?? 'display') === 'display') {
             foreach (($this->ViewDefinition['FieldList'] ?? []) as $fieldDefinition) {
                 $prefixModel = false;
@@ -88,12 +89,13 @@ class ViewCollection extends BluePrintsViewBuilderBase {
                     foreach ($fieldDefinition['Fields'] as $field) {
                         $header .= ('<th>' . ($field->label ?? $field->name) . '</th>');
                         if(isset($field->name)){
-                            $field->name= "['".$field->name."']";
+                            $newfield= clone($field);
+                            $newfield->name= "['".$field->name."']";
                             if ($prefixModel == true) {
-                                $field->label = $field->name;
-                                $field->name = '["'.strtolower($fieldDefinition['modelName']) . 's"]' . $field->name;
+                                $newfield->label = $field->name;
+                                $newfield->name = '["'.strtolower($fieldDefinition['modelName']) . 's"]' . $newfield->name;
                             }
-                            $tableContent .= $this->GenerateComponent($field, 'row');
+                            $tableContent .= $this->GenerateComponent($newfield, 'row');
                         }
                     }
                 } 

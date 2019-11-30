@@ -90,6 +90,8 @@ class BluePrintsFactory {
 
             if (isset($pageDefinition->model) && array_key_exists($pageDefinition->model->name, $this->ModelList)) {
 
+                $pageDefinition->model->eager=[];
+
                 if (!in_array($pageDefinition->model->name, $controllerDefinition['useModels'])) array_push($controllerDefinition['useModels'], $pageDefinition->model->name);
 
                 if (is_string($pageDefinition->model->fields) === true && strtolower($pageDefinition->model->fields) == 'all') {
@@ -104,6 +106,9 @@ class BluePrintsFactory {
                     if (true === array_key_exists($withModel->name, $this->ModelList) && $this->ModelList[$pageDefinition->model->name]->isRelatedTo($withModel->name) === true) {
                         if (is_string($withModel->fields) === true && strtolower($withModel->fields) == 'all') {
                             $withModel->fields = $this->ModelList[$withModel->name]->getFieldNames();
+                        }
+                        if(false=== in_array($withModel->name, $pageDefinition->model->eager)){
+                            array_push($pageDefinition->model->eager, $withModel->name);
                         }
                         array_push($this->ViewList[$pageDefinition->name]['FieldList'], [
                             "modelName" => $withModel->name,
