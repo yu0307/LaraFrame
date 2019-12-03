@@ -102,7 +102,7 @@ class BluePrintsFactory {
                     "Fields" => $pageDefinition->model->fields
                 ]);
 
-                foreach ($pageDefinition->model->with ?? [] as $withModel) {
+                foreach ($pageDefinition->model->with ?? [] as $withModel) {//eager loadings...
                     if (true === array_key_exists($withModel->name, $this->ModelList) && $this->ModelList[$pageDefinition->model->name]->isRelatedTo($withModel->name) === true) {
                         if (is_string($withModel->fields) === true && strtolower($withModel->fields) == 'all') {
                             $withModel->fields = $this->ModelList[$withModel->name]->getFieldNames();
@@ -112,6 +112,7 @@ class BluePrintsFactory {
                         }
                         array_push($this->ViewList[$pageDefinition->name]['FieldList'], [
                             "modelName" => $withModel->name,
+                            "label" => $withModel->label??$withModel->name,
                             "Fields" => $withModel->fields,
                             "type" => 'with'
                         ]);

@@ -76,6 +76,10 @@ class BluePrintsModelFactory {
         return (($this->isRelatedTo($modelName)===true)?$this->RelatedModels[$modelName]['on']:null);
     }
 
+    public function getRelationRemoteTarget($modelName){
+        return (($this->isRelatedTo($modelName)===true)?$this->RelatedModels[$modelName]['targetReference']:null);
+    }
+
     private function getRelationModifier($relation,$reverse=false){
         switch(strtolower($relation->type)){
             case "onetoone":
@@ -92,7 +96,7 @@ class BluePrintsModelFactory {
                 array_push($tableName, $this->ModelDefinition['modelName'], $relation->target);
                 sort($tableName);
                 $tableName = 'MtoM_' . join('_', $tableName);
-                return "belongsToMany('App\model\\" . self::ModelClassPrefix . $relation->target."', '$tableName', '" . $relation->sourceReference . "','" . $relation->target.'_'.$relation->targetReference . "')";
+                return "belongsToMany('App\model\\" . self::ModelClassPrefix . $relation->target."', '$tableName', '" . $this->ModelDefinition['modelName'] . '_' . $relation->sourceReference . "','" . $relation->target.'_'.$relation->targetReference . "', '" . $relation->sourceReference . "', '" . $relation->targetReference . "')";
                 break;
         }
         return false;
@@ -140,6 +144,7 @@ class BluePrintsModelFactory {
             $this->RelatedModels[$relation->target]=[
                 "target"=> $relation->target,
                 "type"=> $relation->type,
+                "targetReference" => $relation->targetReference,
                 "on" => $relation->sourceReference
             ];
         }

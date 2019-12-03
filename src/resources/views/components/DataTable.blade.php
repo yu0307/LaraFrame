@@ -90,12 +90,37 @@
                     }
                 @endif
                 var my_dataTable=$('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
+                $('.dataTable').on('click','button.dt_details',function(){
+                    var DetailData=my_dataTable.row($(this).closest('tr')).data();
+                    if(undefined!==DetailData[$(this).attr('dataTarget')]){
+                        $('.shadow_tr').remove();
+                        var header='';
+                        var tableContents='';
+                        $(DetailData[$(this).attr('dataTarget')]).each(function($index,$row){
+                            tableContents+='<tr>';
+                            $.each( $row, function( key, value ) {
+                                if(key!=='pivot'){
+                                    if($index==0){
+                                        header+=('<th>'+key+'</th>');
+                                    }
+                                    tableContents+='<td>'+((value!=null)?value:'')+'</td>';
+                                }
+                            });
+                            tableContents+='</tr>';
+                        });
+                        $('<tr class="shadow_tr"><td style="display:none" colspan="'+$(this).closest('tr').find('td').length+'">'+((tableContents.length>0)?('<table class="table table-striped table-mini table-hover"><tr>'+header+'</tr>'+tableContents+'</table>'):'<h5 style="text-align:center">There are no data associate with this record.</h5>')+'<button class="btn btn-danger btn-sm btn-mini pull-right closeShadowTr"> Close </button></td></tr>').insertAfter($(this).closest('tr')).find('td').slideDown(300);
+                        
+                    }
+                });
+                $('.dataTable').on('click','button.closeShadowTr',function(){
+                    $(this).closest('tr').slideUp(300).remove();
+                });
                 @if (($enableHeaderSearch??false)===true)
                     var table=$('#{{$tableID}}');
                     var timer;
                     $(table).find('thead tr').clone(false).appendTo($(table).find('thead'));
-                    $(table).find('thead tr:eq(1) th:last-child').html('');
-                    $(table).find('thead tr:eq(1) th').each(function (i) {
+                    $(table).find('thead tr:eq(1) th:last-child, thead tr:eq(1) th.disableFilter, thead tr:eq(1) th.sorting_disabled').html('');
+                    $(table).find('thead tr:eq(1) th:not(".disableFilter, .sorting_disabled")').each(function (i) {
                         var title = $(this).removeClass('sorting').text();
                         $(this).html('<input type="text" placeholder="Search ' + title + '" />');
                         $('input', this).on('keyup change', function () {

@@ -30,21 +30,16 @@ class ViewTable extends BluePrintsViewBuilderBase {
                 if (count($fieldDefinition['Fields'] ?? []) > 0) {
                     if (isset($fieldDefinition['type']) && $fieldDefinition['type'] == 'with') {
                         if (in_array(strtolower($baseModel->getRelationType($fieldDefinition['modelName'])), ['onetomany', 'manytomany'])) {
-                            //many to many 
+                            $fieldName= $fieldDefinition['modelName'];
+                            array_push($headerDef, ("
+                                                        ['data'=>null, 'defaultContent'=>'<button dataTarget=\"". strtolower($fieldName)."s\" class=\"dt_details btn btn-sm btn-mini btn-primary\">View Details</button>','className'=>'disableFilter','searchable'=>false,'orderable'=>false]"));
+                            array_push($headers, ("'" . ($fieldDefinition['label'] ?? $fieldName) . "'"));
                             continue;
-                        }else{
-                            $prefixModel = true;
                         }
                     }
                     foreach ($fieldDefinition['Fields'] as $field) {
-                        if ($prefixModel == true) {
-                            $field->label = $field->name;
-                            array_push($headerDef, ("
-                                                        ['data'=>\"" . strtolower($fieldDefinition['modelName']) . "s.". $field->name."\"]"));
-                        }else{
-                            array_push($headerDef, ("
+                        array_push($headerDef, ("
                                                         ['data'=>'" . $fieldDefinition['modelName'] . '~' . $field->name . "']"));
-                        }
                         array_push($headers, ("'" . ($field->label ?? $field->name) . "'"));
                     }
                 }

@@ -41,7 +41,7 @@ class ViewCollection extends BluePrintsViewBuilderBase {
                                     ' . $thead . '
                                 </tr>';
             return '
-                            <tr class="hiddenItems">
+                            <tr class="hiddenItems shadow_tr">
                                 <td class="hidden_content CL_' . $relationName . '" colspan="1000">
                                     <table class="table table-striped table-hover">
                                         ' . $thead . '

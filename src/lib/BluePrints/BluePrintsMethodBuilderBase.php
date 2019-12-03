@@ -110,14 +110,15 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
             foreach(($modelDefinition->fields??[]) as $field){
                 array_push($selects,($modelDefinition->name.'.'. $field->name));
             }
-            
+
             if(isset($modelDefinition->with) && !empty($modelDefinition->with)) {//eager-loading
                 $eagerLoad=[];
                 foreach (($modelDefinition->with) as $withModel) {
-                    $eager= ("'" . $withModel->name . "s'");
+                    $eager= ("
+                            '" . $withModel->name . "s'");
                     $using = [];
                     $eagerContent = (empty($withModel->fields ?? [])?'':('
-                        $q->select([' . join(',',array_map(function($field){return ("'" . $field->name . "'"); }, $withModel->fields)). ']);
+                            $q->select([' . join(',',array_map(function($field){return ("'" . $field->name . "'"); }, $withModel->fields)). ']);
                         '));
                     if(!empty($this->MethodDefinition['params']) && isset($withModel->params) && !empty($withModel->params)){
                         foreach(($withModel->params??[]) as $param){
@@ -148,7 +149,8 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
                                                 $join->'.
                                                 
                                                 join('->',array_map(function($onDef) use ($modelDefinition, $joinDefinition) {
-                                                    return 'on("' . $modelDefinition->name . '.' . $onDef . '","=","' . $joinDefinition->name . '.' . $onDef . '")';
+                                                    $onDef=explode(',', $onDef);
+                                                    return 'on("' . $modelDefinition->name . '.' . ($onDef[1]?? $onDef[0]) . '","=","' . $joinDefinition->name . '.' . $onDef[0] . '")';
                                                 }, $joinDefinition->on)).
 
                                                 ((isset($joinDefinition->modifier)&& !empty(isset($joinDefinition->modifier)))?(

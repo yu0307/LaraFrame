@@ -52,5 +52,26 @@
 }
 .blueprints .collections tr.hiddenItems td.hidden_content {
     display: none;
-    border: 1px solid whitesmoke;
+    border: 1px solid #d4d4d4;
+    background-color: whitesmoke;
+}
+.blueprints table.table-striped{
+    border: 1px solid #e0e0e0;
+    padding:10px;
+}
+.blueprints table.table-hover td{
+    border-bottom: none;
+}
+.blueprints table.table-mini{
+    border:1px solid gray;
+}
+.blueprints table.table-mini th, .blueprints table.table-mini>tbody>tr:hover {
+    background-color: gray !important;
+    color:snow !important;
+}
+.blueprints .shadow_tr > td{
+    border: 1px solid #e0e0e0;
+}
+.blueprints table.table-mini td{
+    border-bottom: none;
 }

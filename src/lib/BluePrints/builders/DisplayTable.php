@@ -11,30 +11,35 @@ class DisplayTable extends BluePrintsMethodBuilderBase {
         $this->prefixTableName = true;
     }
 
-    public function BuildMethod(): string{
+    private function PreModelProcess(){
+        $modelDefinition = $this->MethodDefinition['model'] ?? false;
+        if (false !== $modelDefinition && isset($modelDefinition->with) && !empty($modelDefinition->with)) { //eager-loading
+            foreach (($modelDefinition->with) as $index=>$withModel) {
+                $relatedModel= $this->ModelList[$modelDefinition->name];
+                if (in_array(strtolower($relatedModel->getRelationType($withModel->name)), ['manytoone', 'onetoone'])) {
+                    if(!isset($modelDefinition->join)){
+                        $modelDefinition->join=[];
+                    }
+                    array_push($modelDefinition->join,(object)[
+                        "type" => "left",
+                        "name" => $withModel->name,
+                        "fields" => $withModel->fields,
+                        "on" => [$relatedModel->getRelationRemoteTarget($withModel->name).','. $relatedModel->getRelationTarget($withModel->name)],
+                    ]);
+                    unset($modelDefinition->with[$index]);
+                }
+            }
+        }
+    }
 
+    public function BuildMethod(): string{
         if(strtoupper($this->MethodDefinition['type'])=='POST'){
-            return $this->PrepareModels(). '
+            $this->PreModelProcess();
+            return  $this->PrepareModels(). '
                     $searchingFields = ['.join(',',$this->BuildFilter()). '];
                     $withData=$this->get_results($request, $query, $searchingFields);
             ';
         }
-        // function ($eagerContent, $baseModel, $withModel) {
-        //     if (!in_array(strtolower($baseModel->getRelationType($withModel->name)), ['onetomany', 'manytomany'])) {
-        //         return $eagerContent .= '
-        //                 if($request->filled("columns")){
-        //                     foreach($request->input("columns") as &$filterColumn){
-        //                         if (isset($filterColumn["search"]["value"])) {
-        //                             if(in_array(strtolower($filterColumn["search"]["data"]),$eagerFilter)){
-        //                                 $q->where($filterColumn["search"]["data"],"=",$filterColumn["search"]["value"]);
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             ';
-        //     }
-        //     return $eagerContent;
-        // }
         return '';
     }
 
