@@ -66,6 +66,7 @@ class BluePrintsFactory {
                 $this->ViewList[$pageDefinition->name] = [
                     'name'=> $pageDefinition->name,
                     "style" => $pageDefinition->style,
+                    "withcrud" => $pageDefinition->withcrud??false,
                     "usage" => ($pageDefinition->usage?? 'display'),
                     'title' => ($pageDefinition->title ?? ''),
                     'subtext' => ($pageDefinition->subtext ?? ''),

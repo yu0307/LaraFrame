@@ -18,7 +18,8 @@ abstract class BluePrintsViewBuilderBase implements BluePrintViewBuilderContract
         "subtext" => "",
         "html" => "",
         "FieldList" => [],
-        "headerSearch" => false
+        "headerSearch" => false,
+        'withcrud'=>false
     ];
 
     public function __construct($ViewDefinition = null, $ModelList){
