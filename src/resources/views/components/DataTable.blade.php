@@ -120,22 +120,24 @@
                     var timer;
                     $(table).find('thead tr').clone(false).appendTo($(table).find('thead'));
                     $(table).find('thead tr:eq(1) th:last-child, thead tr:eq(1) th.disableFilter, thead tr:eq(1) th.sorting_disabled').html('');
-                    $(table).find('thead tr:eq(1) th:not(".disableFilter, .sorting_disabled")').each(function (i) {
-                        var title = $(this).removeClass('sorting').text();
-                        $(this).html('<input type="text" placeholder="Search ' + title + '" />');
-                        $('input', this).on('keyup change', function () {
-                            if (my_dataTable.column(i).search() !== this.value) {
-                                clearTimeout(timer);
-                                var tarval = this.value;
-                                timer = setTimeout(function() {
-                                    my_dataTable
-                                        .column(i)
-                                        .search(tarval)
-                                        .draw();
-                                }, 700);
-                            }
-
-                        });
+                    $(table).find('thead tr:eq(1) th').each(function (i) {
+                        if(!$(this).hasClass('disableFilter') && !$(this).hasClass('sorting_disabled')){
+                            var title = $(this).removeClass('sorting').text();
+                            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                            $('input', this).on('keyup change', function () {
+                                if (my_dataTable.column(i).search() !== this.value) {
+                                    clearTimeout(timer);
+                                    var tarval = this.value;
+                                    timer = setTimeout(function() {
+                                        my_dataTable
+                                            .column(i)
+                                            .search(tarval)
+                                            .draw();
+                                    }, 700);
+                                }
+    
+                            });
+                        }
                     });
                 @endif
             @endpushonce
