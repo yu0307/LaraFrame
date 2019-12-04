@@ -43,11 +43,6 @@ class DisplayTable extends BluePrintsMethodBuilderBase {
         return '';
     }
 
-    public function BuildCRUD(): string{
-        
-        return '';
-    }
-
     private function BuildFilter(){
         $filterList=[];
         if(isset($this->MethodDefinition['tableFilter']) && is_array($this->MethodDefinition['tableFilter'])){

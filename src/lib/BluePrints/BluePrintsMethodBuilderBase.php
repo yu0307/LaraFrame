@@ -32,7 +32,7 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
     }
 
     public abstract function BuildMethod():string;
-    public abstract function BuildCRUD(): string;
+    // public abstract function BuildCRUD(): string;
 
     // protected function SetVisible($modelName,$fieldName){
     //     if(!array_key_exists($modelName,$this->madeVisible)){

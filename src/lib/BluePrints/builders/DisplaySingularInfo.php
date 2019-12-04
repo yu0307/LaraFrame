@@ -17,10 +17,4 @@ class DisplaySingularInfo extends BluePrintsMethodBuilderBase {
                         $withData=array_merge($withData,(($query->first()??new Collection([]))->toArray()));
         ';
     }
-
-    public function BuildCRUD(): string{
-        
-        return '';
-    }
-
 }

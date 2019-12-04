@@ -122,10 +122,4 @@ class ViewSingular extends BluePrintsViewBuilderBase {
         }
         return $content;
     }
-
-    public function BuildCRUD(): string{
-        
-        return '';
-    }
-
 }

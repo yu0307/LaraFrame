@@ -7,6 +7,6 @@ interface BluePrintViewBuilderContract
 
     public function BuildView():string;
 
-    public function BuildCRUD(): string;
+    // public function BuildCRUD(): string;
 
 }

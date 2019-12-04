@@ -7,6 +7,6 @@ interface BluePrintMethodBuilderContract
 
     public function BuildMethod():string;
 
-    public function BuildCRUD(): string;
+    // public function BuildCRUD(): string;
 
 }

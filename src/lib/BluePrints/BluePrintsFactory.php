@@ -66,23 +66,45 @@ class BluePrintsFactory {
                 $this->ViewList[$pageDefinition->name] = [
                     'name'=> $pageDefinition->name,
                     "style" => $pageDefinition->style,
-                    "withcrud" => $pageDefinition->withcrud??false,
                     "usage" => ($pageDefinition->usage?? 'display'),
                     'title' => ($pageDefinition->title ?? ''),
                     'subtext' => ($pageDefinition->subtext ?? ''),
                     'html' => ($pageDefinition->html ?? ''),
                     "FieldList" => [],
                 ];
-                if(strtolower($pageDefinition->style)=='table'){//creating route for dataTable Ajax source
+                if(in_array(strtolower($pageDefinition->style),['table', 'crud'])){//creating route for dataTable Ajax source and Crud Table Style
                     array_push($pageDefinition->routes,(object)[
                         'name'=>'dTable_sr_'. $pageDefinition->name,
-                        'type'=>'POST'
+                        'type'=>'POST',
+                        'style'=>'table'
                     ]);
                     array_push($controllerDefinition['uses'], [
                         'name'=>"DataTables",
                         'target'=>'feiron\felaraframe\lib\traits\DataTables'
                         ]);
-                        $this->ViewList[$pageDefinition->name]['headerSearch']= ($pageDefinition->headerSearch ?? false);
+                    $this->ViewList[$pageDefinition->name]['headerSearch']= ($pageDefinition->headerSearch ?? false);
+                    if(strtolower($pageDefinition->style)=='crud'){
+                        array_push($pageDefinition->routes, (object) [
+                            'name' => 'bp_crud_' . $pageDefinition->name.'_Create',
+                            'usage' => 'crud_Create',
+                            'type' => 'POST'
+                        ]);
+                        array_push($pageDefinition->routes, (object) [
+                            'name' => 'bp_crud_' . $pageDefinition->name . '_Update',
+                            'usage' => 'crud_Update',
+                            'type' => 'POST'
+                        ]);
+                        array_push($pageDefinition->routes, (object) [
+                            'name' => 'bp_crud_' . $pageDefinition->name . '_Delete',
+                            'usage' => 'crud_Delete',
+                            'type' => 'POST'
+                        ]);
+                        array_push($controllerDefinition['uses'], [
+                            'name' => "crudActions",
+                            'target' => 'feiron\felaraframe\lib\traits\crudActions'
+                        ]);
+                        array_push($controllerDefinition['useModels'], 'Illuminate\Support\Facades\Validator');
+                    }
                 }
             }
             if (false == array_key_exists($pageDefinition->name, $this->ControllerList)) {
@@ -145,6 +167,7 @@ class BluePrintsFactory {
                     'view'=> $pageDefinition->name,
                     'type' => ($route->type ?? 'GET'),
                     'style'=> ($route->style??$pageDefinition->style??'singular'),
+                    'usage' => $route->usage??'',
                     'model'=> $pageDefinition->model,
                     'params'=>[],
                     'useModel'=>[]

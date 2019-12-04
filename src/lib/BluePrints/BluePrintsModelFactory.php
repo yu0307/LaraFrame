@@ -124,7 +124,7 @@ class BluePrintsModelFactory {
     }
 
     public function getFieldNames(){
-        return array_map(function($f){return (object)['name'=> $f,''];}, array_keys($this->FieldList));
+        return array_map(function($f){return (object)['name'=> $f];}, array_keys($this->FieldList));
     }
 
     public function getModelDefition($definitionName){

@@ -39,6 +39,9 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
             case "collection":
                 $methodName .= 'ViewCollection';
                 break;
+            case "crud":
+                $methodName .= 'ViewCrudTable';
+                break;
             default: //singular
                 $methodName.= 'ViewSingular';
         }
@@ -63,14 +66,18 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
             @section('content')
                 @fePortlet([
                             'id'=>'panel_". $this->Definition['name']. "',
-                            'class'=>'blueprints'
-                            ".(empty($this->Definition['title'])?'': (",'headerText'=>'<h3>". $this->Definition['title']."</h3>'")). "
+                            'class'=>'blueprints',
+                            'headerText'=>'".(empty($this->Definition['title'])?'': ("<h3>". $this->Definition['title']."</h3>")). "'
                             ])
                     " . (empty($this->Definition['subtext']) ? '' : ("<h5 class='alert alert-info'>" . $this->Definition['subtext'] . "</h5>")) . "
                     " . $this->getPageContents() . "
                 @endfePortlet
             @endsection
-
+            ". ((strtolower($this->Definition['style']) ?? 'singular')=='crud'? "
+            @push('footerscripts')
+                <script type='text/javascript' src='{{asset('/feiron/felaraframe/components/BluePrints/js/blueprintCrud.js')}}'></script>
+            @endpush
+            ":'')."
             ";
             $this->RootStorage->put($target, $contents);
             return $viewName;

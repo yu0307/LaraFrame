@@ -28,6 +28,6 @@ abstract class BluePrintsViewBuilderBase implements BluePrintViewBuilderContract
     }
 
     public abstract function BuildView():string;
-    public abstract function BuildCRUD(): string;
+    // public abstract function BuildCRUD(): string;
 
 }

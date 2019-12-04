@@ -118,10 +118,4 @@ class ViewAccordion extends BluePrintsViewBuilderBase {
 
         return '<div class="My_Accordion" id="My_Accordion">'.$content.'</div>';
     }
-
-    public function BuildCRUD(): string{
-        
-        return '';
-    }
-
 }
