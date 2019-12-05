@@ -6,7 +6,7 @@ trait crudActions{
 
     public function validateRequest(\Illuminate\Contracts\Validation\Validator $validator, \Illuminate\Http\Request $request){
         if ($validator->fails()) {
-            return $request->ajax() ?  ['status' => 'error', 'message' => $validator->getMessageBag()->toArray()] : redirect()
+            return $request->ajax() ?  response()->json(['status' => 'error', 'message' => $validator->getMessageBag()->toArray()]) : redirect()
                 ->back()
                 ->withErrors($validator);
         }

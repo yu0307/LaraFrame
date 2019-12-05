@@ -58,6 +58,7 @@ class BluePrintsFactory {
                 'name' => $pageDefinition->name,
                 'useModels' => [],
                 'uses'=>[],
+                'useLib' => [],
                 'methods' => []
             ];
 
@@ -103,7 +104,7 @@ class BluePrintsFactory {
                             'name' => "crudActions",
                             'target' => 'feiron\felaraframe\lib\traits\crudActions'
                         ]);
-                        array_push($controllerDefinition['useModels'], 'Illuminate\Support\Facades\Validator');
+                        array_push($controllerDefinition['useLib'], 'Illuminate\Support\Facades\Validator');
                     }
                 }
             }

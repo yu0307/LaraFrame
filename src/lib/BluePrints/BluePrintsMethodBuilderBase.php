@@ -176,10 +176,14 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
 
             if($this->prefixTableName && (!empty($selects)|| !empty($bridge))){//Enabling select when duplicated column names are present or eager loading is present.
                 $contents .= '
-                    $query->select([' . join(',
-                    ', array_map(function ($s) {
-                    return ("'" . $s . " as " . str_replace('.', '~', $s) . "'");
-                }, $selects)).((!empty($selects) && !empty($bridge))?',':''). join(', ', $bridge) . ']);
+                    $query->select([
+                                    "' . $modelDefinition->name . '.' . $this->ModelList[$modelDefinition->name]->getPrimary() . ' as tb_Identification",
+                                    ' . join(',
+                                        ', array_map(function ($s) {
+                                        return ("'" . $s . " as " . str_replace('.', '~', $s) . "'");
+                                    }, $selects)).((!empty($selects) && !empty($bridge))?',':''). join(', ', $bridge) . '
+                                    
+                                    ]);
                 ';
             }
         }

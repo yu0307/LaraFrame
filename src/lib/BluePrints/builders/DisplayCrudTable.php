@@ -28,25 +28,37 @@ class DisplayCrudTable extends BluePrintsMethodBuilderBase {
 
     private function buildCreateEdit($isUpdate=false){
         return $this->buildValidator($isUpdate). '
-                    if($this->validateRequest($validator, $request)===true){
+                    $res=$this->validateRequest($validator, $request);
+                    if($res===true){
+                        $keyID=$request->input("td_identification");
                         $request->replace($request->only('. (count($this->inputList)>1?('['.join(',',array_map(function($input){return ("'".$input."'");}, $this->inputList)).']'):"'". $this->inputList[0]."'").'));
                         '.($isUpdate===false? '
-                        $withData=$this->CRUD_Create($request,' . $this->MethodDefinition['model']->name . ');
+                        $withData=$this->CRUD_Create($request,'. self::modelClassPrefix . $this->MethodDefinition['model']->name . '::class);
                         ': '
-                        $withData=$this->CRUD_Update($request,"' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '",' . $this->MethodDefinition['model']->name . ');').'
+                        $request->merge(["' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '"=>$keyID]);
+                        $withData=$this->CRUD_Update($request,"' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '",'. self::modelClassPrefix . $this->MethodDefinition['model']->name . '::class);'). '
+                    }else{
+                        return $res;
                     }
+                    
         ';
     }
 
     private function buildDelete(){
         return '
+                    if($request->filled("td_identification")){
+                        $request->merge(["' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '"=>$request->input("td_identification")]);
+                    } 
                     $validator = Validator::make($request->all(), [
                         "' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '"=>["required"]
                     ]);
-                    if($this->validateRequest($validator, $request)===true){
-                        $withData=$this->CRUD_Delete($request,"' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '",' . $this->MethodDefinition['model']->name . ');
+                    $res=$this->validateRequest($validator, $request);
+                    if($res===true){
+                        $withData=$this->CRUD_Delete($request,"' . $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary() . '",' . self::modelClassPrefix . $this->MethodDefinition['model']->name . '::class);
+                    }else{
+                        return $res;
                     }
-                    $withData=(["status" => "error", "message" => "Validation Failed"]);
+                    
         ';
     }
 
@@ -71,7 +83,7 @@ class DisplayCrudTable extends BluePrintsMethodBuilderBase {
                     array_push($fieldRule, "'required'");
                     array_push($message, ("'" . $field->name . ".required'=>'" . $field->name . " is required.'"));
                 }else{
-                    array_push($fieldRule, "'sometimes'");
+                    array_push($fieldRule, "'nullable'");
                 }
                 if (($fieldDef['unique'] ?? false) === true) {
                     array_push($fieldRule, ("'unique:". $this->MethodDefinition['model']->name.','. $field->name."'"));

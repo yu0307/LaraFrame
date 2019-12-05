@@ -25,6 +25,8 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
         use Illuminate\Http\Request;
         use App\Http\Controllers\Controller;
         use Illuminate\Support\Collection;
+        '.(empty($this->Definition['useLib'])?'':(join('',array_map(function($model){return '
+        use '.$model.';';}, $this->Definition['useLib'])))).'
 
         '.(empty($this->Definition['uses'])?'':(join('',array_map(function($use) use (&$using){
                 $using.='

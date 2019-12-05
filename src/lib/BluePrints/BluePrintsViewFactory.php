@@ -77,6 +77,17 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
             @push('footerscripts')
                 <script type='text/javascript' src='{{asset('/feiron/felaraframe/components/BluePrints/js/blueprintCrud.js')}}'></script>
             @endpush
+            @push('DocumentReady')
+                    if(my_dataTable!=undefined){
+                        MyDataTable=my_dataTable;
+                        MyDataTable.CrudURL={
+                            'create':'{{route('bpr_bp_crud_". $this->Definition['name']."_Create')}}',
+                            'edit':'{{route('bpr_bp_crud_". $this->Definition['name']. "_Update')}}',
+                            'delete':'{{route('bpr_bp_crud_". $this->Definition['name']. "_Delete')}}'
+                        };
+                    }
+                    CrudInterface=$('#crud_controlpage');
+            @endpush
             ":'')."
             ";
             $this->RootStorage->put($target, $contents);
