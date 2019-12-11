@@ -75,3 +75,24 @@
 .blueprints table.table-mini td{
     border-bottom: none;
 }
+.blueprints .bp_crud_controls{
+    position: relative;
+    z-index: 1000;
+}
+.blueprints .bp_crud_col .btn{
+    width: 100%;
+    clear: both;
+    margin: 2px;
+}
+.blueprints .crud_area{
+    max-height: 450px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+.blueprints .alert ul li{
+    list-style: none;
+}
+.blueprints .alert ul{
+    max-height: 120px;
+    overflow-y: auto;
+}

@@ -9,7 +9,6 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
     protected const Defaults =[
         "name" => "",
         "style" => "singular",
-        "usage" => "display",
         "title" => "",
         "subtext" => "",
         "html" => "",
@@ -42,6 +41,9 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
             case "crud":
                 $methodName .= 'ViewCrudTable';
                 break;
+            case "crudsingleton":
+                $methodName .= 'ViewCrudSingleton';
+                break;
             default: //singular
                 $methodName.= 'ViewSingular';
         }
@@ -69,6 +71,7 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                             'class'=>'blueprints',
                             'headerText'=>'".(empty($this->Definition['title'])?'': ("<h3>". $this->Definition['title']."</h3>")). "'
                             ])
+                    " . ($this->Definition['html']??'') . "
                     " . (empty($this->Definition['subtext']) ? '' : ("<h5 class='alert alert-info'>" . $this->Definition['subtext'] . "</h5>")) . "
                     " . $this->getPageContents() . "
                 @endfePortlet

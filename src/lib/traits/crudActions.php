@@ -8,14 +8,15 @@ trait crudActions{
         if ($validator->fails()) {
             return $request->ajax() ?  response()->json(['status' => 'error', 'message' => $validator->getMessageBag()->toArray()]) : redirect()
                 ->back()
+                ->withInput()
                 ->withErrors($validator);
         }
         return true;
     }
 
     public function CRUD_Create(\Illuminate\Http\Request $request,$model){
-        $model::create($request->all());
-        return (["status" => "success", "message" => "Record successfully created."]);
+        $newModel=$model::create($request->all());
+        return (["status" => "success", "message" => "Record successfully created.", "Pk"=> $newModel->getKey()]);
     }
 
     public function CRUD_Update(\Illuminate\Http\Request $request, $IdentificationKey, $model)

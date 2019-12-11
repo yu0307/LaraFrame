@@ -65,43 +65,39 @@ class ViewCollection extends BluePrintsViewBuilderBase {
         $tableContent = '';
         $subComponents='';
         $baseModel=null;
-        if (strtolower($this->ViewDefinition['usage'] ?? 'display') === 'display') {
-            foreach (($this->ViewDefinition['FieldList'] ?? []) as $fieldDefinition) {
-                $prefixModel = false;
-                if (!isset($baseModel)) $baseModel = $this->ModelList[$fieldDefinition['modelName']];
-                if (count($fieldDefinition['Fields'] ?? []) > 0) {
-                    if (($fieldDefinition['type'] ?? '') == 'with') {
-                        if (in_array(strtolower($baseModel->getRelationType($fieldDefinition['modelName'])), ['onetomany', 'manytomany'])) {
-                            $subComponents .= $this->CreateSubViewComponent($fieldDefinition['modelName'], $fieldDefinition['Fields']);
-                            $tableContent .= '
-                                <td class="collection_component">
-                                    <div class="collection_item" >
-                                        <button class="btn btn-mini btn-primary btn-sm" target="CL_' . $fieldDefinition['modelName'] . '">View Details</button>
-                                    </div>
-                                </td>
-                            ';
-                            $fieldDefinition['Fields']=[(object)['label'=> $fieldDefinition['modelName']]];
-                        } else {
-                            $prefixModel = true;
-                        }
+        foreach (($this->ViewDefinition['FieldList'] ?? []) as $fieldDefinition) {
+            $prefixModel = false;
+            if (!isset($baseModel)) $baseModel = $this->ModelList[$fieldDefinition['modelName']];
+            if (count($fieldDefinition['Fields'] ?? []) > 0) {
+                if (($fieldDefinition['type'] ?? '') == 'with') {
+                    if (in_array(strtolower($baseModel->getRelationType($fieldDefinition['modelName'])), ['onetomany', 'manytomany'])) {
+                        $subComponents .= $this->CreateSubViewComponent($fieldDefinition['modelName'], $fieldDefinition['Fields']);
+                        $tableContent .= '
+                            <td class="collection_component">
+                                <div class="collection_item" >
+                                    <button class="btn btn-mini btn-primary btn-sm" target="CL_' . $fieldDefinition['modelName'] . '">View Details</button>
+                                </div>
+                            </td>
+                        ';
+                        $fieldDefinition['Fields']=[(object)['label'=> $fieldDefinition['modelName']]];
+                    } else {
+                        $prefixModel = true;
                     }
+                }
 
-                    foreach ($fieldDefinition['Fields'] as $field) {
-                        $header .= ('<th>' . ($field->label ?? $field->name) . '</th>');
-                        if(isset($field->name)){
-                            $newfield= clone($field);
-                            $newfield->name= "['".$field->name."']";
-                            if ($prefixModel == true) {
-                                $newfield->label = $field->name;
-                                $newfield->name = '["'.strtolower($fieldDefinition['modelName']) . 's"]' . $newfield->name;
-                            }
-                            $tableContent .= $this->GenerateComponent($newfield, 'row');
+                foreach ($fieldDefinition['Fields'] as $field) {
+                    $header .= ('<th>' . ($field->label ?? $field->name) . '</th>');
+                    if(isset($field->name)){
+                        $newfield= clone($field);
+                        $newfield->name= "['".$field->name."']";
+                        if ($prefixModel == true) {
+                            $newfield->label = $field->name;
+                            $newfield->name = '["'.strtolower($fieldDefinition['modelName']) . 's"]' . $newfield->name;
                         }
+                        $tableContent .= $this->GenerateComponent($newfield, 'row');
                     }
-                } 
-            }
-        } else { //CRUD
-
+                }
+            } 
         }
         $content = '
         <div class="container-fluid collections">

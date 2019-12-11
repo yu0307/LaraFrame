@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class BluePrintsModelFactory {
     private $ModelDefinition;
     private $FieldList;
+    private $editableFields;
     private $myRelations;
     private $RelatedModels;
     private $PrimaryKey;
@@ -44,6 +45,7 @@ class BluePrintsModelFactory {
         $this->FieldList=[];
         $this->myRelations=[];
         $this->RelatedModels=[];
+        $this->editableFields=[];
         $this->PrimaryKey=null;
         $this->RootStorage = Storage::createLocalDriver(['root' => base_path()]);
         $ModelDefinition=[
@@ -140,6 +142,9 @@ class BluePrintsModelFactory {
             $this->SetPrimary($definition->name);
         }
         $this->FieldList[$definition->name]= array_merge(self::Defaults, (array) $definition);
+        if(($this->PrimaryKey!== $definition->name) && (($definition->editable ?? true) === true)){
+            $this->editableFields[$definition->name] = array_merge(self::Defaults, (array) $definition);
+        }
     }
 
     public function addRelation($relation){

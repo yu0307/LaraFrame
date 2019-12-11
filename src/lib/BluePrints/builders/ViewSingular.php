@@ -9,7 +9,7 @@ class ViewSingular extends BluePrintsViewBuilderBase {
     public function __construct($MethodDefinition = null, $ModelList){
         parent::__construct(($MethodDefinition??[]), $ModelList);
     }
-    private function GenerateComponent($contrlDefinition){
+    protected function GenerateComponent($contrlDefinition){
         return '
             <div class="page_component_container '. ($contrlDefinition->container_class ?? (in_array(strtolower($contrlDefinition->dataType ?? ''), ['text', 'longtext', 'mediumtext', 'tinytext']) ? 'col-md-12' : 'col-md-3 col-sm-6')).'" ' . ($contrlDefinition->container_attr??'') . '>
                 <div class="page_component">
@@ -77,37 +77,33 @@ class ViewSingular extends BluePrintsViewBuilderBase {
     public function BuildView(): string{
         $content = '';
         $subComponents = '';
-        if (strtolower($this->ViewDefinition['usage'] ?? 'display') === 'display') {
-            $baseModel = null;
-            foreach (($this->ViewDefinition['FieldList'] ?? []) as $fieldDefinition) {
-                $prefixModel=false;
-                if (!isset($baseModel)) $baseModel = $this->ModelList[$fieldDefinition['modelName']];
-                if (count($fieldDefinition['Fields']??[]) > 0){
-                    if( ($fieldDefinition['type']??'') == 'with') {
-                        if(in_array(strtolower($baseModel->getRelationType($fieldDefinition['modelName'])), ['onetomany', 'manytomany'])){
-                            $subComponents .= $this->CreateSubViewComponent($fieldDefinition['modelName'], $fieldDefinition['Fields']);
-                            continue;
-                        }else{
-                            $prefixModel = true;
-                        }
-                        
+        $baseModel = null;
+        foreach (($this->ViewDefinition['FieldList'] ?? []) as $fieldDefinition) {
+            $prefixModel=false;
+            if (!isset($baseModel)) $baseModel = $this->ModelList[$fieldDefinition['modelName']];
+            if (count($fieldDefinition['Fields']??[]) > 0){
+                if( ($fieldDefinition['type']??'') == 'with') {
+                    if(in_array(strtolower($baseModel->getRelationType($fieldDefinition['modelName'])), ['onetomany', 'manytomany'])){
+                        $subComponents .= $this->CreateSubViewComponent($fieldDefinition['modelName'], $fieldDefinition['Fields']);
+                        continue;
+                    }else{
+                        $prefixModel = true;
                     }
+                    
+                }
 
-                    foreach ($fieldDefinition['Fields'] as $field) {
-                        $definition = $this->ModelList[$fieldDefinition['modelName']]->getFieldDefinition($field->name);
-                        $newfield = clone ($field);
-                        if($prefixModel==true){
-                            $newfield->label= $field->name;
-                            $newfield->name= $fieldDefinition['modelName'].'s->'. $newfield->name;
-                        }
-                        $content .= $this->GenerateComponent((object) array_merge((array) ($definition ?? []), (array) $newfield));
+                foreach ($fieldDefinition['Fields'] as $field) {
+                    $definition = $this->ModelList[$fieldDefinition['modelName']]->getFieldDefinition($field->name);
+                    $newfield = clone ($field);
+                    if($prefixModel==true){
+                        $newfield->label= $field->name;
+                        $newfield->name= $fieldDefinition['modelName'].'s->'. $newfield->name;
                     }
-                } 
-            }
-            $content = '<div class="container-fluid singular"><div class="row">' . $content . '</div></div>';
-        } else { //CRUD
-
+                    $content .= $this->GenerateComponent((object) array_merge((array) ($definition ?? []), (array) $newfield));
+                }
+            } 
         }
+        $content = '<div class="container-fluid singular"><div class="row">' . $content . '</div></div>';
         
         if (strlen($subComponents) > 0) {
             $content .= '

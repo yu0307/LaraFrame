@@ -63,6 +63,9 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
                 case "crud":
                     $method .= $this->buildMethod('DisplayCrudTable', $methodDefinition);
                     break;
+                case "crudsingleton":
+                    $method .= $this->buildMethod('DisplayCrudSingleton', $methodDefinition);
+                    break;
                 case "collection":
                     $method.=$this->buildMethod('DisplayCollection', $methodDefinition);
                     break;

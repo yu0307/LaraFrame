@@ -4,11 +4,10 @@ namespace feiron\felaraframe\lib\BluePrints\builders;
 
 use feiron\felaraframe\lib\BluePrints\BluePrintsMethodBuilderBase;
 
-class DisplayCrudTable extends BluePrintsMethodBuilderBase {
+class DisplayCrudSingleton extends BluePrintsMethodBuilderBase {
 
     public function __construct($MethodDefinition = null, $ModelList){
         parent::__construct(($MethodDefinition??[]), $ModelList);
-        $this->prefixTableName = true;
     }
 
     public function BuildMethod(): string{
@@ -19,16 +18,30 @@ class DisplayCrudTable extends BluePrintsMethodBuilderBase {
                 return $this->buildCreateEdit(true);
             case "crud_Delete":
                 return $this->buildDelete();
+            default:
+                return $this->buildDisplay();
         }
         return '';
     }
 
+    private function buildDisplay(){
+        $targetModel = $this->ModelList[$this->MethodDefinition['model']->name];
+        return '
+                    if(isset($'. $targetModel->getPrimary().')){
+                                ' . $this->PrepareModels() . '
+                                ' . $this->PrepareInputs() . '
+                                $withData=(($query->first()??new Collection([]))->toArray());
+                    }
+                    $withData["' . $targetModel->getPrimary() . '"]=$' . $targetModel->getPrimary() . ';
+        ';
+    }
+
     private function buildCreateEdit($isUpdate=false){
-        $primary = $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary();
+        $primary= $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary();
         return $this->buildValidator($isUpdate). '
                     $res=$this->validateRequest($validator, $request);
                     if($res===true){
-                        $keyID=$request->input("td_identification");
+                        $keyID=$request->input("'. $primary.'");
                         $request->replace($request->only('. (count($this->inputList)>1?('['.join(',',array_map(function($input){return ("'".$input."'");}, $this->inputList)).']'):"'". $this->inputList[0]."'").'));
                         '.($isUpdate===false? '
                         $withData=$this->CRUD_Create($request,'. self::modelClassPrefix . $this->MethodDefinition['model']->name . '::class);
@@ -45,9 +58,6 @@ class DisplayCrudTable extends BluePrintsMethodBuilderBase {
     private function buildDelete(){
         $primary = $this->ModelList[$this->MethodDefinition['model']->name]->getPrimary();
         return '
-                    if($request->filled("td_identification")){
-                        $request->merge(["' . $primary . '"=>$request->input("td_identification")]);
-                    } 
                     $validator = Validator::make($request->all(), [
                         "' . $primary . '"=>["required"]
                     ]);
@@ -57,7 +67,6 @@ class DisplayCrudTable extends BluePrintsMethodBuilderBase {
                     }else{
                         return $res;
                     }
-                    
         ';
     }
 }

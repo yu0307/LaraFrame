@@ -50,6 +50,19 @@ class BluePrintsFactory {
         }
     }
 
+    public function addController($name, $controllerDefinition){
+        $this->ControllerList[$name] = $controllerDefinition;
+    }
+    public function addView($name, $viewDefinition){
+        $this->ViewList[$name] = $viewDefinition;
+    }
+    public function addRoute($routeDefinition){
+        array_push($this->routeList, $routeDefinition);
+    }
+    public function addPage($name,$pageDefinition){
+        $this->PageList[$name]= $pageDefinition;
+    }
+
     public function ExtractInfo(){
         // dd($this->ModelList);
         foreach ($this->blueprint->pages as $pageDefinition) {
@@ -64,16 +77,17 @@ class BluePrintsFactory {
 
             if (false == array_key_exists($pageDefinition->name, $this->ViewList)) {
                 $pageDefinition->style = $pageDefinition->style ?? 'singular';
-                $this->ViewList[$pageDefinition->name] = [
-                    'name'=> $pageDefinition->name,
+                $this->addView($pageDefinition->name, [
+                    'name' => $pageDefinition->name,
                     "style" => $pageDefinition->style,
-                    "usage" => ($pageDefinition->usage?? 'display'),
+                    "usage" => ($pageDefinition->usage ?? 'display'),
                     'title' => ($pageDefinition->title ?? ''),
                     'subtext' => ($pageDefinition->subtext ?? ''),
                     'html' => ($pageDefinition->html ?? ''),
                     "FieldList" => [],
-                ];
+                ]);
                 if(in_array(strtolower($pageDefinition->style),['table', 'crud'])){//creating route for dataTable Ajax source and Crud Table Style
+                    
                     array_push($pageDefinition->routes,(object)[
                         'name'=>'dTable_sr_'. $pageDefinition->name,
                         'type'=>'POST',
@@ -83,33 +97,31 @@ class BluePrintsFactory {
                         'name'=>"DataTables",
                         'target'=>'feiron\felaraframe\lib\traits\DataTables'
                         ]);
+
                     $this->ViewList[$pageDefinition->name]['headerSearch']= ($pageDefinition->headerSearch ?? false);
-                    if(strtolower($pageDefinition->style)=='crud'){
-                        array_push($pageDefinition->routes, (object) [
-                            'name' => 'bp_crud_' . $pageDefinition->name.'_Create',
-                            'usage' => 'crud_Create',
-                            'type' => 'POST'
-                        ]);
-                        array_push($pageDefinition->routes, (object) [
-                            'name' => 'bp_crud_' . $pageDefinition->name . '_Update',
-                            'usage' => 'crud_Update',
-                            'type' => 'POST'
-                        ]);
-                        array_push($pageDefinition->routes, (object) [
-                            'name' => 'bp_crud_' . $pageDefinition->name . '_Delete',
-                            'usage' => 'crud_Delete',
-                            'type' => 'POST'
-                        ]);
-                        array_push($controllerDefinition['uses'], [
-                            'name' => "crudActions",
-                            'target' => 'feiron\felaraframe\lib\traits\crudActions'
-                        ]);
-                        array_push($controllerDefinition['useLib'], 'Illuminate\Support\Facades\Validator');
-                    }
                 }
-            }
-            if (false == array_key_exists($pageDefinition->name, $this->ControllerList)) {
-                $this->ControllerList[$pageDefinition->name] = $controllerDefinition;
+                if (in_array(strtolower($pageDefinition->style), ['crud', 'crudsingleton'])) {
+                    array_push($pageDefinition->routes, (object) [
+                        'name' => 'bp_crud_' . $pageDefinition->name . '_Create',
+                        'usage' => 'crud_Create',
+                        'type' => 'POST'
+                    ]);
+                    array_push($pageDefinition->routes, (object) [
+                        'name' => 'bp_crud_' . $pageDefinition->name . '_Update',
+                        'usage' => 'crud_Update',
+                        'type' => 'POST'
+                    ]);
+                    array_push($pageDefinition->routes, (object) [
+                        'name' => 'bp_crud_' . $pageDefinition->name . '_Delete',
+                        'usage' => 'crud_Delete',
+                        'type' => 'POST'
+                    ]);
+                    array_push($controllerDefinition['uses'], [
+                        'name' => "crudActions",
+                        'target' => 'feiron\felaraframe\lib\traits\crudActions'
+                    ]);
+                    array_push($controllerDefinition['useLib'], 'Illuminate\Support\Facades\Validator');
+                }
             }
 
             if (isset($pageDefinition->model) && array_key_exists($pageDefinition->model->name, $this->ModelList)) {
@@ -201,17 +213,16 @@ class BluePrintsFactory {
                 }
                 $method['params']=array_merge($method['params'], $optionalParamList);
                 $routeDefinition['input']=$method['params'];
-                array_push($this->routeList, $routeDefinition);
+                $this->addRoute($routeDefinition);
                 array_push($pageRouteList, $routeDefinition);
                 array_push($controllerDefinition['methods'], $method);
             }
-            $this->ControllerList[$pageDefinition->name]=$controllerDefinition;
-
-            $this->PageList[$pageDefinition->name]= [
+            $this->addController($pageDefinition->name, $controllerDefinition);
+            $this->addPage($pageDefinition->name, [
                 'controller' => $controllerDefinition,
                 'view' => $this->ViewList[$pageDefinition->name],
                 'routes' => $pageRouteList,
-            ];
+            ]);
         }
         return $this->PageList;
     }
@@ -288,6 +299,25 @@ class BluePrintsFactory {
                 unset($field->relation);
             }
             $MyModel->addField($field);
+        }
+        if(($model->withCRUD??false)===true){
+            array_push($this->blueprint->pages,(object)[
+                "name"=> "CRUD_". $model->modelName,
+                "style"=> "crudSingleton",
+                "model"=> (object)[
+                    "name"=> $model->modelName,
+                    "fields"=> "all"
+                ],
+                "routes"=> [
+                    (object)[
+                        "name"=> "crudSingleton_". $model->modelName, 
+                            "input" => [(object) [
+                            "name" => $MyModel->getPrimary(),
+                            "onModel" => $model->modelName,
+                            "optional" => true // empty for adding new
+                        ]]]
+                ]
+            ]);
         }
     }
 
@@ -424,7 +454,7 @@ class BluePrintsFactory {
             $this->ViewFactory->loadDefinition($viewDefinition);
             $this->ViewFactory->buildView();
             // $this->command->line("+ View file generated: ".self::routePath.$viewDefinition['name']);
-        }        
+        }
     }
 
     public function BuildControllers(){
