@@ -9,7 +9,7 @@ trait crudActions{
             return $request->ajax() ?  response()->json(['status' => 'error', 'message' => $validator->getMessageBag()->toArray()]) : redirect()
                 ->back()
                 ->withInput()
-                ->withErrors($validator);
+                ->withErrors($validator)->send();
         }
         return true;
     }
@@ -36,7 +36,7 @@ trait crudActions{
         } catch (Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
             return (["status" => "error", "message" => "Record cannot be located by the identificaiton."]);
         }
-        $withData = (["status" => "success", "message" => "Record successfully removed."]);
+        return (["status" => "success", "message" => "Record successfully removed."]);
     }
 
 }

@@ -23,9 +23,6 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
         parent::__construct(array_merge(self::Defaults, (array)$definition), $ModelList);
     }
 
-    private function GenerateFormComponent($contrlDefinition){
-    }
-
     private function getPageContents(){
         $methodName = 'feiron\\felaraframe\\lib\\BluePrints\\builders\\';
         switch(strtolower($this->Definition['style'])??'singular'){
@@ -43,6 +40,9 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                 break;
             case "crudsingleton":
                 $methodName .= 'ViewCrudSingleton';
+                break;
+            case "crudsingletonlist":
+                $methodName .= 'ViewCrudSingletonList';
                 break;
             default: //singular
                 $methodName.= 'ViewSingular';

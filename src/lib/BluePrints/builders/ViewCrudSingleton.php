@@ -38,13 +38,13 @@ class ViewCrudSingleton extends BluePrintsViewBuilderBase {
                         $fieldDef['default']= '{{$' . $fieldDef['name'] . '??old("' . $fieldDef['name'] . '")??""}}';
                         return $this->generateFormControls($fieldDef);
                     }, ($targetModel->getFields()??[]))). '
+                    <a href="{{url()->previous()}}" class="btn btn-success">Back</a>
                     @if(isset($' . $targetModel->getPrimary() . '))
                     <input type="hidden" class="form-control" name="' . $targetModel->getPrimary() . '" id="bp_' . $targetModel->getPrimary() . '"  value="{{$' . $targetModel->getPrimary() . '}}"/>
                     <button class="btn btn-primary crud_update pull-right">Update</button>
                     @else
                     <button class="btn btn-primary crud_create pull-right">Create</button>
                     @endif
-                    
                 </form>
                 <div class="clearfix"></div>';
     }

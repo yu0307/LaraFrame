@@ -64,8 +64,12 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
                     $method .= $this->buildMethod('DisplayCrudTable', $methodDefinition);
                     break;
                 case "crudsingleton":
+                    if(!empty($methodDefinition['usage'])){
+                        $methodDefinition['return']= 'redirect(route(\'bpr_crudSingletonList_'. $methodDefinition['model']->name. '\'))->with($withData)';
+                    }
                     $method .= $this->buildMethod('DisplayCrudSingleton', $methodDefinition);
                     break;
+                case "crudsingletonlist":
                 case "collection":
                     $method.=$this->buildMethod('DisplayCollection', $methodDefinition);
                     break;
@@ -89,7 +93,7 @@ class BluePrintsControllerFactory extends BluePrintsBaseFactory{
 
                     $withData=[];
                     ' . (new $methodName($methodDefinition, $this->AvailableModels))->BuildMethod() . '
-                    return ' . ((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' .self::ViewClassPrefix . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)')) . ';
+                    return ' . ($methodDefinition['return']??((strtoupper($methodDefinition['type'] ?? 'GET') == 'GET') ? ('view("'.self::ViewPackage.'.' .self::ViewClassPrefix . $methodDefinition['view'] . '")->with($withData)') : ('response()->json($withData)'))) . ';
                 }
                 ';
             }            

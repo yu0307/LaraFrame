@@ -49,7 +49,7 @@ class DisplayCrudSingleton extends BluePrintsMethodBuilderBase {
                         $request->merge(["' . $primary . '"=>$keyID]);
                         $withData=$this->CRUD_Update($request,"' . $primary . '",'. self::modelClassPrefix . $this->MethodDefinition['model']->name . '::class);'). '
                     }else{
-                        return $res;
+                        $withData=["message"=>"Record cannot be '.($isUpdate?'updated':'created').'."];
                     }
                     
         ';
@@ -65,7 +65,7 @@ class DisplayCrudSingleton extends BluePrintsMethodBuilderBase {
                     if($res===true){
                         $withData=$this->CRUD_Delete($request,"' . $primary . '",' . self::modelClassPrefix . $this->MethodDefinition['model']->name . '::class);
                     }else{
-                        return $res;
+                        $withData=["message"=>"Record cannot be removed."];
                     }
         ';
     }

@@ -111,11 +111,19 @@ class BluePrintsFactory {
                         'usage' => 'crud_Update',
                         'type' => 'POST'
                     ]);
-                    array_push($pageDefinition->routes, (object) [
-                        'name' => 'bp_crud_' . $pageDefinition->name . '_Delete',
-                        'usage' => 'crud_Delete',
-                        'type' => 'POST'
-                    ]);
+                    if('crudsingleton'== strtolower($pageDefinition->style)){
+                        array_push($pageDefinition->routes, (object) [
+                            'name' => 'bp_crud_' . $pageDefinition->name . '_Delete',
+                            'usage' => 'crud_Delete',
+                            'type' => 'GET'
+                        ]);
+                    }else{
+                        array_push($pageDefinition->routes, (object) [
+                            'name' => 'bp_crud_' . $pageDefinition->name . '_Delete',
+                            'usage' => 'crud_Delete',
+                            'type' => 'POST'
+                        ]);
+                    }
                     array_push($controllerDefinition['uses'], [
                         'name' => "crudActions",
                         'target' => 'feiron\felaraframe\lib\traits\crudActions'
@@ -304,6 +312,7 @@ class BluePrintsFactory {
             array_push($this->blueprint->pages,(object)[
                 "name"=> "CRUD_". $model->modelName,
                 "style"=> "crudSingleton",
+                "title" => "'.(isset($". $MyModel->getPrimary().") ? 'Updating information' : 'Creating a new record').'",
                 "model"=> (object)[
                     "name"=> $model->modelName,
                     "fields"=> "all"
@@ -316,6 +325,21 @@ class BluePrintsFactory {
                             "onModel" => $model->modelName,
                             "optional" => true // empty for adding new
                         ]]]
+                ]
+            ]);
+            array_push($this->blueprint->pages, (object) [
+                "name" => "CRUDList_" . $model->modelName,
+                "style" => "crudSingletonList",
+                "title"=> '<a href="\'.route(\'bpr_crudSingleton_'. $model->modelName.'\').\'" class="btn btn-success pull-right">Create New</a><div class="clearfix"></div>',
+                "model" => (object) [
+                    "name" => $model->modelName,
+                    "fields" => "all"
+                ],
+                "routes" => [
+                    (object) [
+                        "name" => "crudSingletonList_" . $model->modelName,
+                        "input" => []
+                    ]
                 ]
             ]);
         }

@@ -1,6 +1,6 @@
 <div class="panel portlet {{$class??''}}" {{empty($id)?'':"id=$id"}} {!!empty($attr)?'':$attr!!}>
     @isset($headerText)
-    <div class="panel-header bg-{{$headerBackground??'primary'}} {{(($headercontrols??false)===true)?'panel-controls':''}}">
+    <div class="panel-header bg-{{$headerBackground??'dark'}} {{(($headercontrols??false)===true)?'panel-controls':''}}">
         {!!$headerText??''!!}
     </div>
     @endisset
