@@ -3,6 +3,7 @@
 namespace feiron\felaraframe\lib\BluePrints;
 use Illuminate\Support\Facades\Storage;
 use feiron\felaraframe\lib\BluePrints\BluePrintsFactory;
+use Exception;
 class BluePrints {
     private $command;
     private $storage;
