@@ -285,5 +285,6 @@ class bp_wizardMakeMigration extends bp_wizardbase
         if ($banner === true) {
             $this->command->comment("=====Thank you for using BluePrint Wizard.======");
         }
+        return $factory;
     }
 }

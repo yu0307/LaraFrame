@@ -263,9 +263,9 @@ class BluePrintsModelFactory {
         }
     }
 
-    public function BuildModel(){
+    public function BuildModel($targetPath=null){
         $className = self::ModelClassPrefix . $this->ModelDefinition['modelName'];
-        $target = self::modelPath . $className . '.php';
+        $target = ($targetPath??(self::modelPath)) . $className . '.php';
         $this->PrimaryKey=($this->PrimaryKey ?? 'idx');
         $guarded = [$this->PrimaryKey];
         $hidden = [];
@@ -308,6 +308,49 @@ class BluePrintsModelFactory {
         }
         ';
         $this->RootStorage->put($target, $contents);
+    }
+
+    public function extractDataFields($list){
+        $fieldList=[];
+        foreach ((explode(';', $list) ?? []) as $field) {
+            preg_match('/(.*):(\w*)(?:\((.*)\))?(?:\[(.*)\])?(?:\<(.*)\>)?/i', $field, $fieldDef);
+            $Definition = [ //Process name and type
+                "name" => $fieldDef[1],
+                "dataType" => $fieldDef[2]
+            ];
+
+            if (!empty($fieldDef[3])) { //Process options
+                if (stripos(trim($fieldDef[3], ','), ',') === false) {
+                    $Definition['size'] = $fieldDef[3];
+                } elseif (in_array($fieldDef[2], ['set', 'enum']) === true) {
+                    $Definition['modifier'] = explode(',', trim($fieldDef[3], ','));
+                } else {
+                    $Definition['modifier'] = $fieldDef[3];
+                }
+            }
+
+            if (!empty($fieldDef[4])) { //Process Modifiers
+                foreach (explode(',', trim($fieldDef[4], ',')) ?? [] as $modifier) {
+                    if ((stripos($modifier, '=') === false)) {
+                        $Definition[$modifier] = true;
+                        if ($modifier == 'primary') {
+                            $this->PrimaryKey = $fieldDef[1];
+                        }
+                    } else {
+                        $modifier = explode('=', $modifier);
+                        $Definition[$modifier[0]] = $modifier[1];
+                    }
+                }
+            }
+
+            if (!empty($fieldDef[5])) {
+                $Definition['default'] = $fieldDef[5];
+            }
+            $Definition['nullable'] = $Definition['nullable'] ?? false;
+            $this->addField((object) $Definition);
+            array_push($fieldList, $Definition);
+        }
+        return $fieldList;
     }
 
     public function isRelatedTo($modelName){
