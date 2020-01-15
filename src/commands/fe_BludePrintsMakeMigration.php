@@ -21,7 +21,7 @@ class fe_BludePrintsMakeMigration extends Command
                             {--O|collation= : Specify a default collation for the table (MySQL,Default:utf8_unicode_ci).}
                             {--S|timestamps : Automatically put in timestamp fields.}
                             {--T|types : List available field types}
-                            {--F|modifiers : List available field types}
+                            {--F|modifiers : List available field modifiers}
                             {--W|wizard : Creating migration using wizard}';
 
     /**

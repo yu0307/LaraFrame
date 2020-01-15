@@ -159,6 +159,12 @@ class BluePrintsModelFactory {
         }
     }
 
+    public function SetModelDefinition($key,$value){
+        if(array_key_exists($key,$this->ModelDefinition)){
+            $this->ModelDefinition[$key]=$value;
+        }
+    }
+
     private function SetPrimary($keyName){
         $this->PrimaryKey=$keyName;
     }
@@ -172,7 +178,7 @@ class BluePrintsModelFactory {
             . ((isset($field['nullable']) && false === $field['nullable']) ? "->nullable(false)" : "->nullable(true)")
             . ($skipIndex === false && isset($field['autoIncrement']) && true === $field['autoIncrement'] ? "->autoIncrement()" : "")
             . (isset($field['unsigned']) && true === $field['unsigned'] ? "->unsigned()" : "")
-            . (false === empty($field['default']) ? ("->default(".$field['default'].")") : "")
+            . (false === empty($field['default']) ? ("->default('".$field['default']."')") : "")
             . (false === empty($field['charset']) ? ("->charset(".$field['charset'].")") : "")
             . (false === empty($field['collation']) ?("->collation(".$field['collation'].")") : "")
             . ($skipIndex === false && isset($field['unique']) && true === $field['unique'] ? "->unique()" : "")
@@ -306,6 +312,13 @@ class BluePrintsModelFactory {
 
     public function isRelatedTo($modelName){
         return (array_key_exists($modelName, $this->RelatedModels)===true);
+    }
+
+    public function Describe(){
+        echo "Model Definition:\r\n";
+        dump($this->ModelDefinition);
+        echo "Model FieldList:\r\n";
+        dump($this->FieldList);
     }
 }
 
