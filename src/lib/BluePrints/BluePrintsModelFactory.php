@@ -165,7 +165,7 @@ class BluePrintsModelFactory {
         }
     }
 
-    private function SetPrimary($keyName){
+    public function SetPrimary($keyName){
         $this->PrimaryKey=$keyName;
     }
 
@@ -236,7 +236,7 @@ class BluePrintsModelFactory {
                         {
                             public function up()
                             {
-                                if(false===Schema::hasTable("' . $this->ModelDefinition['modelName'] . '")){
+                                if(false===Schema::hasTable("' . strtolower($this->ModelDefinition['modelName']) . '")){
                                     Schema::create("' . $this->ModelDefinition['modelName'] . '", function (Blueprint $table) {
                                         $table->engine = "' . ($this->ModelDefinition['engine'] ?? 'InnoDB') . '";
                                         $table->charset = "' . ($this->ModelDefinition['charset'] ?? 'utf8') . '";
@@ -299,7 +299,7 @@ class BluePrintsModelFactory {
 
         class ' . $className . ' extends Model
         {
-            protected $table = "' . $this->ModelDefinition['modelName'] . '";
+            protected $table = "' . strtolower($this->ModelDefinition['modelName']) . '";
             protected $primaryKey = "' . $this->PrimaryKey . '";
             ' . (($this->ModelDefinition['withTimeStamps'] ?? false) ? "" : 'public $timestamps = false;') . '
             ' . (!empty($guarded) ? ('protected $guarded = [' . join(',', array_map(function ($g) { return ("'" . $g . "'"); }, $guarded)) . '];') : "") . '

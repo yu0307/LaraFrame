@@ -17,7 +17,6 @@ class fe_BludePrintsMakeModel extends Command
                             {--P|path=/app/Model : Path to store the models, defaulted to root of the app controllers(/app/Model).}
                             {--D|datafields= : Field definitions seperated by ";" Format: "fieldname:dataType(option)[modifier,...]<default>" Example: -D "name:string(100)[nullable,editable=false]<John>;age:set(1,2,3)"}
                             {--M|migartion : Creating the model with migration.}
-                            {--T|table= : Table name associate with the model file.}
                             {--K|key= : Primary Key for the model.}
                             {--W|wizard : Creating model using wizard}';
 

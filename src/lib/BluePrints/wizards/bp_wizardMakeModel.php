@@ -7,7 +7,7 @@ use feiron\felaraframe\lib\BluePrints\BluePrintsModelFactory;
 use Illuminate\Support\Facades\Artisan;
 
 class bp_wizardMakeModel extends bp_wizardbase{
-    
+
     protected $command;
     protected $storage;
     private $path;
@@ -31,18 +31,15 @@ class bp_wizardMakeModel extends bp_wizardbase{
                 if (!empty($this->command->option('datafields'))) {
                     $this->ModelFactory->extractDataFields($this->command->option('datafields'));
                 }
-                if ($this->command->option('migartion') !== false) {
-                    $this->command->info('Building migrations ' . $this->modelName . ' ...');
-                    $this->ModelFactory->buildMigrations();
-                }
-            }
-            
+            }            
             $path = '/' . str_replace('\\', "/", trim($this->path, '/')) . '/';
             $this->command->info('Building model ' . $this->modelName . ' ...');
             $this->ModelFactory->BuildModel($path);
             $this->command->info('Model file is created and stored at ' . $path . $this->modelName . '.php');
 
             if ($this->command->option('migartion') !== false) {
+                $this->command->info('Building migrations ' . $this->modelName . ' ...');
+                $this->ModelFactory->buildMigrations();
                 if ($this->command->confirm('Perform the migration?') === true) {
                     $this->command->info('Now migrating to database ...');
                     Artisan::call('migrate');
@@ -61,17 +58,12 @@ class bp_wizardMakeModel extends bp_wizardbase{
             $this->modelName= $this->command->ask('Model Name(without ".php"):');
             if(empty($this->modelName)){
                 $this->command->error('Model Name is required.');
-            }else{
-                $this->ModelFactory = new BluePrintsModelFactory(['modelName' => ucfirst($this->modelName)]);
             }
         }
+        $this->ModelFactory = new BluePrintsModelFactory(['modelName' => ucfirst($this->modelName)]);
 
-        if($this->command->confirm('Do you need to create a Migration?')===true){
-            $migrationWizard= new bp_wizardMakeMigration($this->command);
-            $migrationWizard->Wizard(false, $this->ModelFactory);
-            $this->command->info('Building migrations ' . $this->modelName . ' ...');
-            $this->ModelFactory->buildMigrations();
-        }
+        $migrationWizard = new bp_wizardMakeMigration($this->command);
+        $migrationWizard->Wizard(false, $this->ModelFactory);
 
         if ($banner === true) {
             $this->command->comment("=====Thank you for using BluePrint Wizard.======");

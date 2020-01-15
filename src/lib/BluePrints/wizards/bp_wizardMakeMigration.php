@@ -103,10 +103,10 @@ class bp_wizardMakeMigration extends bp_wizardbase
             'year'
         ];
         $this->options=[
-            'engine' => $this->command->option('engine') ?? 'InnoDB',
-            'charset' => $this->command->option('charset') ?? 'utf8',
-            'collation' => $this->command->option('collation') ?? 'utf8_unicode_ci',
-            'timestamps' => ($this->command->option('timestamps') === true),
+            'engine' => 'InnoDB',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'timestamps' => true,
             'migrate'=>false
         ];
 
@@ -136,6 +136,13 @@ class bp_wizardMakeMigration extends bp_wizardbase
         if (empty($this->tableName) && ($this->command->option('wizard') === false)) {
             $this->command->error('Model name is required or using flag -W to use wizard.');
         }else{
+            $this->options = [
+                'engine' => $this->command->option('engine') ?? 'InnoDB',
+                'charset' => $this->command->option('charset') ?? 'utf8',
+                'collation' => $this->command->option('collation') ?? 'utf8_unicode_ci',
+                'timestamps' => (($this->command->option('timestamps') ?? false) === true),
+                'migrate' => false
+            ];
             $this->command->info('Building migration for ' . $this->tableName . ' ...');
             $ModelDefinition = [
                 'modelName' => ucfirst($this->tableName),
@@ -228,7 +235,9 @@ class bp_wizardMakeMigration extends bp_wizardbase
         // $this->options['charset'] = $this->command->ask('Table Charset ("Enter" to skip and use utf8):')?? 'utf8';
         // $this->options['collation'] = $this->command->ask('Table Charset ("Enter" to skip and use utf8_unicode_ci):')?? 'utf8_unicode_ci';
         // $this->options['timestamps'] = $this->command->confirm('Include timestamps?');
-        $this->options['migrate']= $this->command->confirm('Perform migration to database at the end?');
+        if ($banner === true) {
+            $this->options['migrate']= $this->command->confirm('Perform migration to database at the end?');
+        }
         $this->command->info("Adding table fields now...");
 
         while (true) {//Table Definition Section--------------------
