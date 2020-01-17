@@ -591,6 +591,17 @@ class BluePrintsFactory {
         $url = preg_replace('/[^0-9_a-z?]+/iu', '', $url);
         return $url;
     }
+
+    public function PublishTemplate(){
+        $sourcePath= dirname($this->BlueprintStorage->path('app')) . '/' . $this->projectPath;
+        $targetPath = dirname($this->BlueprintStorage->path('app')) . '/blueprints/cached/live';
+        if ($this->BlueprintStorage->exists('/blueprints/cached/live') === false) {
+            mkdir($targetPath, 0777, true);
+        }
+        if (file_exists($sourcePath . "/models")) copy($sourcePath . "/models", $targetPath. "/models");
+        if (file_exists($sourcePath . "/resources")) copy($sourcePath . "/resources", $targetPath . "/resources");
+        $this->BlueprintStorage->put('/blueprints/cached/live/Live.bp', json_encode($this->blueprint, JSON_PRETTY_PRINT));
+    }
     
 }
 ?>

@@ -9,7 +9,6 @@ class BluePrints {
     private $command;
     private $storage;
     private $template;
-    private $modelDefs;
     private $targetFile;
     private const PathPrefix='blueprints/';
 
@@ -80,15 +79,13 @@ class BluePrints {
                     $factory->BuildControllers();
                     $this->command->info("--> Now generating Route File ...");
                     $factory->BuildRoutes();
+                    //publish to cached live blueprint.
+                    $factory->PublishTemplate();
                 }
             } catch (Exception $e) {
                 $this->command->error($e->getMessage());
             }
         }
-    }
-
-    private function PublishTemplate($template=null,$path= 'cached/temp/',$targetFile='bluePrint.bp'){
-        $this->storage->put($path.$targetFile, json_encode($this->template, JSON_PRETTY_PRINT));
     }
 
     private function Wizard(){
