@@ -12,12 +12,14 @@ class bp_wizardMakePage extends bp_wizardbase
     private $PageName;
     private $CacheModelList;
     private $pageTemplate;
+    private $relatedModels;
 
     public function __construct($Command,$modelList=null)
     {
         parent::__construct($Command);
         $this->CacheModelList = $modelList??[];
         $this->pageTemplate = parent::PAGETEMPLATE;
+        $this->relatedModels = [];
         $this->PageName = $this->command->argument('name') ?? null;
     }
 
@@ -119,6 +121,7 @@ class bp_wizardMakePage extends bp_wizardbase
         }
         if($banner === false){
             $this->PageName=null;
+            $this->relatedModels = [];
             $this->pageTemplate = parent::PAGETEMPLATE;
         }
 
@@ -140,6 +143,7 @@ class bp_wizardMakePage extends bp_wizardbase
         if(!empty($this->CacheModelList) && $this->command->confirm('Any models used in this page?')===true){
 
             $this->pageTemplate['model']['name'] = $this->command->choice('Which model is used:', array_keys($this->CacheModelList),0);
+            array_push($this->relatedModels, $this->pageTemplate['model']['name']);
             $this->command->comment("What fields are used from this model?");
             $fieldList='';
             foreach($this->CacheModelList[$this->pageTemplate['model']]['modelFields']??[] as $fieldDef){
@@ -161,6 +165,7 @@ class bp_wizardMakePage extends bp_wizardbase
                             'on'=>[]
                         ];
                         $joins['name'] = $this->command->choice('Which model is to be joined with:', array_keys($this->CacheModelList), 0);
+                        array_push($this->relatedModels, $joins['name']);
                         $joins['type'] = $this->command->choice('Join Type:', ['left','right','cross','inner'], 0);
                         $joins['type']= ($joins['type']=='inner')?'': $joins['type'];
                         $this->command->comment("What fields are used from this join?");
@@ -209,7 +214,7 @@ class bp_wizardMakePage extends bp_wizardbase
                     while(true){
                         $with=[];
                         $with['name'] = $this->command->choice('Which model is to be loaded with:', array_keys($this->CacheModelList), 0);
-
+                        array_push($this->relatedModels, $with['name']);
                         $this->command->comment("What fields are used?");
                         $fieldList = '';
                         foreach ($this->CacheModelList[$with['name']]['modelFields'] ?? [] as $fieldDef) {
@@ -231,47 +236,82 @@ class bp_wizardMakePage extends bp_wizardbase
         //End with Page Model Definition and setups------------------------------------------
 
         //Dealing with Route Setups-----------------------------
-        $this->command->info("Let's setup the route for this page...");
+        $this->command->info("Let's setup some routes for this page...");
         while(true){
-            $this->pageTemplate['routes']['name'] = $this->command->ask('Route Name:') ?? null;
-            if(empty($this->pageTemplate['routes']['name'])){
-                $this->command->error('Route Name is required.');
-            }else{
-                break 1;
-            }
-        }
-        if($this->command->confirm('Any inputs expected to this route?') === true){
-            $this->pageTemplate['routes']['input']=[];
+            $route=[];
             while (true) {
-                $input=[
-                    'optional'=>true
-                ];
-                if ($this->command->confirm('Is this input associated with a model?') === true) {
-                    $input['onModel'] = $this->command->choice('Which model is used:', array_keys($this->CacheModelList), 0);
-                    $fieldList = [];
-                    foreach ($this->CacheModelList[$input['onModel']]['modelFields'] ?? [] as $fieldDef) {
-                        array_push($fieldList,$fieldDef['name']);
-                    }
-                    $input['name']= $this->command->choice('which field is used from this model?', $fieldList,0);
-                }else{
-                    while(true){
-                        $input['name'] = $this->command->ask('Parameter Name:') ?? null;
-                        if (empty($input['name'])) {
-                            $this->command->error('Parameter Name is required.');
-                        } else {
-                            break 1;
-                        }
-                    }
-                }
-                $input['optional']= ($this->command->confirm('Optional Input?')===true)??false;
-                array_push($this->pageTemplate['routes']['input'], $input);
-                if($this->command->confirm('Finished with inputs?') === true){
+                $route['name'] = $this->command->ask('Route Name:') ?? null;
+                if (empty($route['name'])) {
+                    $this->command->error('Route Name is required.');
+                } else {
                     break 1;
                 }
+            }
+            $route['input'] = $this->command->choice('Route type:',['GET','POST'],0);
+            if ($this->command->confirm('Any inputs expected to this route?') === true) {
+                $route['input'] = [];
+                while (true) {
+                    $input = [
+                        'optional' => true
+                    ];
+                    if ($this->command->confirm('Is this input associated with a model?') === true) {
+                        $input['onModel'] = $this->command->choice('Which model is used:', array_keys($this->CacheModelList), 0);
+                        $fieldList = [];
+                        foreach ($this->CacheModelList[$input['onModel']]['modelFields'] ?? [] as $fieldDef) {
+                            array_push($fieldList, $fieldDef['name']);
+                        }
+                        $input['name'] = $this->command->choice('which field is used from this model?', $fieldList, 0);
+                    } else {
+                        while (true) {
+                            $input['name'] = $this->command->ask('Parameter Name:') ?? null;
+                            if (empty($input['name'])) {
+                                $this->command->error('Parameter Name is required.');
+                            } else {
+                                break 1;
+                            }
+                        }
+                    }
+                    $input['optional'] = ($this->command->confirm('Optional Input?') === true) ?? false;
+                    array_push($route['input'], $input);
+                    if ($this->command->confirm('Finished with inputs?') === true) {
+                        break 1;
+                    }
+                }
+            }
+            array_push($this->pageTemplate['routes'], $route);
+            if ($this->command->confirm('Add another route?') === false) {
+                break 1;
             }
         }
         //End Dealing with Route Setups-------------------------
 
+
+        // Table Style page specific options--------------------
+        if($this->pageTemplate['style']== 'table'){
+            $this->pageTemplate['headerSearch']= $this->command->confirm('Enable table header search?')??false;
+            if(true=== $this->command->confirm('Define table header filters?')){
+                $this->pageTemplate['tableFilter']=[];
+                foreach($this->relatedModels as $modelName){
+                    $filter=[
+                        'name'=> $modelName
+                    ];
+                    if($this->command->confirm("Use filter on model:$modelName?")===false){
+                        $filter['fields']=false;
+                    }else{
+                        $fieldList = '';
+                        foreach ($this->CacheModelList[$modelName]['modelFields'] ?? [] as $fieldDef) {
+                            $fieldList .= $fieldDef['name'] . "\t";
+                        }
+                        $this->command->comment("Available Fields are: " . $fieldList);
+                        $filter['fields'] = $this->command->ask("What fields are used as filters on this model?\n ->'all' for every field\n ->empty to disable filters on this model\n ->seperate each with comma(,) eg: name,age,... ")??false;
+                        $filter['fields']=(($filter['fields']=='all')?'all':explode(',', $filter['fields']));
+                    }
+                    array_push($this->pageTemplate['tableFilter'], $filter);
+                }
+            }
+        }
+        // End with Table Style page specific options-----------
+        
         if ($banner === true) {
             $this->command->comment("=====Thank you for using BluePrint Page Wizard======");
         }
