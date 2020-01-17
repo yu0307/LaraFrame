@@ -4,6 +4,7 @@ namespace feiron\felaraframe\lib\BluePrints;
 
 use Exception;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 
 class BluePrintsModelFactory {
     private $ModelDefinition;
@@ -196,11 +197,10 @@ class BluePrintsModelFactory {
     }
 
     public function buildMigrations(){
-        $className = 'create_' . $this->ModelDefinition['modelName'] . '_table';
-        $target = self::migrationPath . 'fe_blueprint_migration_file_' . $className . '.php';
-
         try {
-            if ($this->RootStorage->exists($target) === false) {
+            $className = 'create_' . $this->ModelDefinition['modelName'] . '_table';
+            $target = self::migrationPath . date('Y_m_d_his') . '_' . $className . '.php';
+            if (Schema::hasTable(strtolower($this->ModelDefinition['modelName'])) === false) {
                 $fieldList = "";
 
                 if (array_key_exists('index',$this->ModelDefinition)) {
@@ -253,14 +253,16 @@ class BluePrintsModelFactory {
                         }
                         ?>';
                     $this->RootStorage->put($target, $contents);
-                    
+                    return true;
                 } else {
                     throw new Exception("Model contains no fields definition [".$this->ModelDefinition['modelName']."]");
                 }
+                return false;
             }
         } catch (Exception $e) {
             throw new Exception("Error Creating Migrations" . $e->getMessage(), 1);
         }
+        return false;
     }
 
     public function BuildModel($targetPath=null){

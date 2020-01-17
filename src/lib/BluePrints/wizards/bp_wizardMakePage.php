@@ -14,17 +14,15 @@ class bp_wizardMakePage extends bp_wizardbase
     private $pageTemplate;
     private $relatedModels;
 
-    public function __construct($Command,$modelList=null)
-    {
+    public function __construct($Command,$modelList=null){
         parent::__construct($Command);
         $this->CacheModelList = $modelList??[];
         $this->pageTemplate = parent::PAGETEMPLATE;
         $this->relatedModels = [];
-        $this->PageName = $this->command->argument('name') ?? null;
     }
 
-    public function Build()
-    {
+    public function Build(){
+        $this->PageName = $this->command->argument('name') ?? null;
         $this->Wizard(true);
     }
 
@@ -100,21 +98,26 @@ class bp_wizardMakePage extends bp_wizardbase
                 if($this->command->confirm('Is this field in a relationship with other tables?')){
                     $this->command->comment('Which model is the field related to:');
                     if(!empty($this->CacheModelList)){
-                        $this->command->info('Available Models are :',join("\t",array_keys($this->CacheModelList)));
+                        $this->command->info('Available Models are : ['.join(",\t",array_keys($this->CacheModelList)).']');
                     }
                     $FieldDefinition['relation']['target']= $this->command->ask('Choose from the available model list or type one model name that is planed to be created later in the process.');
                     $FieldDefinition['relation']['targetReference'] = $this->command->ask('What is the associated field name on the target model?');
                     $FieldDefinition['relation']['onDelete'] = $this->command->choice('On delete operation:',['cascade', 'restrict', 'set null','set default','no action'],0);
                     $FieldDefinition['relation']['type'] = $this->command->choice('Relation Type:', ['OneToOne', 'ManyToMany', 'OneToMany', 'ManyToOne'], 0);
+                    $FieldDefinition['nullable'] = false;
+                    if (in_array($FieldDefinition['dataType'], parent::OPTIONLIST['unsingn'])) {
+                        $FieldDefinition['unsigned'] = true;
+                    }
                 }
                 array_push($ModelDefinition['modelFields'], $FieldDefinition);
             }
             $this->CacheModelList[$ModelDefinition['modelName']] = $ModelDefinition;
             if ($this->command->confirm('Finished with models design? Choose "No" to continue adding more models.')) break 1;
         }
+        return $this->CacheModelList;
     }
 
-    private function Wizard($banner = false){
+    public function Wizard($banner = false){
         if ($banner === true) {
             $this->command->comment("=====Welcome to BluePrints Page building utility======");
             $this->command->comment("This wizard will walk you through the steps to create a page.\nLet's get started...");
@@ -131,8 +134,8 @@ class bp_wizardMakePage extends bp_wizardbase
             }
         }
         $this->pageTemplate['name']= $this->PageName;
-        $this->pageTemplate['title'] = $this->command->ask('Page Title('. $this->PageName.' will be used if left empty):')?? $this->PageName;
-        $this->pageTemplate['subtext'] = $this->command->ask('Sub heading (Displayed at the top as h5):') ?? '';
+        $this->pageTemplate['title'] = str_replace("'","\'",$this->command->ask('Page Title('. $this->PageName.' will be used if left empty):')?? $this->PageName);
+        $this->pageTemplate['subtext'] = str_replace("'", "\'", $this->command->ask('Sub heading (Displayed at the top as h5):') ?? '');
         $this->pageTemplate['style'] = $this->command->choice('Page Style (default is "singular"):', ['singular', 'table', 'accordion', 'collection', 'crud', 'crudsingleton', 'crudsingletonlist'], 0);
 
         if(empty($this->CacheModelList) && $this->command->confirm("I don't see any models setup in the system. Pages may need models to work with database. Would you like to setup some models?")){
@@ -146,11 +149,11 @@ class bp_wizardMakePage extends bp_wizardbase
             array_push($this->relatedModels, $this->pageTemplate['model']['name']);
             $this->command->comment("What fields are used from this model?");
             $fieldList='';
-            foreach($this->CacheModelList[$this->pageTemplate['model']]['modelFields']??[] as $fieldDef){
-                $fieldList.= $fieldDef['name']."\t";
+            foreach($this->CacheModelList[$this->pageTemplate['model']['name']]['modelFields']??[] as $fieldDef){
+                $fieldList.= $fieldDef['name'].",\t";
             }
 
-            $this->command->comment("Available Fields are: ". $fieldList );
+            $this->command->comment("Available Fields are: [". $fieldList.']' );
             $this->pageTemplate['model']['fields'] = $this->command->ask("Type 'all' to use all available fields or use syntax <fieldName:label,...> to define the list(eg: name:user name, age:user age,...).")??'all';
             $this->pageTemplate['model']['fields']=(($this->pageTemplate['model']['fields']=='all')?'all':array_map(function($field){
                 $field= explode(':',$field);
@@ -175,9 +178,9 @@ class bp_wizardMakePage extends bp_wizardbase
                         }
                         $this->command->comment("Available Fields are: " . $fieldList);
                         $joins['fields'] = $this->command->ask("Type 'all' to use all available fields or use syntax <fieldName,...> to define the list(eg: name, age,...).") ?? 'all';
-                        $joins['fields'] = (($joins['fields'] == 'all') ? 'all' : explode(',', $joins['fields']));
+                        $joins['fields'] = (($joins['fields'] == 'all') ? 'all' : array_map(function($fieldName){return ['name'=> $fieldName,'caption'=> $fieldName];}, explode(',', $joins['fields'])));
                         while(true){
-                            array_push($joins['on'],$this->command->comment("Join on keys (format: local,foreign)<eg: name,foreignName>:")??'');
+                            array_push($joins['on'],$this->command->ask("Join on keys (format: local,foreign)<eg: name,foreignName>:")??'');
                             if ($this->command->confirm('More joint keys?') === false) {
                                 break 1;
                             }
@@ -199,6 +202,9 @@ class bp_wizardMakePage extends bp_wizardbase
                                     break 1;
                                 }
                             }
+                        }
+                        if(array_key_exists('join', $this->pageTemplate['model'])===false){
+                            $this->pageTemplate['model']['join']=[];
                         }
                         array_push($this->pageTemplate['model']['join'], $joins);
                         if($this->command->confirm('No more joins?') === true){
@@ -317,5 +323,13 @@ class bp_wizardMakePage extends bp_wizardbase
         }
 
         return $this->pageTemplate;
+    }
+
+    public function ExportMyModels($isJson=false){
+        $export=[];
+        foreach($this->CacheModelList as $modelName=>$ModelDef){
+            array_push($export, $ModelDef);
+        }
+        return ($isJson)?json_encode($export, JSON_PRETTY_PRINT):$export;
     }
 }

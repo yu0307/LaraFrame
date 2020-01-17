@@ -25,6 +25,8 @@ class BluePrintsFactory {
 
     private $ViewFactory;
     private $ControllerFactory;
+
+    private $counter;
     
     private const migrationPath="database/migrations/";
     protected const routePath = "routes/BluePrints/BluePrintsRoute.php";
@@ -41,6 +43,7 @@ class BluePrintsFactory {
         $this->ViewList = [];
         $this->ControllerList = [];
         $this->routeList=[];
+        $this->counter=['tableMigrated'=>0];
         $this->ViewFactory = new BluePrintsViewFactory();
         $this->ControllerFactory = new BluePrintsControllerFactory();
         try{
@@ -348,7 +351,9 @@ class BluePrintsFactory {
     private function BuildModel(){
         $relations=[];
         foreach ($this->ModelList as $modelName => $model) {
-            $model->buildMigrations();
+            if($model->buildMigrations()===true){
+                $this->counter['tableMigrated']++;
+            }
             // $this->command->line("*migration created for " . $modelName);
             $relation=$model->getRelations();
             if(!empty($relation)){
@@ -364,103 +369,105 @@ class BluePrintsFactory {
     }
 
     private function createRelationMigration($models){
-        $className = 'create_Relations_table';
-        $target = self::migrationPath . 'fe_blueprint_migration_file_' . $className . '.php';
-        if ($this->RootStorage->exists($target) === false) {
-            try {
-                $relationList = '';
-                $dropList = '';
-                $M2MList='';
-                $M2MTables=[];
-                foreach($models as $model=>$relations){
-                    $relationString='';
-                    $dropString='';
-                    foreach($relations as $relation){
-                        $relationString.= '
-                        $table->foreign("' . $relation->sourceReference . '") 
-                            ->references("' . $relation->targetReference . '")
-                            ->on("' . $relation->target . '")'.
-                            (isset($relation->onDelete) ? ('->onDelete("' . $relation->onDelete . '")') : '') . ';
-                        ';
-                        $dropString .= '
-                            $table->dropForeign(["' . $relation->sourceReference . '"]);
-                        ';
-                        if($relation->type == 'ManyToMany'){
-                            $tableName = [];
-                            array_push($tableName, $model, $relation->target);
-                            sort($tableName);
-                            $tableName = 'MtoM_' . join('_', $tableName);
-                            if(!in_array($tableName, $M2MTables)){
-                                $newField= $this->ModelList[$relation->target]->renderDBField($relation->targetReference, $relation->target . '_', true);
-                                $M2MList .= '
-                                if(false===Schema::hasTable("' . $tableName . '")){
-                                        Schema::create("' . $tableName . '", function (Blueprint $table) {
-                                            $table->engine = "' . ($this->ModelList[$model]->getModelDefition('engine') ?? 'InnoDB') . '";
-                                            $table->charset = "' . ($this->ModelList[$model]->getModelDefition('charset') ?? 'utf8') . '";
-                                            $table->collation = "' . ($this->ModelList[$model]->getModelDefition('collation') ?? 'utf8_unicode_ci') . '";
-                                            $table->bigIncrements("id");
-                                            ' . str_replace(($relation->target . '_' . $relation->targetReference), ($model . '_' . $relation->sourceReference), $newField) . '
-                                            ' . $newField . '
-                                            
-                                            $table->foreign("' . $model . '_' . $relation->sourceReference . '") 
-                                                    ->references("' . $relation->sourceReference . '")
-                                                    ->on("' . $model . '")->onDelete("cascade");
-
-                                            $table->foreign("' . $relation->target . '_' . $relation->targetReference . '") 
-                                                    ->references("' . $relation->targetReference . '")
-                                                    ->on("' . $relation->target . '")->onDelete("cascade");    
-                                            $table->unique(["' . $model . '_' . $relation->sourceReference.'", "' . $relation->target . '_' . $relation->targetReference.'"]);
-                                        });
-                                    }
-                                ';
-                                $dropList .= '
-                                    Schema::dropIfExists("' . $tableName . '");
-                                ';
-                                array_push($M2MTables, $tableName);
+        if($this->counter['tableMigrated']>0){
+            $className = 'create_Relations_table'. date('Ymdhis');
+            $target = self::migrationPath . date('Y_m_d_his', strtotime('+ 1 second')) . '_' . $className . '.php';
+            if ($this->RootStorage->exists($target) === false) {
+                try {
+                    $relationList = '';
+                    $dropList = '';
+                    $M2MList='';
+                    $M2MTables=[];
+                    foreach($models as $model=>$relations){
+                        $relationString='';
+                        $dropString='';
+                        foreach($relations as $relation){
+                            $relationString.= '
+                            $table->foreign("' . $relation->sourceReference . '") 
+                                ->references("' . $relation->targetReference . '")
+                                ->on("' . $relation->target . '")'.
+                                (isset($relation->onDelete) ? ('->onDelete("' . $relation->onDelete . '")') : '') . ';
+                            ';
+                            $dropString .= '
+                                $table->dropForeign(["' . $relation->sourceReference . '"]);
+                            ';
+                            if($relation->type == 'ManyToMany'){
+                                $tableName = [];
+                                array_push($tableName, $model, $relation->target);
+                                sort($tableName);
+                                $tableName = 'MtoM_' . join('_', $tableName);
+                                if(!in_array($tableName, $M2MTables)){
+                                    $newField= $this->ModelList[$relation->target]->renderDBField($relation->targetReference, $relation->target . '_', true);
+                                    $M2MList .= '
+                                    if(false===Schema::hasTable("' . $tableName . '")){
+                                            Schema::create("' . $tableName . '", function (Blueprint $table) {
+                                                $table->engine = "' . ($this->ModelList[$model]->getModelDefition('engine') ?? 'InnoDB') . '";
+                                                $table->charset = "' . ($this->ModelList[$model]->getModelDefition('charset') ?? 'utf8') . '";
+                                                $table->collation = "' . ($this->ModelList[$model]->getModelDefition('collation') ?? 'utf8_unicode_ci') . '";
+                                                $table->bigIncrements("id");
+                                                ' . str_replace(($relation->target . '_' . $relation->targetReference), ($model . '_' . $relation->sourceReference), $newField) . '
+                                                ' . $newField . '
+                                                
+                                                $table->foreign("' . $model . '_' . $relation->sourceReference . '") 
+                                                        ->references("' . $relation->sourceReference . '")
+                                                        ->on("' . $model . '")->onDelete("cascade");
+    
+                                                $table->foreign("' . $relation->target . '_' . $relation->targetReference . '") 
+                                                        ->references("' . $relation->targetReference . '")
+                                                        ->on("' . $relation->target . '")->onDelete("cascade");    
+                                                $table->unique(["' . $model . '_' . $relation->sourceReference.'", "' . $relation->target . '_' . $relation->targetReference.'"]);
+                                            });
+                                        }
+                                    ';
+                                    $dropList .= '
+                                        Schema::dropIfExists("' . $tableName . '");
+                                    ';
+                                    array_push($M2MTables, $tableName);
+                                }
                             }
                         }
+                        $relationList .= '
+                                if(false!==Schema::hasTable("' . $model . '")){
+                                    Schema::table("' . $model . '", function (Blueprint $table) {
+                                            '. $relationString .'
+                                    });
+                                }
+                            ';
+                        $dropList .= '
+                                if(false!==Schema::hasTable("' . $model . '")){
+                                    Schema::table("' . $model . '", function (Blueprint $table) {
+                                        '.$dropString.'
+                                    });
+                                }
+                            ';
                     }
-                    $relationList .= '
-                            if(false!==Schema::hasTable("' . $model . '")){
-                                Schema::table("' . $model . '", function (Blueprint $table) {
-                                        '. $relationString .'
-                                });
-                            }
-                        ';
-                    $dropList .= '
-                            if(false!==Schema::hasTable("' . $model . '")){
-                                Schema::table("' . $model . '", function (Blueprint $table) {
-                                    '.$dropString.'
-                                });
-                            }
-                        ';
-                }
-                if(strlen($relationList)>0 || strlen($M2MList) > 0){
-                    $contents = '
-                    <?php
-            
-                    use Illuminate\Database\Migrations\Migration;
-                    use Illuminate\Database\Schema\Blueprint;
-                    use Illuminate\Support\Facades\Schema;
-            
-                    class ' . str_replace('_', '', $className) . ' extends Migration
-                    {
-                        public function up()
+                    if(strlen($relationList)>0 || strlen($M2MList) > 0){
+                        $contents = '
+                        <?php
+                
+                        use Illuminate\Database\Migrations\Migration;
+                        use Illuminate\Database\Schema\Blueprint;
+                        use Illuminate\Support\Facades\Schema;
+                
+                        class ' . str_replace('_', '', $className) . ' extends Migration
                         {
-                            ' . $relationList . '
-                            ' . $M2MList . '
+                            public function up()
+                            {
+                                ' . $relationList . '
+                                ' . $M2MList . '
+                            }
+                
+                            public function down()
+                            {
+                                ' . $dropList . '
+                            }
                         }
-            
-                        public function down()
-                        {
-                            ' . $dropList . '
-                        }
+                        ?>';
+                        $this->RootStorage->put($target, $contents);
                     }
-                    ?>';
-                    $this->RootStorage->put($target, $contents);
+                } catch (Exception $e) {
+                    throw new Exception("Error Creating Migration Relations " . $e->getMessage(), 1);
                 }
-            } catch (Exception $e) {
-                throw new Exception("Error Creating Migration Relations " . $e->getMessage(), 1);
             }
         }
         // $this->command->line("+ migration created for table relations. ");

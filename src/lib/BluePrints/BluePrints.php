@@ -9,6 +9,7 @@ class BluePrints {
     private $command;
     private $storage;
     private $template;
+    private $modelDefs;
     private $targetFile;
     private const PathPrefix='blueprints/';
 
@@ -31,70 +32,6 @@ class BluePrints {
                 "inFooter"=>[]
             ],
             "pages" => [
-                [
-                    "name" => "",
-                    "title"=>'',//Displayed in title tag
-                    "subtext"=>'',//Displayed after HTML contents as text and wrapped in H5 tag
-                    'style' => 'Singular', //table, accordion, collection, Singular, crud
-                    "model" => [
-                        // "name"=> "",
-                        // "fields"=> "all" | ["name"=>"Field Name", "caption"=>"label displayed"]
-                        // (Optional)"with"=> [
-                            // [
-                            //     "name"=> "",
-                            //     "fields"=> "all"
-                            // ]
-                        // ]
-                        // (Optional)"join": [
-                        //     {
-                        //         "type": "left|full|...etc",
-                        //         "name": "Model Name",
-                        //         "fields": "all"| ["name"=>"Field Name", "caption"=>"label displayed"],
-                        //         "on": [
-                        //             "name(Local),name(Foreign"
-                        //         ],
-                        //         "modifier"(Optional): [
-                        //             {
-                        //                 "name": "fieldName",
-                        //                 "symbol": "Operators(<,>,<>,=,etc...)",
-                        //                 "value": "on value"
-                        //             }
-                        //         ]
-                        //     }
-                        // ]
-                    ],
-                    'routes' => [
-                        // [
-                            //  "name"=> "Route_Name",
-                            //  "slug"=> used as URL(optional),
-                            //  "type"=> POST | GET(default),
-                            //  "input"(optional)=> [
-                            //                 [
-                            //                     "name"=> "field_name",
-                            //                     "onModel"=> "Model Name" (Optional, As Variable if not on model)
-                            //                     "optional"=> false | true
-                            //                 ],
-                            //                 ...
-                            //             ]
-                        // ]
-                    ],
-                    // For Style="table" Only---------------------
-
-                    // "tableFilter"=>[
-                        // {
-                        //     "name"=> "on Model Name",
-                        //     "fields"=> [
-                        //         "all"| ["field name",...]
-                        //     ]
-                        // }
-                    // ],
-                    // "headerSearch"=>true | false,
-
-                    // -------------------------------------------
-
-                    'html' => '',//Html Contents before the page components
-                    "visible" => [ ]
-                ]
             ]            
         ];
     }
@@ -112,7 +49,6 @@ class BluePrints {
                 $this->command->error('We were unable to find a blueprint file in the target location.');
                 if ($this->command->confirm("Would you like to create one with the wizard? It would be stored at:\n" . str_replace("\\", '/', $this->storage->path($this->targetFile))) !== false) {
                     $this->Wizard();
-                    // $this->buildTemplate();
                 }
             } else {
                 $this->command->info("Blueprint found, now proceed to site building...");
@@ -151,38 +87,53 @@ class BluePrints {
         }
     }
 
-    private function buildTemplate($template=null){
-        $template= $template??$this->template;
-        $path = dirname($this->storage->path($this->targetFile));
-        $this->storage->put($this->targetFile, json_encode($this->template, JSON_PRETTY_PRINT));
-        try {
-            if ($this->storage->exists($path . '/resources') === false) {
-                mkdir($path . '/resources');
-            }
-            if ($this->storage->exists($path . '/models') === false) {
-                mkdir($path . '/models');
-            }
-        } catch (\Exception $ex) {
-            var_dump($ex);
-        }
+    private function PublishTemplate($template=null,$path= 'cached/temp/',$targetFile='bluePrint.bp'){
+        $this->storage->put($path.$targetFile, json_encode($this->template, JSON_PRETTY_PRINT));
     }
 
     private function Wizard(){
+        $path = 'blueprints/cached/temp';
         $this->command->info("Running BluePrints Wizard...");
         $this->command->info("This wizard will guide you through the process of creating your awesome site.\nLeave blank for anything that does not apply\nLet's get started:");
+        $this->command->comment(">Setting up wizard workspace...");
+        try {
+            $basePath= dirname($this->storage->path($path)) . '/temp/';
+            if ($this->storage->exists($path.'/resources') === false) {
+                mkdir($basePath.'resources', 0777,true);
+            }
+            if ($this->storage->exists($path.'/models') === false) {
+                mkdir($basePath. 'models', 0777, true);
+            }
+        } catch (\Exception $ex) {
+            dd($ex);
+        }
+        $this->command->comment(">Wizard workspace is setup at $basePath");
+
         $this->template['siteName'] = $this->command->ask('What is the Name of the website?');
         $this->template['siteAuthor'] = $this->command->ask('What is the Name of the author?');
         $this->template['siteTitle'] = $this->command->ask('What is the Title of the website?');
         $this->template['siteFooter'] = $this->command->ask('Any footer text?');
         $this->template['favIcon'] = $this->command->ask('Add a shortcut image? Absolute path to the image from within the folder of the blueprint loaded.');
         $this->template['siteFooter'] = empty($this->template['siteFooter'])? ("<div class=\"footer_text\"><span>Copyright <span class=\"copyright\">\u00a9<\/span> {{date(\"Y\")}} <\/span> <span>{{config(\"app.name\")}}<\/span>. <span>All rights reserved. <\/span><\/div>"):$this->template['siteFooter'];
-        $this->command->info("Good. Now let's setup some models to use with the system.");
+        $this->command->info("Good. Now let's setup some models to be used with the system.");
         $pageBuilder=new bp_wizardMakePage($this->command);
         $pageBuilder->ModelSetup();
-        $pageBuilder->Wizard();
-        // $this->buildTemplate();
-        $this->command->info("A blueprint is generated by the template and stored at:" . str_replace("\\", '/', $this->storage->path($this->targetFile)));
-        $this->command->info("Please head over to that file and make the adjustments needed. Run this command again when finished.");
+        $this->storage->put($path. '/models/ModelDefinition.mbp', $pageBuilder->ExportMyModels(true));
+        $this->command->comment("Now, let's setup some pages for the site.");
+        while(true){
+            array_push($this->template['pages'], $pageBuilder->Wizard());
+            if($this->command->confirm("Add another page?")===false){
+                break 1;
+            }
+        }
+        $this->storage->put($path . '/MyBluePrint.bp', json_encode($this->template, JSON_PRETTY_PRINT));
+        $this->command->comment("Your complete blueprint has been generated and stored at: " . dirname($this->storage->path($path)));
+        if($this->command->confirm('Do you need further manual adjustments to the blueprint? Choose "no" to proceed with building with the blueprint.',0)===false){
+            $this->command->info("Please head over to that file and make the adjustments needed.  When finished, run 'php artisan bp:BuildSite cached/temp/MyBluePrint.bp'");
+        }else{
+            $this->targetFile= 'cached/temp/MyBluePrint.bp';
+            $this->build();
+        }
     }
 }
 
