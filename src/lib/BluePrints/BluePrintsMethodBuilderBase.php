@@ -146,7 +146,7 @@ abstract class BluePrintsMethodBuilderBase implements BluePrintMethodBuilderCont
                 foreach (($modelDefinition->join) as $joinDefinition) {
                     if(isset($joinDefinition->name) && !empty($joinDefinition->name)){
                         array_push($join, (
-                                            "->".(($joinDefinition->type??'')."Join(").
+                                            "->". lcfirst(($joinDefinition->type??'')."Join(").
                                             ("'". $joinDefinition->name."'"). ', function($join){
                                                 $join->'.
                                                 

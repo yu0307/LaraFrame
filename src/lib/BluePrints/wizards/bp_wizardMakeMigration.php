@@ -10,40 +10,13 @@ class bp_wizardMakeMigration extends bp_wizardbase
     protected $command;
     protected $storage;
     private $tableName;
-    private $FieldList;
-    private $Modifers;
     private $PrimaryKey;
-    private $options;
 
     private $dataTypes;
-    private const OPTIONLIST=[
-        'unsingn'=>['bigInteger', 'decimal', 'double', 'float', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'],
-        'autoIncrement'=>['bigInteger', 'integer', 'mediumInteger', 'smallInteger', 'tinyInteger'],
-        'NonDefault' => ['uuid', 'tinyIncrements', 'smallIncrements', 'rememberToken', 'mediumIncrements', 'increments', 'bigIncrements'],
-        'hasOption'=>[
-            'char' => ['size' => 100],
-            'string' => ['size' => 100],
-            'decimal' => ['Decimal Points(Seperated by comma ",".)' => '8,2'],
-            'unsignedDecimal' => ['Decimal Points(Seperated by comma ",".)' => '8,2'],
-            'double' => ['Decimal Points(Seperated by comma ",". Default: 8,2)' => '8,2'],
-            'float' => ['Decimal Points(Seperated by comma ",".)' => '8,2'],
-            'enum' => ['List Of Values(Seperate each with comma ",")' => ''],
-            'set' => ['List Of Values(Seperate each with comma ",")' => '']
-        ]
-    ];
     public function __construct($Command){
         parent::__construct($Command);
         $this->tableName=$this->command->argument('name')??null;
         $this->PrimaryKey=null;
-        $this->FieldList = [];
-        $this->Modifers=[
-            'autoIncrement'=>'Integer type auto-increment',
-            'nullable' => 'Allows (by default) NULL values to be inserted into the column',
-            'unsigned' => 'Set INTEGER columns as UNSIGNED (MySQL)',
-            'useCurrent' => 'Set TIMESTAMP columns to use CURRENT_TIMESTAMP as default value',
-            'primary'=>'Set as Primary Key',
-            'editable' => 'Make field available for mass assignables'
-        ];
         $this->dataTypes=[
             'increments',
             'bigIncrements',
@@ -102,14 +75,6 @@ class bp_wizardMakeMigration extends bp_wizardbase
             'uuid',
             'year'
         ];
-        $this->options=[
-            'engine' => 'InnoDB',
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'timestamps' => true,
-            'migrate'=>false
-        ];
-
     }
 
     public function Build(){
@@ -260,19 +225,19 @@ class bp_wizardMakeMigration extends bp_wizardbase
                 $Definition['nullable'] = true;
             }            
 
-            if(in_array($Definition['dataType'],self::OPTIONLIST['unsingn'])){
+            if(in_array($Definition['dataType'],parent::OPTIONLIST['unsingn'])){
                 if (false !== ($this->command->confirm('Unsigned?') ?? false)) {
                     $Definition['unsigned'] = true;
                 }  
             }
-            if (in_array($Definition['dataType'], self::OPTIONLIST['autoIncrement'])) {
+            if (in_array($Definition['dataType'], parent::OPTIONLIST['autoIncrement'])) {
                 if (false !== ($this->command->confirm('AutoIncrement?') ?? false)) {
                     $Definition['autoIncrement'] = true;
                 }  
             }
 
-            if (array_key_exists($Definition['dataType'], self::OPTIONLIST['hasOption'])) {
-                foreach(self::OPTIONLIST['hasOption'][$Definition['dataType']] as $option=>$default){
+            if (array_key_exists($Definition['dataType'], parent::OPTIONLIST['hasOption'])) {
+                foreach(parent::OPTIONLIST['hasOption'][$Definition['dataType']] as $option=>$default){
                     if (in_array($Definition['dataType'], ['char', 'string'])) {
                         $Definition['size'] = $this->command->ask(ucfirst($option) . '(Default:' . $default . '):') ?? $default;
                     }else{
@@ -283,7 +248,7 @@ class bp_wizardMakeMigration extends bp_wizardbase
                     }
                 }
             }
-            if (!in_array($Definition['dataType'], self::OPTIONLIST['NonDefault'])) {
+            if (!in_array($Definition['dataType'], parent::OPTIONLIST['NonDefault'])) {
                 $default= $this->command->ask('Default value? (boolean use 1,0):');
                 if(!empty($default)){
                     $Definition['default'] =  $default;

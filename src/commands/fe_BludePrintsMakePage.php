@@ -3,25 +3,24 @@
 namespace feiron\felaraframe\commands;
 
 use Illuminate\Console\Command;
-use feiron\felaraframe\lib\BluePrints\BluePrints;
+use feiron\felaraframe\lib\BluePrints\wizards\bp_wizardMakePage;
 
-class fe_BluePrints extends Command
+class fe_BludePrintsMakePage extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'bp:BuildSite 
-                            {target=blueprints.bp}
-                            {--W|wizard : Creating BluePrints using wizard}';
+    protected $signature = 'bp:makePage 
+                            {name? : Page Name}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Build the site base on the blueprint';
+    protected $description = 'Building a page with the wizard and installs into the framework';
 
     /**
      * Create a new command instance.
@@ -40,6 +39,6 @@ class fe_BluePrints extends Command
      */
     public function handle()
     {
-        (new BluePrints($this))->start();
+        (new bp_wizardMakePage($this))->build();
     }
 }
