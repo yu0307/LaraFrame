@@ -10,11 +10,16 @@ class BluePrints {
     private $storage;
     private $template;
     private $targetFile;
+    private $basecachedPath;
+    private $liveModelList;
+    private const cachedDIR= 'blueprints/cached/';
     private const PathPrefix='blueprints/';
 
     public function __construct(\feiron\felaraframe\commands\fe_BluePrints $command){
         $this->command=$command;
         $this->storage=Storage::disk('local');
+        $this->basecachedPath= $this->storage->path(self::cachedDIR);
+        $this->liveModelList=[];
         $this->template=[
             "siteName"=>"My Awsome Web Site",
             "siteAuthor" => "Lucas F. Lu",
@@ -41,6 +46,8 @@ class BluePrints {
         }
 
         $this->command->comment("=====Welcome to BluePrints Site building utility======");
+        $this->command->info('Loading blueprint configurations currently live in the system.');
+        $this->preLoadLive();
         if ($this->command->option('wizard') === false){
             $this->targetFile = self::PathPrefix . $this->command->argument('target');
             $this->command->info("Loading blueprints from target => " . str_replace("\\", '/', $this->storage->path($this->targetFile)));
@@ -59,6 +66,19 @@ class BluePrints {
         $this->command->comment("=====Thank you for using BluePrints=====");
     }
 
+    private function preLoadLive(){
+        $modelFiles = preg_grep('/^.*\.(mbp)$/i', $this->storage->files(self::cachedDIR . 'live/models'));
+        foreach ($modelFiles??[] as $model) {
+            $this->command->info("Live model file loaded : " . $model);
+            $modelFile = json_decode($this->storage->get($model));
+            foreach ($modelFile as $model) {
+                if (isset($model->modelName)) {
+                    $this->liveModelList[$model->modelName] = (array)$model;
+                }
+            }
+        }
+    }
+
     private function check(){//implement later to check the integrity of the blueprint
         return true;
     }
@@ -70,7 +90,7 @@ class BluePrints {
                 $this->command->info("--> Building Page templates...");
                 if(true===$factory->buildPageTemplate()){
                     $this->command->info("--> Building Models ...");
-                    $factory->ImportModels();
+                    $factory->ImportModels($this->liveModelList);
                     $this->command->info("--> Extracting information and putting things together ...");
                     $factory->ExtractInfo();
                     $this->command->info("--> Building View Files ...");
@@ -89,17 +109,16 @@ class BluePrints {
     }
 
     private function Wizard(){
-        $path = 'blueprints/cached/temp';
         $this->command->info("Running BluePrints Wizard...");
         $this->command->info("This wizard will guide you through the process of creating your awesome site.\nLeave blank for anything that does not apply\nLet's get started:");
         $this->command->comment(">Setting up wizard workspace...");
         try {
-            $basePath= dirname($this->storage->path($path)) . '/temp/';
-            if ($this->storage->exists($path.'/resources') === false) {
-                mkdir($basePath.'resources', 0777,true);
+            $basePath= $this->basecachedPath . 'temp/';
+            if (file_exists($this->basecachedPath . 'temp/resources') === false) {
+                mkdir($this->basecachedPath . 'temp/resources', 0777,true);
             }
-            if ($this->storage->exists($path.'/models') === false) {
-                mkdir($basePath. 'models', 0777, true);
+            if (file_exists($this->basecachedPath . 'temp/models') === false) {
+                mkdir($this->basecachedPath . 'temp/models', 0777, true);
             }
         } catch (\Exception $ex) {
             dd($ex);
@@ -113,9 +132,9 @@ class BluePrints {
         $this->template['favIcon'] = $this->command->ask('Add a shortcut image? Absolute path to the image from within the folder of the blueprint loaded.');
         $this->template['siteFooter'] = empty($this->template['siteFooter'])? ("<div class=\"footer_text\"><span>Copyright <span class=\"copyright\">\u00a9<\/span> {{date(\"Y\")}} <\/span> <span>{{config(\"app.name\")}}<\/span>. <span>All rights reserved. <\/span><\/div>"):$this->template['siteFooter'];
         $this->command->info("Good. Now let's setup some models to be used with the system.");
-        $pageBuilder=new bp_wizardMakePage($this->command);
+        $pageBuilder=new bp_wizardMakePage($this->command, ($this->liveModelList??[]));
         $pageBuilder->ModelSetup();
-        $this->storage->put($path. '/models/ModelDefinition.mbp', $pageBuilder->ExportMyModels(true));
+        $this->storage->put('blueprints/cached/temp/models/ModelDefinition.mbp', $pageBuilder->ExportMyModels(true));
         $this->command->comment("Now, let's setup some pages for the site.");
         while(true){
             array_push($this->template['pages'], $pageBuilder->Wizard());
@@ -123,9 +142,9 @@ class BluePrints {
                 break 1;
             }
         }
-        $this->storage->put($path . '/MyBluePrint.bp', json_encode($this->template, JSON_PRETTY_PRINT));
-        $this->command->comment("Your complete blueprint has been generated and stored at: " . dirname($this->storage->path($path)));
-        if($this->command->confirm('Do you need further manual adjustments to the blueprint? Choose "no" to proceed with building with the blueprint.',0)===false){
+        $this->storage->put('blueprints/cached/temp//MyBluePrint.bp', json_encode($this->template, JSON_PRETTY_PRINT));
+        $this->command->comment("Your complete blueprint has been generated and stored at: " . $basePath);
+        if($this->command->confirm('Do you need further manual adjustments to the blueprint? Choose "no" to proceed with building with the blueprint.')!==false){
             $this->command->info("Please head over to that file and make the adjustments needed.  When finished, run 'php artisan bp:BuildSite cached/temp/MyBluePrint.bp'");
         }else{
             $this->targetFile= 'cached/temp/MyBluePrint.bp';

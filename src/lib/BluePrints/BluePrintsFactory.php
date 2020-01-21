@@ -22,6 +22,7 @@ class BluePrintsFactory {
     private $routeList;
     private $ViewList;
     private $ControllerList;
+    private $liveModelList;
 
     private $ViewFactory;
     private $ControllerFactory;
@@ -43,6 +44,7 @@ class BluePrintsFactory {
         $this->ViewList = [];
         $this->ControllerList = [];
         $this->routeList=[];
+        $this->liveModelList=[];
         $this->counter=['tableMigrated'=>0];
         $this->ViewFactory = new BluePrintsViewFactory();
         $this->ControllerFactory = new BluePrintsControllerFactory();
@@ -255,10 +257,11 @@ class BluePrintsFactory {
         return $relation;
     }
 
-    public function ImportModels(){
+    public function ImportModels($liveModelList=[]){
         if(false=== $this->RootStorage->exists('app/model')){
             $this->RootStorage->makeDirectory('app/model');
         }
+        $this->liveModelList= $liveModelList;
         $modelFiles= preg_grep('/^.*\.(mbp)$/i',$this->BlueprintStorage->files($this->projectPath.'/models'));
         if(empty($modelFiles)){
             // $this->command->info("There are no model files in the sub direcotry [models]");
@@ -354,13 +357,13 @@ class BluePrintsFactory {
             if($model->buildMigrations()===true){
                 $this->counter['tableMigrated']++;
             }
-            // $this->command->line("*migration created for " . $modelName);
+
             $relation=$model->getRelations();
-            if(!empty($relation)){
+            if(!empty($relation) && !array_key_exists($modelName, $this->liveModelList)){
                 $relations[$modelName]=$relation;
             }
+
             $model->BuildModel();
-            // $this->command->line("*model file created for " . $modelName);
             
         }
         $this->createRelationMigration($relations);
@@ -598,8 +601,18 @@ class BluePrintsFactory {
         if ($this->BlueprintStorage->exists('/blueprints/cached/live') === false) {
             mkdir($targetPath, 0777, true);
         }
-        if (file_exists($sourcePath . "/models")) copy($sourcePath . "/models", $targetPath. "/models");
-        if (file_exists($sourcePath . "/resources")) copy($sourcePath . "/resources", $targetPath . "/resources");
+
+        if (file_exists($sourcePath . "/models")){
+            foreach (preg_grep('/^.*\.mbp$/i', scandir($sourcePath . "/models"))??[] as $file) {
+                copy($sourcePath . "/models/". $file, $targetPath . "/models/" . $file);
+            }
+        }
+        if (file_exists($sourcePath . "/resources")) {
+            foreach (preg_grep('/^.*\.[a-zA-Z]+$/i', scandir($sourcePath . "/resources")) ?? [] as $file) {
+                copy($sourcePath . "/resources/" . $file, $targetPath . "/resources/" . $file);
+            }
+        }
+
         $this->BlueprintStorage->put('/blueprints/cached/live/Live.bp', json_encode($this->blueprint, JSON_PRETTY_PRINT));
     }
     

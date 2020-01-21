@@ -3,7 +3,6 @@
 namespace feiron\felaraframe\lib\BluePrints\wizards;
 
 use feiron\felaraframe\lib\BluePrints\wizards\bp_wizardbase;
-use feiron\felaraframe\lib\BluePrints\wizards\bp_wizardMakeMigration;
 
 class bp_wizardMakePage extends bp_wizardbase
 {
@@ -42,7 +41,9 @@ class bp_wizardMakePage extends bp_wizardbase
                 if (empty($ModelDefinition['modelName'])) {
                     $this->command->error('Model name is required.');
                     if ($counter > 2 && ($this->command->confirm('Do you wish to exit model management?'))) break 2;
-                } else {
+                } else if(array_key_exists(trim($ModelDefinition['modelName']),$this->CacheModelList)){
+                    $this->command->error('There is already a model defined with that name in the system. Please choose another name.');
+                }else {
                     break 1;
                 }
             }
@@ -150,7 +151,7 @@ class bp_wizardMakePage extends bp_wizardbase
             $this->command->comment("What fields are used from this model?");
             $fieldList='';
             foreach($this->CacheModelList[$this->pageTemplate['model']['name']]['modelFields']??[] as $fieldDef){
-                $fieldList.= $fieldDef['name'].",\t";
+                $fieldList.= ((array)$fieldDef)['name'].",\t";
             }
 
             $this->command->comment("Available Fields are: [". $fieldList.']' );
@@ -174,7 +175,7 @@ class bp_wizardMakePage extends bp_wizardbase
                         $this->command->comment("What fields are used from this join?");
                         $fieldList = '';
                         foreach ($this->CacheModelList[$joins['name']]['modelFields'] ?? [] as $fieldDef) {
-                            $fieldList .= $fieldDef['name'] . "\t";
+                            $fieldList .= ((array)$fieldDef)['name'] . "\t";
                         }
                         $this->command->comment("Available Fields are: " . $fieldList);
                         $joins['fields'] = $this->command->ask("Type 'all' to use all available fields or use syntax <fieldName,...> to define the list(eg: name, age,...).") ?? 'all';
@@ -230,6 +231,9 @@ class bp_wizardMakePage extends bp_wizardbase
                         $with['fields'] = $this->command->ask("Type 'all' to use all available fields or use syntax <fieldName,...> to define the list(eg: name, age,...).") ?? 'all';
                         $with['fields'] = (($with['fields'] == 'all') ? 'all' : explode(',', $with['fields']));
 
+                        if(array_key_exists('with', $this->pageTemplate['model'])!==true){
+                            $this->pageTemplate['model']['with']=[];
+                        }
                         array_push($this->pageTemplate['model']['with'], $with);
                         if ($this->command->confirm('No more loaded models?') === true) {
                             break 1;
@@ -253,7 +257,7 @@ class bp_wizardMakePage extends bp_wizardbase
                     break 1;
                 }
             }
-            $route['input'] = $this->command->choice('Route type:',['GET','POST'],0);
+            $route['type'] = $this->command->choice('Route type:',['GET','POST'],0);
             if ($this->command->confirm('Any inputs expected to this route?') === true) {
                 $route['input'] = [];
                 while (true) {
@@ -264,7 +268,7 @@ class bp_wizardMakePage extends bp_wizardbase
                         $input['onModel'] = $this->command->choice('Which model is used:', array_keys($this->CacheModelList), 0);
                         $fieldList = [];
                         foreach ($this->CacheModelList[$input['onModel']]['modelFields'] ?? [] as $fieldDef) {
-                            array_push($fieldList, $fieldDef['name']);
+                            array_push($fieldList, ((array)$fieldDef)['name']);
                         }
                         $input['name'] = $this->command->choice('which field is used from this model?', $fieldList, 0);
                     } else {
