@@ -40,9 +40,7 @@
 @endphp
 
 @section('footer')
-<div class="footer m-0 p-0">
     <div class="copyright p-0">
         <p class="pull-right sm-pull-reset m-b-0"> <span>Copyright <span class="copyright">©</span> {{date('Y')}} </span> <span>{{config('app.name')}}</span>. <span>All rights reserved. </span> </p>
     </div>
-</div>
 @endsection

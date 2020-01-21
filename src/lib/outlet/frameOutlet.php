@@ -74,14 +74,14 @@ class frameOutlet implements feOutletManagerContract
         }
     }
 
-    public function OutletResources($outletName,$target=false,$formater=null){
+    public function OutletResources($outletName,$target=false,$toHtml=false,$formater=null){
         $resources = [];
         if($target===false){
             foreach($this->OutletList[$outletName] as $key=>$outlet){
                 $outlet= $outlet->getResource();
                 if(!empty($outlet) && is_array($outlet)){
                     foreach($outlet as $res){
-                        array_push($resources, $this->toHTML(asset($res)));
+                        array_push($resources, ($toHtml===false? asset($res):$this->toHTML(asset($res))));
                     }
                 }
             }
@@ -89,7 +89,7 @@ class frameOutlet implements feOutletManagerContract
             $outlet = $this->OutletList[$outletName][$target]->getResource();
             if (!empty($outlet) && is_array($outlet)) {
                 foreach ($outlet as $res) {
-                    array_push($resources, $this->toHTML(asset($res)));
+                    array_push($resources, ($toHtml === false ? asset($res): $this->toHTML(asset($res))));
                 }
             }
         }

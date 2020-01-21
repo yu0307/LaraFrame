@@ -54,26 +54,20 @@
     @yield('Widget_JsBeforeReady');
 @endpush
 
-@push('headerscripts')
-    @foreach ($headerscripts as $script)
-        <script type="text/javascript" src="{{$script['file']}}"></script>
-    @endforeach
-@endpush
-@push('headerstyles')
-    @foreach ($headerstyles as $style)
-        <link href="{{$style['file']}}" rel="stylesheet"> <!-- MANDATORY -->
-    @endforeach
-@endpush
-@push('footerscripts')
-    @foreach ($footerscripts as $script)
-        <script type="text/javascript" src="{{$script['file']}}"></script>
-    @endforeach
-@endpush
-@push('footerstyles')
-    @foreach ($footerstyles as $style)
-        <link href="{{$style['file']}}" rel="stylesheet"> <!-- MANDATORY -->
-    @endforeach
-@endpush
+@php
+    foreach ($headerscripts as $script){
+        app()->FeFrame->enqueueResource($script['file'],'headerscripts');
+    }
+    foreach ($headerstyles as $script){
+        app()->FeFrame->enqueueResource($script['file'],'headerstyles');
+    }
+    foreach ($footerscripts as $script){
+        app()->FeFrame->enqueueResource($script['file'],'footerscripts');
+    }
+    foreach ($footerstyles as $script){
+        app()->FeFrame->enqueueResource($script['file'],'footerstyles');
+    }
+@endphp
 
 @push('DocumentReady')
     @yield('Widget_DocumentReady')

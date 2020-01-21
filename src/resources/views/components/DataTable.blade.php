@@ -82,8 +82,64 @@
                             {{($tableID.'_setting')}}.ajaxDataFunc(data);
                         }
                     }
+                    {{($tableID.'_setting')}}.ajax.dataSrc=function(json){
+                        if ({{($tableID.'_setting')}}.ajaxDataSrcFunc!=undefined && {{($tableID.'_setting')}}.ajaxDataSrcFunc instanceof Function) {
+                            json.data={{($tableID.'_setting')}}.ajaxDataSrcFunc(data);
+                        }
+                        return json.data;
+                    }
                 @endif
-                $('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
+                var my_dataTable=$('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
+                $('.dataTable').on('click','button.dt_details',function(){
+                    var DetailData=my_dataTable.row($(this).closest('tr')).data();
+                    if(undefined!==DetailData[$(this).attr('dataTarget')]){
+                        $('.shadow_tr').remove();
+                        var header='';
+                        var tableContents='';
+                        $(DetailData[$(this).attr('dataTarget')]).each(function($index,$row){
+                            tableContents+='<tr>';
+                            $.each( $row, function( key, value ) {
+                                if(key!=='pivot'){
+                                    if($index==0){
+                                        header+=('<th>'+key+'</th>');
+                                    }
+                                    tableContents+='<td>'+((value!=null)?value:'')+'</td>';
+                                }
+                            });
+                            tableContents+='</tr>';
+                        });
+                        $('<tr class="shadow_tr"><td style="display:none" colspan="'+$(this).closest('tr').find('td').length+'">'+((tableContents.length>0)?('<table class="table table-striped table-mini table-hover"><tr>'+header+'</tr>'+tableContents+'</table>'):'<h5 style="text-align:center">There are no data associate with this record.</h5>')+'<button class="btn btn-danger btn-sm btn-mini pull-right closeShadowTr"> Close </button></td></tr>').insertAfter($(this).closest('tr')).find('td').slideDown(300);
+                        
+                    }
+                });
+                $('.dataTable').on('click','button.closeShadowTr',function(){
+                    $(this).closest('tr').slideUp(300).remove();
+                });
+                @if (($enableHeaderSearch??false)===true)
+                    var table=$('#{{$tableID}}');
+                    var timer;
+                    $(table).find('thead tr').clone(false).appendTo($(table).find('thead'));
+                    $(table).find('thead tr:eq(1) th:last-child, thead tr:eq(1) th.disableFilter, thead tr:eq(1) th.sorting_disabled').html('');
+                    $(table).find('thead tr:eq(1) th').each(function (i) {
+                        if(!$(this).hasClass('disableFilter') && !$(this).hasClass('sorting_disabled')){
+                            var title = $(this).removeClass('sorting').text();
+                            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                            $('input', this).on('keyup change', function () {
+                                if (my_dataTable.column(i).search() !== this.value) {
+                                    clearTimeout(timer);
+                                    var tarval = this.value;
+                                    timer = setTimeout(function() {
+                                        my_dataTable
+                                            .column(i)
+                                            .search(tarval)
+                                            .draw();
+                                    }, 700);
+                                }
+    
+                            });
+                        }
+                    });
+                @endif
             @endpushonce
         @else
             <h3>No table header is set, check component configuration.</h3>

@@ -24,7 +24,9 @@
                 <!-- PAGE CONTENT -->
                 @yield('content')
             </div>
-            @yield('footer')
+            <div class="footer m-0 p-0 t-center text-center">
+                @yield('footer')
+            </div>
         </div>
         <!-- END MAIN CONTENT -->
     </section>
@@ -47,7 +49,9 @@
             </div>
         </div>
     </div>    
-
+    @push('footerscripts')
+        @stack('OutletResource')
+    @endpush
     @stack('footerscripts')
     @stack('footerstyles')
     <script type="text/javascript">

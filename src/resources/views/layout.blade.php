@@ -12,7 +12,9 @@
 @endsection
 
 @if(($siteInfo['theme']!='felaraframe') && isset($siteInfo['Setting']['tm_force_bootstrap']))    
-
+    @php
+        $siteInfo['Setting']['tm_force_bootstrap']=(is_array($siteInfo['Setting']['tm_force_bootstrap'])===false?[$siteInfo['Setting']['tm_force_bootstrap']]:$siteInfo['Setting']['tm_force_bootstrap']);
+    @endphp
     @if (in_array('Jquery',$siteInfo['Setting']['tm_force_bootstrap']))
         @php
             app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-3.1.0.min.js'),'footerscripts',true);
@@ -50,13 +52,20 @@
 @includeIf($siteInfo['theme'].'::header')
 @includeIf($siteInfo['theme'].'::footer')
 @includeIf($siteInfo['theme'].'::sidebar')
-
+@php
+    $resoucesList=[];
+@endphp
 @foreach (app()->FeFrame->getResources() as $Location=>$Resources)
         @if ($Location=='push')
             @foreach ($Resources as $section=>$assets)
                 @push($section)
                     @foreach ($assets as $key=>$asset)
-                        {!!$asset!!}
+                        @if (false=== in_array($key,$resoucesList))
+                            @php
+                                array_push($resoucesList,$key)
+                            @endphp
+                            {!!$asset!!}
+                        @endif
                     @endforeach
                 @endpush
             @endforeach
@@ -64,7 +73,12 @@
             @foreach ($Resources as $section=>$assets)
                 @prepend($section)
                     @foreach ($assets as $key=>$asset)
-                        {!!$asset!!}
+                        @if (false=== in_array($key,$resoucesList))
+                            @php
+                                array_push($resoucesList,$key)
+                            @endphp
+                            {!!$asset!!}
+                        @endif
                     @endforeach
                 @endprepend
             @endforeach
@@ -84,9 +98,12 @@
 @if($siteInfo['theme']!='felaraframe')
 <body>
 @endif
-    @include($siteInfo['theme'].'::index')   
+@include($siteInfo['theme'].'::index')   
 
 @if($siteInfo['theme']!='felaraframe')
+    @push('footerscripts')
+        @stack('OutletResource')
+    @endpush
     @stack('footerscripts')
     @stack('footerstyles')
     <script type="text/javascript">

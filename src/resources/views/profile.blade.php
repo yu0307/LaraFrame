@@ -6,6 +6,12 @@
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/select2/dist/css/select2.min.css'),'headerstyles');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/structure.css'),'headerstyles');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/themes/bootstrap-v3.css'),'headerstyles');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/css/usrProfile.css'),'headerstyles');
+
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-3.1.0.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery/jquery-migrate-3.0.0.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/jquery-ui/jquery-ui.min.js'),'footerscripts');
+    app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/bootstrap/js/bootstrap.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/noty/noty.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/mcustom-scrollbar/jquery.mCustomScrollbar.concat.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/bootstrap-loading/lada.min.js'),'footerscripts');
@@ -16,6 +22,9 @@
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/laraframe.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/global.js'),'footerscripts');
     
+    foreach(app()->frameOutlet->OutletResources('Fe_FrameProfileOutlet') as $asset){
+        app()->FeFrame->enqueueResource($asset,'OutletResource');
+    }
 @endphp
 
 @section('Prof_control_tab_contents')
@@ -36,18 +45,6 @@
         @endforeach
     @endif
 @endsection
-
-@push('Prof_OutletResource')
-    {!! join(app()->frameOutlet->OutletResources('Fe_FrameProfileOutlet')) !!}
-@endpush
-
-@push('footerscripts')
-    @stack('Prof_OutletResource')
-@endpush
-
-@push('headerstyles')
-    <link href="{{asset('/feiron/felaraframe/css/usrProfile.css')}}" rel="stylesheet"> <!-- MANDATORY -->
-@endpush
 
 @section('content')    
     @fePortlet([
