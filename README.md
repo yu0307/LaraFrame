@@ -105,6 +105,12 @@ Further reading on this could be found at [This Link](https://laravel.com/docs/m
 **For details of how to use this framework. Please head over to the [WiKi](https://github.com/yu0307/LaraFrame/wiki) page of this Repo.**
 There are a lot of features packed into this package and I will be updating the [WiKi Page](https://github.com/yu0307/LaraFrame/wiki) frequently, please stay tuned.
 
+## Support us:
+
+If you like this project, Please, please, please consider put a Star⭐️ and tweet about it.
+
+I would love for any forms of supports and they are deeply appreciated👍! Thanks!
+
 ### Notes:
 - This package does not come with user support nor with role management. 
 - For these functions, please use [Fe_Login](https://github.com/yu0307/Fe_Login) and [Fe_Roles](https://github.com/yu0307/Fe_Roles) which were specifically developed to work with this framework. 
