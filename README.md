@@ -1,5 +1,6 @@
 ## Welcome to LaraFrame Repo!
 A powerful, state of the art, framework for laravel application.
+Documentation of this Framework, [Please visit here](https://github.com/yu0307/LaraFrame/wiki)
 ### **Enable user authentication and management, use [Fe_Login](https://github.com/yu0307/Fe_Login)**
 ### **Enable user Role management, use [Fe_Roles](https://github.com/yu0307/Fe_Roles)**
 ### Let's collaborate!
