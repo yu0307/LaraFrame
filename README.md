@@ -6,22 +6,22 @@ A powerful, state of the art, framework for laravel application.
 Please send a email to me for bugs, feature suggestions,pull requests,etc... or even hang out :) [yu0307@gmail.com](mailto:yu0307@gmail.com)
 
 ### This package provides the following features:
-    - Built-in UI framework for laravel application. Ideal for cloud system, admin control panel, CRM, general back-end interface and more.
-    - Home page Widget support. Create custom widgets for users to choose at the front end.
-    - List of stock widgets(weather,calendar,clock,etc) already built-in, instantly available for anyone who visits the home page.
-    - Widget management. Re-arranging widgets at home page, add/remove widgets and change widget settings all at one place. 
-    - Built-in templates for profile page, user setting page, etc. 
-    - Built-in centralized control panel. Integrated with user management, role management, general settings, etc. Everything is added to the panel automatically.
-    - Theme support. You can choose between themes like WordPress within the central control panel. 
-    - Extendable Themes. You can create your own theme/designs and apply to the framework. Everything integrates gracefully. 
-    - Revolutionary, BluePrints utility tool. Making building sites as easy as taking a survey. 
-    - Built-in laravel commands for building components. Automatically generates controllers, models, migrations, etc. 
-    - Extensive list of blade directives (forms, buttons,tables,etc) for fast interface development.
-    - Built-in blade directives for common controls, take away the burden of writing repetitive codes.
-    - Mobile responsive interface and menu design.
-    - Built-in notification interface for users to view message/mails.
-    - Menu Generator with support with icon, label, slug support.
-    - Clean, elegant and modern design of front-end interface.
+- Built-in UI framework for laravel application. Ideal for cloud system, admin control panel, CRM, general back-end interface and more.
+- Home page Widget support. Create custom widgets for users to choose at the front end.
+- List of stock widgets(weather,calendar,clock,etc) already built-in, instantly available for anyone who visits the home page.
+- Widget management. Re-arranging widgets at home page, add/remove widgets and change widget settings all at one place. 
+- Built-in templates for profile page, user setting page, etc. 
+- Built-in centralized control panel. Integrated with user management, role management, general settings, etc. Everything is added to the panel automatically.
+- Theme support. You can choose between themes like WordPress within the central control panel. 
+- Extendable Themes. You can create your own theme/designs and apply to the framework. Everything integrates gracefully. 
+- Revolutionary, BluePrints utility tool. Making building sites as easy as taking a survey. 
+- Built-in laravel commands for building components. Automatically generates controllers, models, migrations, etc. 
+- Extensive list of blade directives (forms, buttons,tables,etc) for fast interface development.
+- Built-in blade directives for common controls, take away the burden of writing repetitive codes.
+- Mobile responsive interface and menu design.
+- Built-in notification interface for users to view message/mails.
+- Menu Generator with support with icon, label, slug support.
+- Clean, elegant and modern design of front-end interface.
 
 ### Dependencies:
 - Composer [Visit vendor](https://getcomposer.org/)
