@@ -29,11 +29,5 @@
                 "feiron\\felaraframe\\FeLaraFrameServiceProvider"
             ]
         }
-    },
-    "scripts": {
-        "post-package-install": [
-            "php artisan storage:link",
-            "@php artisan vendor:publish --provider=\"\\feiron\\felaraframe\\FeLaraFrameServiceProvider\""
-        ]
     }
 }
