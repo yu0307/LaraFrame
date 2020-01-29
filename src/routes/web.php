@@ -21,9 +21,6 @@
             Route::post('thememanagement', 'fe_controlpanel@UpdateTheme')->name('updateThemeSetting');
             Route::get('thememanagement/load/{ThemeName}', 'fe_controlpanel@LoadThemeInfo')->name('LoadThemeInfo');
         });
-        Route::get('test',function(){
-            dd(config());
-        });
     });
 
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers'], function () {
