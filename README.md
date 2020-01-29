@@ -45,6 +45,7 @@ Please send a email to me for bugs, feature suggestions,pull requests,etc... or 
 
     ```
         php artisan vendor:publish --provider="feiron\felaraframe\FeLaraFrameServiceProvider" --force
+        php artisan migrate --path="/vendor/feiron/felaraframe/src/database/migrations/"
         php artisan storage:link
     ```
 
