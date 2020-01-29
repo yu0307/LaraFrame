@@ -1,7 +1,6 @@
 ## Welcome to LaraFrame Repo!
 A powerful, state of the art, framework for laravel application.
 Documentation of this Framework, [Please visit here](https://github.com/yu0307/LaraFrame/wiki)
-### **Enable user authentication and management, use [Fe_Login](https://github.com/yu0307/Fe_Login)**
 ### **Enable user Role management, use [Fe_Roles](https://github.com/yu0307/Fe_Roles)**
 ### Let's collaborate!
 Please send a email to me for bugs, feature suggestions,pull requests,etc... or even hang out :) [yu0307@gmail.com](mailto:yu0307@gmail.com)
@@ -27,7 +26,7 @@ Please send a email to me for bugs, feature suggestions,pull requests,etc... or 
 ### Dependencies:
 - Composer [Visit vendor](https://getcomposer.org/)
 - Laravel 5+
-- Compatible add-ons: [Fe_Login](https://github.com/yu0307/Fe_Login), [Fe_Roles](https://github.com/yu0307/Fe_Roles)
+- [Fe_Login](https://github.com/yu0307/Fe_Login), [Fe_Roles](https://github.com/yu0307/Fe_Roles)
 
 ### Installation:
 
@@ -45,7 +44,11 @@ Please send a email to me for bugs, feature suggestions,pull requests,etc... or 
 
     ```
         php artisan vendor:publish --provider="feiron\felaraframe\FeLaraFrameServiceProvider" --force
+        php artisan vendor:publish --provider="feiron\fe_login\Fe_LoginServiceProvider" --force
+
+        php artisan migrate --path="/vendor/feiron/fe_login/src/database/migrations/"
         php artisan migrate --path="/vendor/feiron/felaraframe/src/database/migrations/"
+
         php artisan storage:link
     ```
 
