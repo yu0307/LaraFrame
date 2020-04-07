@@ -9,7 +9,10 @@ use feiron\felaraframe\models\LF_Mails;
 class fe_NotificationController extends Controller
 {
     public function loadNotification(Request $request, $MID){
-        return response()->json(LF_Mails::find($MID)->load('Sender')->toArray());
+        $mail=LF_Mails::find($MID);
+        $mail->status='read';
+        $mail->save();
+        return response()->json($mail->load('Sender')->toArray());
     }
 
     public function show()
@@ -18,7 +21,7 @@ class fe_NotificationController extends Controller
     }
 
     public function removeNotification(Request $request, $MID){
-        // LF_Mails::destroy($MID);
+        LF_Mails::destroy($MID);
         return response()->json(['status'=>'success','message'=>['Notification Removed.']]);
     }
 }

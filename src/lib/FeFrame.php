@@ -7,7 +7,7 @@ use feiron\felaraframe\lib\contracts\feTheme;
 use feiron\felaraframe\lib\contracts\feSettingControls;
 use feiron\felaraframe\lib\felaraframeTheme;
 use feiron\felaraframe\models\LF_MetaInfo;
-
+use feiron\felaraframe\lib\helper\menuGenerator;
 class FeFrame {
 
     private $theme; //feTheme
@@ -16,6 +16,8 @@ class FeFrame {
     private $siteSetting;
     private $siteSettingList;
     private $resourceList;
+    private $menu;
+    private $initBlocks=[];
     public function __construct(){
         if (\Schema::hasTable('lf_site_metainfo')) {
             $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??(config('felaraframe.appconfig.theme')??felaraframeTheme::class);
@@ -26,6 +28,7 @@ class FeFrame {
             $this->themeSetting=[];
             $this->siteSetting=[];
         }
+        $this->menu= new menuGenerator();
         
         $theme = new $theme();
         if ($theme instanceof feTheme) {
@@ -42,6 +45,18 @@ class FeFrame {
             'prepend'=>[],
             'push'=>[]
         ];
+    }
+
+    public function addInitBlock(\feiron\felaraframe\lib\contracts\feInitBlock $block){
+        array_push($this->initBlocks,$block);
+    }
+
+    public function getInitBlocks(){
+        return $this->initBlocks;
+    }
+
+    public function menuGenerator(){
+        return $this->menu;
     }
 
     public function enqueueResource($resource,$location= 'headerstyles',$prepend=false){

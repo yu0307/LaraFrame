@@ -1,7 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+@php
+    foreach(app()->FeFrame->getInitBlocks()??[] as $initBlock){
+        $initBlock->execute(request());
+    }
+@endphp
 
 @section('main_menu')
+    @foreach (app()->FeFrame->menuGenerator()->getMenu()??[] as $Menu)
+        <li class="tm">
+            <a href="{{$Menu['href']??'#'}}"><i class="{{$Menu['icon']??'fa fa-angle-right'}}"></i><span>{!!$Menu['title']!!}</span></a>
+        </li>
+    @endforeach
     @if(config('felaraframe.appconfig.use_route_as_menu'))
         @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
             @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])

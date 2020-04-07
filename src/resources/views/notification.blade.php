@@ -44,7 +44,8 @@
                                     @foreach ($mails as $mail)
                                         <div class="message-item media" mail_id="{{$mail->id}}">
                                             <div class="media">
-                                                <img src="{{asset('/feiron/felaraframe/images/shopping/mail.png')}}" alt="Mail Icon" width="40" class="sender-img">
+                                                {{-- <img src="{{asset('/feiron/felaraframe/images/shopping/mail.png')}}" alt="Mail Icon" width="40" class="sender-img"> --}}
+                                                <i class="icon icon-envelope{{$mail->status=='read'?'-open':''}} f-40 sender-img"  alt="Mail Icon"></i>
                                                 <div class="media-body">
                                                     <div class="sender">{{$mail->Sender->name??'From System'}}</div>
                                                     <div class="subject">{!!(($mail->sender<=0)?'<span class="label label-primary">System</span>':'').(empty($mail->remarks)?"":'<span class="label label-info">'.$mail->remarks.'</span>') !!} <span class="subject-text">{{$mail->subject}}</span></div>

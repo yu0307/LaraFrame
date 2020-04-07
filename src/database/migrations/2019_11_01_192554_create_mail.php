@@ -18,8 +18,9 @@ class CreateMail extends Migration
             $table->integer('sender');
             $table->integer('recipient');
             $table->string('subject', 220)->default('Untitiled');
+            $table->string('status',30)->default('new');
             $table->text('contents')->nullable();
-            $table->string('remarks')->nullable();
+            $table->string('remarks')->nullable();            
             $table->timestamps();
 
             $table->engine = 'InnoDB';
