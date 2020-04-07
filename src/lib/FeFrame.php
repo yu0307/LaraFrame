@@ -18,6 +18,7 @@ class FeFrame {
     private $resourceList;
     private $menu;
     private $initBlocks=[];
+    private $filterBlock=[];
     public function __construct(){
         if (\Schema::hasTable('lf_site_metainfo')) {
             $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??(config('felaraframe.appconfig.theme')??felaraframeTheme::class);
@@ -51,8 +52,15 @@ class FeFrame {
         array_push($this->initBlocks,$block);
     }
 
+    public function addFilterBlock(\feiron\felaraframe\lib\contracts\feFilterBlock $block){
+        array_push($this->filterBlock,$block);
+    }
+
     public function getInitBlocks(){
         return $this->initBlocks;
+    }
+    public function getFilterBlock(){
+        return $this->filterBlock;
     }
 
     public function menuGenerator(){

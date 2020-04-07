@@ -11,6 +11,9 @@
         Route::post('GetWidget/{WidgetName}', 'userWidgetLayoutController@addWidget')->name('WidgetsAjaxBuild');
 
         Route::get('GetWidgetList', function () {
+            foreach(app()->FeFrame->getFilterBlock()??[] as $filter){
+                $filter->filter(request(),app()->WidgetManager);
+            }
             return response()->json(app()->WidgetManager->getSiteWidgetList());
         })->name('GetWidgetList');
 
