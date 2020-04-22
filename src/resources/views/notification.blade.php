@@ -12,8 +12,13 @@
     
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/plugins/quicksearch/quicksearch.min.js'),'footerscripts');
     app()->FeFrame->enqueueResource(asset('/feiron/felaraframe/js/mailbox.js'),'footerscripts');
-    
 @endphp
+
+@if ($MID!=null)
+    @push('DocumentReady')
+        loadNotification({{$MID}});
+    @endpush
+@endif
 
 
 @section('content')
@@ -24,7 +29,7 @@
     ])
     <div class="row h-100p">
         <div class="col-sm-12 page-app mailbox h-100p">
-            <section class="app">
+            <section class="app bg-white">
                 <aside class="aside-md emails-list">
                     <section>
                         <div class="mailbox-page clearfix">

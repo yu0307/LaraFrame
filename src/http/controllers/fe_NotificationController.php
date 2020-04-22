@@ -15,9 +15,12 @@ class fe_NotificationController extends Controller
         return response()->json($mail->load('Sender')->toArray());
     }
 
-    public function show()
+    public function show(Request $request, $MID=null)
     {
-        return view('felaraframe::notification')->with('mails', LF_Mails::getMails(auth()->user()->getKey()));
+        return view('felaraframe::notification')->with([
+                                                            'mails'=>LF_Mails::getMails(auth()->user()->getKey()),
+                                                            'MID'=>$MID
+                                                        ]);
     }
 
     public function removeNotification(Request $request, $MID){
