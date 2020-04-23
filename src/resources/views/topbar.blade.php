@@ -7,7 +7,7 @@
     <div class="header-left w-50p">
         <div class="topnav w-100p">
             <a class="menutoggle" href="#" data-toggle="sidebar-collapsed"><span class="menu__handle"><span>Menu</span></span></a>
-            <ul class="nav nav-icons w-30p">
+            <ul class="nav nav-icons w-80p">
                 @yield('topbar_menus')
                 <!-- testing remove on production -->
                 <!-- <li><span class="octicon octicon-cloud-upload"></span></li> -->
