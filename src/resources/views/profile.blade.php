@@ -62,7 +62,7 @@
                             <div class="panel-body p-10">
                                 <div class="text-center col-md-2 hidden-xs hidden-sm" style="min-height: 120px;">
                                     <div class="bd-full img-circle  usrProfile {{$Editable?'editable':''}}">
-                                        <img src="{{app()->FeFrame->GetProfileImage(120)}}" class="img-lg img-thumbnail img-responsive img-circle bg-light" alt="avatar">
+                                        <img src="{{app()->FeFrame->GetProfileImage(120,false,null,$User)}}" class="img-lg img-thumbnail img-responsive img-circle bg-light" alt="avatar">
                                     </div>
                                 </div>
                                 <div class="clearfix col-md-10 col-sm-12">
