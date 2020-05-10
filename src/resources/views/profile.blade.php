@@ -34,12 +34,13 @@
     @if ($Editable)
         @foreach (app()->frameOutlet->getOutlet('Fe_FrameProfileOutlet') as $OutletItem)
             @php
+                $active = empty($menu);
                 $ID=str_replace(' ','_',$OutletItem->MyName());
-                $menu.='<li>
-                            <a href="#'.$ID.'" data-toggle="tab">'.$OutletItem->MyName().'</a>
+                $menu.='<li '.($active?'class="active"':'').'>
+                            <a href="#'.$ID.'"  data-toggle="tab">'.$OutletItem->MyName().'</a>
                         </li>';
             @endphp
-            <div class="tab-pane fade h-100p" id="{{$ID}}">
+            <div class="tab-pane fade h-100p {{$active?'active in':''}}" id="{{$ID}}">
                 @include($OutletItem->getView()->getname())
             </div>
         @endforeach
@@ -77,13 +78,9 @@
                     <div class="col-md-12 p-10 h-100p">
                         <div class="tab_left h-100p">
                             <ul class="nav nav-tabs nav-primary h-100p f-16">
-                                <li class="active"><a href="#usrProfHome" data-toggle="tab">General</a></li>
                                 {!!$menu!!}
                             </ul>
                             <div class="tab-content h-100p">
-                                <div class="tab-pane fade active in h-100p" id="usrProfHome">
-                                    <p class="light">Display some useful information here.</p>
-                                </div>
                                 @yield('Prof_control_tab_contents')
                             </div>
                         </div>
