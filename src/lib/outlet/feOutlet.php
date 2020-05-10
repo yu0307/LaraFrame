@@ -10,6 +10,7 @@ class feOutlet implements feOutletContract
     protected $resource = []; //array of path to resource files;
     protected $view;
     protected $myName;
+    private $params;
     // private $type;//outlet type
 
     public function __construct($params = null)
@@ -18,7 +19,12 @@ class feOutlet implements feOutletContract
         $this->resource = $params['reousrce'] ?? null;
         $this->view = $params['view'] ?? null;
         $this->myName = $params['myName'] ?? null;
+        $this->params=$params;
         return $this;
+    }
+
+    public function __get($name){
+        return $this->params[$name]??null;
     }
 
     public function setName($outletname)
