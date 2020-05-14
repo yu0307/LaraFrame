@@ -13,6 +13,7 @@
                         <img src="{{app()->FeFrame->GetProfileImage(300)}}" class="img-responsive img-circle">
                     </div>
                     <h4>@yield('user_name',(auth()->user()->name??''))</h4>
+                    @yield('user_subctrl')
                 </div>
                 @break
             @case('Mini Profile Image')
@@ -22,6 +23,7 @@
                     </div>
                     <div class="user-details">
                         <h4>@yield('user_name',(auth()->user()->name??''))</h4>
+                        @yield('user_subctrl')
                     </div>
                 </div>
                 @break
@@ -32,6 +34,7 @@
                         <i class="icon icons-faces-users-01"></i>
                         <div class="user-details">
                             <h4>@yield('user_name',(auth()->user()->name??''))</h4>
+                            @yield('user_subctrl')
                         </div>
                     </div>
                 </div>
