@@ -66,15 +66,17 @@ class BluePrintsViewFactory extends BluePrintsBaseFactory {
                 <script type='text/javascript' src='{{asset('/feiron/felaraframe/components/BluePrints/js/blueprintDisplay.js')}}'></script>
             @endpush
             @section('content')
-                @fePortlet([
-                            'id'=>'panel_". $this->Definition['name']. "',
-                            'class'=>'blueprints',
-                            'headerText'=>'".(empty($this->Definition['title'])?'': ("<h3>". $this->Definition['title']."</h3>")). "'
-                            ])
+                <x-fe-portlet
+                    class='blueprints'
+                    id='panel_". $this->Definition['name']. "'
+                >
+                    <x-slot name=\"header\">
+                        ".(empty($this->Definition['title'])?'': ("<h3>". $this->Definition['title']."</h3>")). "
+                    </x-slot>
                     " . ($this->Definition['html']??'') . "
                     " . (empty($this->Definition['subtext']) ? '' : ("<h5 class='alert alert-info'>" . $this->Definition['subtext'] . "</h5>")) . "
                     " . $this->getPageContents() . "
-                @endfePortlet
+                </x-fe-portlet>
             @endsection
             ". ((strtolower($this->Definition['style']) ?? 'singular')=='crud'? "
             @push('footerscripts')

@@ -1,7 +1,7 @@
-<div class="panel portlet {{$class??''}}" {{empty($id)?'':"id=$id"}} {!!empty($attr)?'':$attr!!}>
-    @isset($headerText)
-    <div class="panel-header bg-{{$headerBackground??'dark'}} {{(($headercontrols??false)===true)?'panel-controls':''}}">
-        {!!$headerText??''!!}
+<div {{$attributes->merge(['class' => "panel portlet "])}} >
+    @isset($header)
+    <div class="panel-header bg-{{$headerBg??'dark'}} {{(($headerControls??false)===true)?'panel-controls':''}}">
+        {!!$header??''!!}
     </div>
     @endisset
 
@@ -9,9 +9,9 @@
         {{ $slot }}
     </div>
     
-    @isset($footerText)
-    <div class="panel-footer bg-{{$footerBackground??'none'}}">
-        {!!$footerText??''!!} 
+    @isset($footer)
+    <div class="panel-footer bg-{{$footerBg??'none'}}">
+        {!!$footer??''!!} 
     </div>
     @endisset
 </div>

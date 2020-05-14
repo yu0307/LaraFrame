@@ -1,10 +1,9 @@
-<form class="LF_form_uploads" form_type="LF_form_uploads" enctype="multipart/form-data" action="{{(isset($custom_action)?$custom_action:route('LF_FileUploads'))}}" id="{{$formID??'LF_fileUploads_form'}}">
+<form class="LF_form_uploads" form_type="LF_form_uploads" enctype="multipart/form-data" action="{{(isset($action)?$action:route('LF_FileUploads'))}}" id="{{$id??'LF_fileUploads_form'}}">
     
     <div id="drop" class="dropzone">
-        Drop List of Files Here<br/>
-        Or<br/>
+        {{$slot??'Drop List of Files Here<br/>'}}
         <a class="btn btn-primary btn-sm LF_UploadBrowse">Browse</a>
-        <input type="file" name="LF_FilesUpload" {{($multifile??false)?'multiple':''}}/>
+        <input type="file" name="LF_FilesUpload" {{($multiple??false)?'multiple':''}}/>
     </div>
 
     <ul>

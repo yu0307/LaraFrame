@@ -17,7 +17,7 @@
 @endpushonce
 
 <div class="panel">
-    <div class="panel-header bg-{{ $header_bg??'dark' }}">
+    <div class="panel-header bg-{{ $headerBg??'dark' }}">
         <div class="row">
             <div class="col-md-4 col-sm-12">
                 <h3>{{ $header??''}}</h3>
@@ -32,10 +32,10 @@
         @if (isset($headerList)&&!empty($headerList))
             @php
                 $footer='';
-                $tableID=$tableID??('datatable'.rand(100,99999));
+                $id=$id??('datatable'.rand(100,99999));
             @endphp
 
-            <table id="{{ $tableID }}" class="table dataTable table-striped filter-{{ $FilterLocation??'footer'}} table-hover" style="width:100%;">
+            <table id="{{ $id }}" class="table dataTable table-striped filter-{{ $filterLocation??'footer'}} table-hover" style="width:100%;">
                 <thead>
                     <tr>
                         @foreach ($headerList as $header)
@@ -64,32 +64,32 @@
                     'searchDelay'=>1500,
                     'columns'=>[]
                 ];
-                $jsonSettings=array_merge($jsonSettings, ($JsSettins ?? []));
+                $jsonSettings=array_merge($jsonSettings, ($jsSettins ?? []));
             @endphp
 
             @prepend('footerscripts')
                 <script type="text/javascript">
-                    var {{($tableID.'_setting')}}={!!json_encode($jsonSettings)!!};
+                    var {{($id.'_setting')}}={!!json_encode($jsonSettings)!!};
                 </script>
             @endprepend
             
             @pushonce('DocumentReady','DataTables')
                 @if ($jsonSettings['serverSide']===true)
-                    {{($tableID.'_setting')}}.ajax.data=function(data,settings){
+                    {{($id.'_setting')}}.ajax.data=function(data,settings){
                         data.page = settings.oInstance.DataTable().page.info().page + 1;
                         data._token = $('meta[name="csrf-token"]').attr('content');
-                        if ({{($tableID.'_setting')}}.ajaxDataFunc!=undefined && {{($tableID.'_setting')}}.ajaxDataFunc instanceof Function) {
-                            {{($tableID.'_setting')}}.ajaxDataFunc(data);
+                        if ({{($id.'_setting')}}.ajaxDataFunc!=undefined && {{($id.'_setting')}}.ajaxDataFunc instanceof Function) {
+                            {{($id.'_setting')}}.ajaxDataFunc(data);
                         }
                     }
-                    {{($tableID.'_setting')}}.ajax.dataSrc=function(json){
-                        if ({{($tableID.'_setting')}}.ajaxDataSrcFunc!=undefined && {{($tableID.'_setting')}}.ajaxDataSrcFunc instanceof Function) {
-                            json.data={{($tableID.'_setting')}}.ajaxDataSrcFunc(data);
+                    {{($id.'_setting')}}.ajax.dataSrc=function(json){
+                        if ({{($id.'_setting')}}.ajaxDataSrcFunc!=undefined && {{($id.'_setting')}}.ajaxDataSrcFunc instanceof Function) {
+                            json.data={{($id.'_setting')}}.ajaxDataSrcFunc(data);
                         }
                         return json.data;
                     }
                 @endif
-                var my_dataTable=$('#{{$tableID}}').DataTable({{($tableID.'_setting')}});
+                var my_dataTable=$('#{{$id}}').DataTable({{($id.'_setting')}});
                 $('.dataTable').on('click','button.dt_details',function(){
                     var DetailData=my_dataTable.row($(this).closest('tr')).data();
                     if(undefined!==DetailData[$(this).attr('dataTarget')]){
@@ -116,7 +116,7 @@
                     $(this).closest('tr').slideUp(300).remove();
                 });
                 @if (($enableHeaderSearch??false)===true)
-                    var table=$('#{{$tableID}}');
+                    var table=$('#{{$id}}');
                     var timer;
                     $(table).find('thead tr').clone(false).appendTo($(table).find('thead'));
                     $(table).find('thead tr:eq(1) th:last-child, thead tr:eq(1) th.disableFilter, thead tr:eq(1) th.sorting_disabled').html('');
