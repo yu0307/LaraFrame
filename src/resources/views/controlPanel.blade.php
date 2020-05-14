@@ -53,11 +53,13 @@
 @endsection
 
 @section('content')
-    @fePortlet([
-        'id'=>'controlPanel',
-        'headerBackground'=>'dark',
-        'headerText'=>'<h3>Admin Control Panel</h3>'
-        ])
+    <x-fe-portlet
+        id="controlPanel"
+        header-bg="dark"
+    >
+        <x-slot name="header">
+            <h3>Admin Control Panel</h3>
+        </x-slot>
         <ul class="nav nav-tabs nav-primary">
             <li class="active"><a href="#General" data-toggle="tab">General</a></li>
             {!!$menu!!}
@@ -73,20 +75,18 @@
             @yield('control_tab_contents')
         </div>
         <div class="clear-fix"></div>
-    @endfePortlet
+    </x-fe-portlet>
 
-    @feModal([
-        'modal_ID'=>'control_CRUD',
-        'footer'=>'
+    <x-fe-modal id="control_CRUD" >
+        <x-slot name="footer">
             <div class="buttonSlot col-md-8 col-sm-12">
 
             </div>
             <div class="col-md-4 col-sm-12">
                 <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
             </div>
-            
-        '
-        ])
+        </x-slot>
+
         <div class="loading text-center">
             <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
             <span><h4 class="text-center t-center">Loading Contents ...</h4></span>
@@ -97,7 +97,7 @@
             </div>
             @stack('LF_CRUD')
         </div>
-    @endfeModal
+    </x-fe-modal>
 
 @endsection
 

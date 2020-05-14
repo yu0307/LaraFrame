@@ -14,9 +14,11 @@
     @endforeach
     @if(config('felaraframe.appconfig.use_route_as_menu'))
         @foreach (menuGenerator::getMenuFromRoutes() as $Menu)
-            @fesidebarMenu(['href'=>$Menu['href'],'icon'=>($Menu['title']=='home'?'home':'angle-right')])
+            <x-fe-sidebar-menu
+                :menu="$Menu"
+            >
                 {{$Menu['title']}}
-            @endfesidebarMenu
+            </x-fe-sidebar-menu>
         @endforeach
     @endif
 @endsection

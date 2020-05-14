@@ -12,7 +12,6 @@
     $id=$id??('datepicker_'.rand(100,999));
     $value=$value??false;
 @endphp
-
 <div class="form-group">
     <label class="form-label">{{$label??''}}</label>
     <div class="input-group date" data-provide="datepicker">
