@@ -24,10 +24,10 @@ class ViewCrudTable extends ViewTable {
         $targetModel= $this->ModelList[$targetModel['modelName']];
 
         return '
-            @feModal([
-                "modal_ID"=>"crud_controlpage",
-                "footer"=>"<button class=\'btn btn-success btn_crud_update pull-left \'>Save</button> <button class=\'btn btn-danger pull-right \' data-dismiss=\'modal\'>Cancel</button>"
-            ])
+            <x-fe-modal id="crud_controlpage" >
+                <x-slot name="footer">
+                    <button class="btn btn-success btn_crud_update pull-left ">Save</button> <button class="btn btn-danger pull-right " data-dismiss="modal">Cancel</button>
+                </x-slot>
                 <div class="crud_area row" role="form">
                     <input type="hidden" class="form-control" name="td_identification" id="td_identification"  value=""/>
                     '.join('
@@ -43,7 +43,7 @@ class ViewCrudTable extends ViewTable {
                         return $this->generateFormControls($fieldDef);
                     }, ($targetModel->getFields()??[]))).'
                 </div>
-            @endfeModal
+            </x-fe-modal>
         ';
     }
 }

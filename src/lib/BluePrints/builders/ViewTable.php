@@ -39,25 +39,15 @@ class ViewTable extends BluePrintsViewBuilderBase {
         return '<div class="container-fluid">
                         <div class="row">
                             <div class="panel-group" id="My_DataTable">
-                                @feDataTable([
-                                    "tableID"=>"DataTable_'. $this->ViewDefinition['name']. '",
-                                    "header_bg"=>"none",
-                                    '.((($this->ViewDefinition['headerSearch']??false)===true)? '"enableHeaderSearch"=>true,':'').'
-                                    "headerList"=>[
-                                        '.join(',', $this->headers). '
-                                    ],
-                                    "JsSettins"=>[
-                                        "serverSide" => true,
-                                        "ajax" => [
-                                            "url" => route("bpr_dTable_sr_'. $this->ViewDefinition["name"]. '"),
-                                            "type" => "POST"
-                                        ],
-                                    "columns" => [
-                                                ' . join(',', $this->headerDef) . '
-                                            ]
-                                    ]
-                                ])
-                                @endfeDataTable
+                                <fe-data-table
+                                    id="DataTable_'. $this->ViewDefinition['name']. '"
+                                    header-bg="none"
+                                    '.((($this->ViewDefinition['headerSearch']??false)===true)? ':enable-header-search="true"':'').'
+                                    :header-list=\'['.join(',', $this->headers). ']\'
+                                    :js-settins=\'["serverSide" => true, "ajax" => [ "url" => route("bpr_dTable_sr_'. $this->ViewDefinition["name"]. '"), "type" => "POST"],"columns" => [' . join(',', $this->headerDef) . '] ]\'
+                                >
+
+                                </fe-data-table>
                             </div>
                         </div>
                     </div>';

@@ -26,17 +26,18 @@
         @yield('Widget_Area')
         {!!app()->WidgetManager->renderUserWidgets(Auth::user())!!}    
     </div>
+    <x-fe-modal
+        id="dashboardWidgetControl"
+        header-bg="dark"
+    >
+        <x-slot name="header">
+            Site Available Widgets
+        </x-slot>
 
-    @feModal([
-        'modal_ID'=>'dashboardWidgetControl',
-        'header'=>'Site Available Widgets',
-        'modal_size'=>'',
-        'header_bg'=>'dark',
-        'footer'=>'
-        <button type="button" class="btn btn-primary" id="widget_add">Add Widget</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        '
-        ])
+        <x-slot name="footer">
+            <button type="button" class="btn btn-primary" id="widget_add">Add Widget</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>   
+        </x-slot>
         <div id="fe_widget_list_area">
             <div id="fe_widget_list">
                 <div class="text-center sm-col-12 m-t-10">
@@ -46,7 +47,7 @@
             </div>
             <div id="fe_widget_desc" class="f-18 p-10"></div>
         </div>
-    @endfeModal
+    </x-fe-modal>
     <div id="new_widget_area" class="animated bd-9 c-gray fadeInUp fadeOutDown" style="z-index: 1010;">
         <div class="front text-center" id="widget_add">
             <div class="text-center m-5"><i class="fa fa-plus-circle fa-3x faa-float animated"></i></div>

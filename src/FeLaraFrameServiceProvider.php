@@ -89,17 +89,15 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
 
     private function registerBladeComponents(){
         //read from dir and build a cache and load from cache.
-        Blade::component('felaraframe::components.sidebarMenu', 'fesidebarMenu');
-        Blade::component('felaraframe::components.Notes', 'fenotes');
-        Blade::component('felaraframe::components.FileUpload', 'fefileupload');
-        Blade::component('felaraframe::components.Modal', 'feModal');
-        Blade::component('felaraframe::components.DataTable', 'feDataTable');
-        Blade::component('felaraframe::components.form.DatePicker', 'feDatePicker');
-        Blade::component('felaraframe::components.layout.Portlet', 'fePortlet');
+        Blade::component('fe-sidebar-menu', \feiron\felaraframe\lib\components\feSidebarMenu::class);
+        Blade::component('fe-notes', \feiron\felaraframe\lib\components\feNotes::class);
+        Blade::component('fe-file-upload', \feiron\felaraframe\lib\components\feFileUpload::class);
+        Blade::component('fe-modal', \feiron\felaraframe\lib\components\feModal::class);
+        Blade::component('fe-portlet', \feiron\felaraframe\lib\components\fePortlet::class);
+        Blade::component('fe-date-picker', \feiron\felaraframe\lib\components\feDatePicker::class);
+        Blade::component('fe-data-table', \feiron\felaraframe\lib\components\feDataTable::class);
 
         Blade::directive('pushonce', function ($expression) {
-            // $expression = substr(substr($expression, 0, -1), 1);
-            // Split variable and its value
             list($push_name, $push_sub) = explode('\',', $expression, 2);
             $push_name=trim($push_name,"'");
             $isDisplayed = '__pushonce_' . $push_name . '_'."{{$push_sub}}";
