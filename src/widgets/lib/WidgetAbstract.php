@@ -29,6 +29,7 @@ abstract class WidgetAbstract implements Widget{
             'Widget_footer'     => '',
             'DisableControls'   => false,
             'Width'             => '3',
+            'col'             => '',
             'DataHeight'        => '400',
             'Widget_contents'   => '',
             'WidgetData'        => false,//[false: Display contents only, no data to load. function:function to get data. dataset:var of data]

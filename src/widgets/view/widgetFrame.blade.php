@@ -9,7 +9,7 @@
 
 @yield('Widget_InlineScript')
 
-<div class="col-md-{{$Width??'4'}} fe_widget fe_widget_{{$Type}} " id="{{$ID}}" name="{{$WidgetName}}" usrKey="{{$usr_key}}">
+<div class="col-md-{{$Width??'4'}} {{$col}} fe_widget fe_widget_{{$Type}} " id="{{$ID}}" name="{{$WidgetName}}" usrKey="{{$usr_key}}">
     <div class="panel {{$WidgetBackground??'bg-white'}}">
             @if (true!==$DisableHeader)
                 <div class="panel-header {{(($DisableControls??false)?'':'panel-controls')}}  {{$HeaderBackground??'bg-primary'}} {{((empty($usrSettings)===true)?'':'HasSettingOutlet')}}">
