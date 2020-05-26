@@ -3,7 +3,7 @@
 <div class="sidebar">
     <div class="logopanel">
         <!-- LOGO -->
-        <a class="logoText" href="{{Route::has('home')?route('home'):'/'}}">{{config('app.name')}}</a>
+        <a class="logoText" href="{{Route::has('home')?route('home'):'/'}}">@yield('siteName',config('app.name'))</a>
     </div>
     <div class="sidebar-inner">
         @switch(($siteInfo['themeSettings']['sb_topdisplay']??'None'))
