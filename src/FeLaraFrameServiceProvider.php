@@ -15,10 +15,10 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
         if ($this->app->runningInConsole()) {
             $this->commands([
                 commands\fe_BluePrints::class,
-                commands\fe_BludePrintsMakeController::class,
-                commands\fe_BludePrintsMakeMigration::class,
-                commands\fe_BludePrintsMakeModel::class,
-                commands\fe_BludePrintsMakePage::class
+                commands\fe_BluePrintsMakeController::class,
+                commands\fe_BluePrintsMakeMigration::class,
+                commands\fe_BluePrintsMakeModel::class,
+                commands\fe_BluePrintsMakePage::class
             ]);
         }
 
