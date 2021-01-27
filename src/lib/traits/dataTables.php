@@ -3,7 +3,7 @@
 namespace feiron\felaraframe\lib\traits;
 
 
-trait DataTables{
+trait dataTables{
 
     public function get_results(\Illuminate\Http\Request $request, \Illuminate\Database\Eloquent\Builder $QueryBuilder, $globalSearchTargets=[], callable $dataTableFormater=null): array
     {

@@ -73,7 +73,7 @@
                 </script>
             @endprepend
             
-            @pushonce('DocumentReady','DataTables')
+            @pushonce('DocumentReady','dataTables')
                 @if ($jsonSettings['serverSide']===true)
                     {{($id.'_setting')}}.ajax.data=function(data,settings){
                         data.page = settings.oInstance.DataTable().page.info().page + 1;

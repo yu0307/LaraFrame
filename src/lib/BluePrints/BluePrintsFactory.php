@@ -99,8 +99,8 @@ class BluePrintsFactory {
                         'style'=>'table'
                     ]);
                     array_push($controllerDefinition['uses'], [
-                        'name'=>"DataTables",
-                        'target'=>'feiron\felaraframe\lib\traits\DataTables'
+                        'name'=>"dataTables",
+                        'target'=>'feiron\felaraframe\lib\traits\dataTables'
                         ]);
 
                     $this->ViewList[$pageDefinition->name]['headerSearch']= ($pageDefinition->headerSearch ?? false);
