@@ -5,7 +5,7 @@ namespace feiron\felaraframe\commands;
 use Illuminate\Console\Command;
 use feiron\felaraframe\lib\BluePrints\wizards\bp_wizardMakeController;
 
-class fe_BludePrintsMakeController extends Command
+class fe_BluePrintsMakeController extends Command
 {
     /**
      * The name and signature of the console command.
