@@ -79,11 +79,11 @@ class bp_wizardMakeController extends bp_wizardbase
     use Illuminate\Http\Request;
     use App\Http\Controllers\Controller;
     ". (in_array('CrudActions', $this->libList)? 'use feiron\felaraframe\lib\traits\crudActions;':''). "
-    " . (in_array('DataTable', $this->libList) ? 'use feiron\felaraframe\lib\traits\DataTables;' : '') . "
+    " . (in_array('dataTable', $this->libList) ? 'use feiron\felaraframe\lib\traits\dataTables;' : '') . "
 
     class ". $this->controllerName. " extends Controller{
         " . (in_array('CrudActions', $this->libList) ? 'use crudActions;' : '') . "
-        " . (in_array('DataTable', $this->libList) ? 'use DataTables;' : '') . "
+        " . (in_array('dataTable', $this->libList) ? 'use dataTables;' : '') . "
 
     }
 ?>
