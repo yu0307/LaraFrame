@@ -5,7 +5,7 @@ namespace feiron\felaraframe\commands;
 use Illuminate\Console\Command;
 use feiron\felaraframe\lib\BluePrints\wizards\bp_wizardMakeMigration;
 
-class fe_BludePrintsMakeMigration extends Command
+class fe_BluePrintsMakeMigration extends Command
 {
     /**
      * The name and signature of the console command.
