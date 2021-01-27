@@ -5,7 +5,7 @@ namespace feiron\felaraframe\commands;
 use Illuminate\Console\Command;
 use feiron\felaraframe\lib\BluePrints\wizards\bp_wizardMakePage;
 
-class fe_BludePrintsMakePage extends Command
+class fe_BluePrintsMakePage extends Command
 {
     /**
      * The name and signature of the console command.
