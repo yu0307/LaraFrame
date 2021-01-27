@@ -4,12 +4,12 @@
     "type": "library",
     "license": "Apache-2.0",
     "require": {
-        "php": "^7.2.1",
+        "php": ">=7.2.1",
         "feiron/fe_login": ">=1.0",
         "laravel/framework": ">=7.0"
     },
     "require-dev": {
-        "php": "^7.2.1",
+        "php": ">=7.2.1",
         "feiron/fe_login": ">=1.0",
         "laravel/framework": ">=7.0"
     },
