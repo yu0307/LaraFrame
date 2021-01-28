@@ -1,6 +1,8 @@
 <?php
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers', 'middleware' => ['web','auth']], function () {
 
+        Route::get('/', function () { return view('felaraframe::dashboard'); });
+
         if(!Route::has('home')){
             Route::get('home', function () { return view('felaraframe::dashboard'); })->name('home');
         }        
