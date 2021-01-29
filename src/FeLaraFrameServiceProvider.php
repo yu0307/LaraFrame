@@ -42,26 +42,18 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
             __DIR__ . '/assets/css' => public_path('feiron/' . $PackageName . '/css')
         ], ($PackageName . '_public_scripts'));
 
-        View::share('siteInfo', [
-            'Setting'=> app()->FeFrame->GetSiteSettings(),
-            'themeSettings'=> (app()->FeFrame->GetThemeSettings() ?? []),
-            'theme'=>(((app()->FeFrame->GetCurrentTheme())->name())?? 'felaraframe')
-        ]);
-
-        app()->frameOutlet->bindOutlet('Fe_FrameOutlet', new \feiron\felaraframe\lib\outlet\feOutlet([
-            'view' => 'felaraframe::ThemeManagement',
-            'myName' => 'Theme Management',
-            'reousrce' => [
-                asset('/feiron/felaraframe/js/sidebar_hover.js'),
-                asset('/feiron/felaraframe/js/ThemeManagement.js')
-            ]
-        ]));
+        View::share('siteInfo',
+                                array_merge((View::getShared('siteInfo')??[]),[
+                                    'Setting'=> app()->FeFrame->GetSiteSettings()
+                                ])
+                    );
     }
 
     public function register(){
         $loader = \Illuminate\Foundation\AliasLoader::getInstance();
         $loader->alias('menuGenerator', '\feiron\felaraframe\lib\facades\menuGenerator');
         $this->app->register( '\feiron\felaraframe\FrameOutletProvider');
+
         $this->app->singleton('FeFrame', function ($app) {
             return new FeFrame();
         });
@@ -74,13 +66,13 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
 
     private function registerBladeComponents(){
         //read from dir and build a cache and load from cache.
-        Blade::component('fe-sidebar-menu', \feiron\felaraframe\lib\components\feSidebarMenu::class);
-        Blade::component('fe-notes', \feiron\felaraframe\lib\components\feNotes::class);
-        Blade::component('fe-file-upload', \feiron\felaraframe\lib\components\feFileUpload::class);
-        Blade::component('fe-modal', \feiron\felaraframe\lib\components\feModal::class);
-        Blade::component('fe-portlet', \feiron\felaraframe\lib\components\fePortlet::class);
-        Blade::component('fe-date-picker', \feiron\felaraframe\lib\components\feDatePicker::class);
-        Blade::component('fe-data-table', \feiron\felaraframe\lib\components\feDataTable::class);
+        // Blade::component('fe-sidebar-menu', \feiron\felaraframe\lib\components\feSidebarMenu::class);
+        // Blade::component('fe-notes', \feiron\felaraframe\lib\components\feNotes::class);
+        // Blade::component('fe-file-upload', \feiron\felaraframe\lib\components\feFileUpload::class);
+        // Blade::component('fe-modal', \feiron\felaraframe\lib\components\feModal::class);
+        // Blade::component('fe-portlet', \feiron\felaraframe\lib\components\fePortlet::class);
+        // Blade::component('fe-date-picker', \feiron\felaraframe\lib\components\feDatePicker::class);
+        // Blade::component('fe-data-table', \feiron\felaraframe\lib\components\feDataTable::class);
 
         Blade::directive('pushonce', function ($expression) {
             list($push_name, $push_sub) = explode('\',', $expression, 2);

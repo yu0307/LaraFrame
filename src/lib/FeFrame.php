@@ -3,74 +3,28 @@ namespace feiron\felaraframe\lib;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use feiron\felaraframe\lib\contracts\feTheme;
 use feiron\felaraframe\lib\contracts\feSettingControls;
-use feiron\felaraframe\lib\felaraframeTheme;
 use feiron\felaraframe\models\LF_MetaInfo;
 use feiron\felaraframe\lib\helper\menuGenerator;
 use feiron\felaraframe\lib\helper\Communication;
 class FeFrame {
 
-    private $theme; //feTheme
-    private $themeList; //array of feTheme
-    private $themeSetting;
+    private $resourceList;
     private $siteSetting;
     private $siteSettingList;
-    private $resourceList;
     private $menu;
     private $initBlocks=[];
     private $filterBlock=[];
     private $communication;
     public function __construct(){
-        if (\Schema::hasTable('lf_site_metainfo')) {
-            $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??(config('felaraframe.appconfig.theme')??felaraframeTheme::class);
-            $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
-            $this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? [];
-        }else{
-            $theme =felaraframeTheme::class;
-            $this->themeSetting=[];
-            $this->siteSetting=[];
-        }
+        $this->siteSetting =(\Schema::hasTable('lf_site_metainfo')) ? ($this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? []):[];
         $this->menu= new menuGenerator();
         $this->communication = new Communication();
-        $theme = new $theme();
-        if ($theme instanceof feTheme) {
-            $this->theme = $theme;
-        }else{
-            $this->theme =new felaraframeTheme();
-        }
-        $this->themeList[$this->theme->name()]=$this->theme;
-        if(false===array_key_exists('felaraframe', $this->themeList)){
-            $this->AppendTheme(new felaraframeTheme());
-        }
         $this->AppendGeneralSetting(new \feiron\felaraframe\lib\FeGeneralSetting());
         $this->resourceList=[
             'prepend'=>[],
             'push'=>[]
         ];
-    }
-
-    public function addInitBlock(\feiron\felaraframe\lib\contracts\feInitBlock $block){
-        array_push($this->initBlocks,$block);
-    }
-
-    public function addFilterBlock(\feiron\felaraframe\lib\contracts\feFilterBlock $block){
-        array_push($this->filterBlock,$block);
-    }
-
-    public function getInitBlocks(){
-        return $this->initBlocks;
-    }
-    public function getFilterBlock(){
-        return $this->filterBlock;
-    }
-
-    public function menuGenerator(){
-        return $this->menu;
-    }
-
-    public function COMs(){
-        return $this->communication;
     }
 
     public function enqueueResource($resource,$location= 'headerstyles',$prepend=false){
@@ -90,48 +44,36 @@ class FeFrame {
         }
     }
 
-    public function requireResource($resource, $location = 'headerstyles'){
-        $this->enqueueResource($resource, $location,true);
+    public function addInitBlock(\feiron\felaraframe\lib\contracts\feInitBlock $block){
+        array_push($this->initBlocks,$block);
     }
 
-    public function ThemeSetting($name){
-        return $this->themeSetting[$name];
+    public function addFilterBlock(\feiron\felaraframe\lib\contracts\feFilterBlock $block){
+        array_push($this->filterBlock,$block);
     }
 
-    public function LoadTheme($themeName){
-        $this->theme= $this->themeList[$themeName]?? $this->themeList['felaraframe'];
+    public function getInitBlocks(){
+        return $this->initBlocks;
     }
 
-    public function AppendTheme(feTheme $theme){
-        $this->themeList[$theme->name()]= $theme;
+    public function getFilterBlock(){
+        return $this->filterBlock;
+    }
+
+    public function menuGenerator(){
+        return $this->menu;
+    }
+
+    public function COMs(){
+        return $this->communication;
     }
 
     public function AppendGeneralSetting(feSettingControls $setting){
         $this->siteSettingList[$setting->name()] = $setting;
     }
 
-    public function RemoveTheme($themeName){
-        unset($this->themeList[$themeName]);
-    }
-
-    public function GetThemeSettings(){
-        return $this->themeSetting;
-    }
-    
     public function GetSiteSettings(){
         return $this->siteSetting;
-    }
-
-    public function GetCurrentTheme(){
-        return $this->theme;
-    }
-
-    public function GetThemes(){
-        return $this->themeList;
-    }
-
-    public function getThemeByName($name){
-        return $this->themeList[$name];
     }
 
     public function getResources(){
@@ -146,10 +88,6 @@ class FeFrame {
             $rst= '<img src="'. $rst. '" alt="user image">';
         }
         return $rst;
-    }
-
-    public function RenderThemeSettings(){
-        return $this->RenderSettings($this->theme->ThemeSettings(), $this->themeSetting);
     }
 
     public function RenderSiteSettings(){
