@@ -12,16 +12,6 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
 
     public function boot(){
 
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                commands\fe_BluePrints::class,
-                commands\fe_BluePrintsMakeController::class,
-                commands\fe_BluePrintsMakeMigration::class,
-                commands\fe_BluePrintsMakeModel::class,
-                commands\fe_BluePrintsMakePage::class
-            ]);
-        }
-
         $PackageName='felaraframe';
         //locading package route files
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
