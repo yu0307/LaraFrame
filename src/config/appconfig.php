@@ -2,7 +2,7 @@
 
     return [
         'use_route_as_menu'=>true,
-        'theme'=> feiron\felaraframe\lib\felaraframeTheme::class
+        'theme'=> feiron\fe_theme\felaraframeTheme::class
     ];
     
 ?>

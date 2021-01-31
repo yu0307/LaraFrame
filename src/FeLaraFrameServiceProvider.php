@@ -41,9 +41,9 @@ class FeLaraFrameServiceProvider extends ServiceProvider {
             __DIR__ . '/assets/js' => public_path('feiron/' . $PackageName.'/js'),
             __DIR__ . '/assets/css' => public_path('feiron/' . $PackageName . '/css')
         ], ($PackageName . '_public_scripts'));
-
+        
         View::share('siteInfo',
-                                array_merge((View::getShared('siteInfo')??[]),[
+                                array_merge((View::shared('siteInfo')??[]),[
                                     'Setting'=> app()->FeFrame->GetSiteSettings()
                                 ])
                     );

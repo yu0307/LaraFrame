@@ -35,7 +35,7 @@ class fe_controlpanel extends Controller
         if(!isset($themeInfo)){
             return ['status' => 'error', 'message' => ['No such theme in the system.']];
         }else{
-            $themeInfo= $themeInfo->ThemeSettings();
+            $themeInfo= $themeInfo->themeSettings();
         }
         return ['status' => 'success', 'message' => ['Theme loaded'],'settingList'=> $themeInfo,'siteDefaults'=>($ThemeName== app()->FeFrame->GetCurrentTheme()->name()? app()->FeFrame->GetThemeSettings():[])];
     }
