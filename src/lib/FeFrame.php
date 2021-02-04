@@ -9,10 +9,10 @@ use feiron\felaraframe\lib\helper\menuGenerator;
 use feiron\felaraframe\lib\helper\Communication;
 class FeFrame {
 
+    public $menu;
     private $resourceList;
     private $siteSetting;
     private $siteSettingList;
-    private $menu;
     private $initBlocks=[];
     private $filterBlock=[];
     private $communication;

@@ -55,6 +55,7 @@
 <!-- BEGIN BODY -->
 <body>
     @include($siteInfo['theme'].'::index')
+    @yield('footer')
     @stack('footerscripts')
 </body>
 </html>
