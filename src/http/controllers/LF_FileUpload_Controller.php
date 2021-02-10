@@ -5,18 +5,19 @@ namespace feiron\felaraframe\http\controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use feiron\felaraframe\lib\traits\uploader;
 
 class LF_FileUpload_Controller extends Controller
 {
-    public function processUploads(Request $request){
-        $validator = Validator::make($request->all(), [
-            'LF_FilesUpload' =>('required|file')
-        ]);
-        if ($validator->fails()) {
-            return ['status' => 'error', 'message' => $validator->getMessageBag()->toArray()];
-        }else{
-            $path=$request->LF_FilesUpload->store('LF_FilesUpload/'.date('Ymdhis'));
-        }
-        return ['status' => 'success', 'message' => ['File uploaded.'],'datapath'=>$path];
+    use uploader;
+    private $fieldName='fileToUpload';
+
+    public function PreUploadPorcess(Request $request,$files=null,&$path=null)
+    {
+        return false;
+    }
+
+    public function postUploadPorcess($response){
+        return false;
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
     return [
-        'theme'=> feiron\fe_theme\felaraframeTheme::class
+        'theme'=> feiron\fe_theme\felaraframeTheme::class,
+        'upload_path'=>'storage/temp/uploads/'
     ];
     
 ?>
