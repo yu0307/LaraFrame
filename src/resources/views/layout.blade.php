@@ -48,6 +48,7 @@
     <meta charset="utf-8">
     @yield('header')
     @stack('headerstyles')
+    <script type="text/javascript" src="{{ asset('/feiron/felaraframe/js/core.js') }}"></script>
     @stack('headerscripts')
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -56,6 +57,10 @@
 <body>
     @include($siteInfo['theme'].'::index')
     @yield('footer')
+    @stack('lastContent')
+    @push('footerscripts')
+        @stack('OutletResource')
+    @endpush
     @stack('footerscripts')
 </body>
 </html>

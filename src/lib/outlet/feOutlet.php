@@ -16,7 +16,7 @@ class feOutlet implements feOutletContract
     public function __construct($params = null)
     {
         $this->callback = $params['callback'] ?? null;
-        $this->resource = $params['reousrce'] ?? null;
+        $this->resource = $params['resource'] ?? null;
         $this->view = $params['view'] ?? null;
         $this->myName = $params['myName'] ?? null;
         $this->params=$params;
@@ -52,14 +52,14 @@ class feOutlet implements feOutletContract
         return false;
     }
 
-    public function setResource($reousrce){
-        $this->resource=$reousrce;
+    public function setResource($resource){
+        $this->resource=$resource;
         return $this;
     }
 
-    public function pushResource($reousrce)
+    public function pushResource($resource)
     {
-        array_push($this->resource, $reousrce);
+        array_push($this->resource, $resource);
         return $this;
     }
 
