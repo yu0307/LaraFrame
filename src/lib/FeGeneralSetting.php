@@ -11,14 +11,7 @@ class FeGeneralSetting implements feSettingControls {
 
     public function Settings(): array{
         return [
-            'Theme Settings' => [
-                'Force Bootstrap' => [
-                    'type' => 'checkbox',
-                    'label' => 'Force Bootstrap Components',
-                    'options' => ['Jquery', 'JqueryUI', 'Bootstrap','fontAwesome'],
-                    'default' => '',
-                    'name' => 'tm_force_bootstrap'
-                ]
+            'Site Settings' => [
             ]
         ];
     }
