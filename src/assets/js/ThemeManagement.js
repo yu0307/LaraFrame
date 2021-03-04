@@ -29,6 +29,7 @@ $(document).ready(function () {
         });
         SendAjax($('#FeThemeManagement').attr('datatarget'), setting, "POST");
     });
+    
     livePreview();
 });
 
@@ -45,7 +46,7 @@ function renderThemeSettings(settingList, defaults, heading) {
                 BuildFormControls(settings, defaults[settings.name]) +
                 '</div > ';
         } else {
-            html += '<div class="form-row"><h' + heading + '><strong>' + key + '</strong></h' + heading + '>' + renderThemeSettings(settings, defaults, heading + 1) + '</div>';
+            html += '<div class="form-row row"><h' + heading + '><strong>' + key + '</strong></h' + heading + '>' + renderThemeSettings(settings, defaults, heading + 1) + '</div>';
 
         }
     });

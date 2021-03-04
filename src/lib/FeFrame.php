@@ -103,7 +103,7 @@ class FeFrame {
         foreach($settingList as $key=>$settings){
             $heading=($heading>5)?5:$heading;
             if((false === array_key_exists('type', $settings))){
-                $html.= '<div class="form-row"><h'.$heading.'><strong>'.$key. '</strong></h' . $heading . '>'.$this->RenderSettings($settings, $valueList, $heading+1). '</div>';
+                $html.= '<div class="form-row row"><h'.$heading.'><strong>'.$key. '</strong></h' . $heading . '>'.$this->RenderSettings($settings, $valueList, $heading+1). '</div>';
             }else{
                 $html .= '<div class="ThemeSettings col-md-4 col-sm-12">
                             <div class="ThemeSettingHeading">
@@ -123,39 +123,49 @@ class FeFrame {
                 $options='';
                 if(!empty($control['options']) && is_array($control['options'])){
                     foreach($control['options'] as $option){
-                        $options.='<option value="'. $option.'" '.($option==$value?'SELECTED':'').'>'.$option.'</option>';
+                        $options.='<option value="'. $option.'" '.($option==$value?'SELECTED default':'').'>'.$option.'</option>';
                     }
                 }
-                return '<select class="form-control" name="'. $control['name'].'">
+                return '<select class="form-control form-select" name="'. $control['name'].'">
                             '.$options.'
                         </select>';
-            break;
+            case 'switch':
+                return '
+                    <div class="form-check-inline form-switch me-2">
+                        <input class="form-check-input form-control" type="checkbox" toggle '.(($control['options']??'false')=='false'?'':'checked').' name="'.$control['name'].'" >
+                    </div>
+                ';
             case 'radio':
                 $options = '';
                 if (!empty($control['options']) && is_array($control['options'])) {
                     foreach ($control['options'] as $option) {
-                        $options .= '<label><input type="radio" ' . ($option == $value ? 'checked' : '') . ' name="' . $control['name'] . '" class="form-control" data-radio="iradio_minimal-blue" value="' . $option . '">' . $option . '</label>';
+                        $options .= '
+                            <div class="form-check-inline me-2">
+                                <input value="'.$option.'" class="form-check-input form-control" '.($option == $value ? 'checked' : '').' type="radio" name="'.$control['name'].'">
+                                <label class="form-check-label">
+                                '.$option.'
+                                </label>
+                            </div>
+                        ';
                     }
                 }
-                return '<div class="icheck-inline">
-                            '.$options.'
-                        </div>';
-            break;
+                return $options;
             case 'checkbox':
                 $options = '';
                 if (!empty($control['options']) && is_array($control['options'])) {
                     foreach ($control['options'] as $option) {
-                        $options .= '<label>
-                                        <input type="checkbox" '. ((is_array($value)?(in_array($option, $value)):($option == $value)) ? 'checked' : ''). ' name="' . $control['name'] . '" class="form-control" data-radio="icheckbox_square-blue" value="' . $option . '">' . $option . '</label>';
+                        $options .='
+                            <div class="form-check-inline me-2">
+                                <input class="form-check-input form-control" '. ((is_array($value)?(in_array($option, $value)):($option == $value)) ? 'checked' : ''). ' type="checkbox" value="' . $option . '" name="' . $control['name'] . '">
+                                <label class="form-check-label">' . $option . '</label>
+                            </div>
+                        ';
                     }
                 }
-                return '<div class="icheck-inline">
-                            ' . $options . '
-                        </div>';
-            break;
+                return $options;
             default:
                 return '<div class="prepend-icon">
-                            <input class="form-control" type="'. $control['type']. '" name="' . $control['name'] . '" value="'. ($control['value']??$value).'">
+                            <input class="form-control form-white" type="'. $control['type']. '" name="' . $control['name'] . '" value="'. ($control['value']??$value).'">
                             <i class="fa fa-indent"></i>
                         </div>';
         }
