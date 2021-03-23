@@ -2,13 +2,10 @@
     use Illuminate\Support\Facades\Route;
 
     Route::group(['namespace' => 'feiron\felaraframe\http\controllers', 'middleware' => ['web','auth']], function () {
-
-        Route::get('/', function () { return view('felaraframe::dashboard'); });
-
+        
         if(!Route::has('home')){
-            Route::get('home', function () { return view('felaraframe::dashboard'); })->name('home');
+            Route::get('/', function () { return view('felaraframe::page'); });
         }
-
         Route::get('getUsersByRole/{roleName}','LF_Role_Controller@getUsersByRole')->name('getUserByRoles');
         Route::post('lf_uploadfiles','LF_FileUpload_Controller@processUpload')->name('LF_FileUploads');
 
