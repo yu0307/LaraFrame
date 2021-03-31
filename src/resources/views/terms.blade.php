@@ -1,6 +1,6 @@
-@extends('felaraframe::PlainPage')
+@extends('felaraframe::blank')
 
-@section('content')
+@section('main-content')
 <div class="panel">
     <div class="panel-header bg-primary">
         <h3>Privacy Policy for Frontier Solution, LLC</h3>
