@@ -3,74 +3,28 @@ namespace feiron\felaraframe\lib;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use feiron\felaraframe\lib\contracts\feTheme;
 use feiron\felaraframe\lib\contracts\feSettingControls;
-use feiron\felaraframe\lib\felaraframeTheme;
 use feiron\felaraframe\models\LF_MetaInfo;
 use feiron\felaraframe\lib\helper\menuGenerator;
 use feiron\felaraframe\lib\helper\Communication;
 class FeFrame {
 
-    private $theme; //feTheme
-    private $themeList; //array of feTheme
-    private $themeSetting;
+    public $menu;
+    private $resourceList;
     private $siteSetting;
     private $siteSettingList;
-    private $resourceList;
-    private $menu;
     private $initBlocks=[];
     private $filterBlock=[];
     private $communication;
     public function __construct(){
-        if (\Schema::hasTable('lf_site_metainfo')) {
-            $theme = LF_MetaInfo::where('meta_name', 'theme')->first()->meta_value??(config('felaraframe.appconfig.theme')??felaraframeTheme::class);
-            $this->themeSetting = LF_MetaInfo::where('meta_name', 'themeSetting')->first()->meta_value ?? [];
-            $this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? [];
-        }else{
-            $theme =felaraframeTheme::class;
-            $this->themeSetting=[];
-            $this->siteSetting=[];
-        }
+        $this->siteSetting =(\Schema::hasTable('lf_site_metainfo')) ? ($this->siteSetting = LF_MetaInfo::where('meta_name', 'SiteSetting')->first()->meta_value ?? []):[];
         $this->menu= new menuGenerator();
         $this->communication = new Communication();
-        $theme = new $theme();
-        if ($theme instanceof feTheme) {
-            $this->theme = $theme;
-        }else{
-            $this->theme =new felaraframeTheme();
-        }
-        $this->themeList[$this->theme->name()]=$this->theme;
-        if(false===array_key_exists('felaraframe', $this->themeList)){
-            $this->AppendTheme(new felaraframeTheme());
-        }
         $this->AppendGeneralSetting(new \feiron\felaraframe\lib\FeGeneralSetting());
         $this->resourceList=[
             'prepend'=>[],
             'push'=>[]
         ];
-    }
-
-    public function addInitBlock(\feiron\felaraframe\lib\contracts\feInitBlock $block){
-        array_push($this->initBlocks,$block);
-    }
-
-    public function addFilterBlock(\feiron\felaraframe\lib\contracts\feFilterBlock $block){
-        array_push($this->filterBlock,$block);
-    }
-
-    public function getInitBlocks(){
-        return $this->initBlocks;
-    }
-    public function getFilterBlock(){
-        return $this->filterBlock;
-    }
-
-    public function menuGenerator(){
-        return $this->menu;
-    }
-
-    public function COMs(){
-        return $this->communication;
     }
 
     public function enqueueResource($resource,$location= 'headerstyles',$prepend=false){
@@ -90,48 +44,36 @@ class FeFrame {
         }
     }
 
-    public function requireResource($resource, $location = 'headerstyles'){
-        $this->enqueueResource($resource, $location,true);
+    public function addInitBlock(\feiron\felaraframe\lib\contracts\feInitBlock $block){
+        array_push($this->initBlocks,$block);
     }
 
-    public function ThemeSetting($name){
-        return $this->themeSetting[$name];
+    public function addFilterBlock(\feiron\felaraframe\lib\contracts\feFilterBlock $block){
+        array_push($this->filterBlock,$block);
     }
 
-    public function LoadTheme($themeName){
-        $this->theme= $this->themeList[$themeName]?? $this->themeList['felaraframe'];
+    public function getInitBlocks(){
+        return $this->initBlocks;
     }
 
-    public function AppendTheme(feTheme $theme){
-        $this->themeList[$theme->name()]= $theme;
+    public function getFilterBlock(){
+        return $this->filterBlock;
+    }
+
+    public function menuGenerator(){
+        return $this->menu;
+    }
+
+    public function COMs(){
+        return $this->communication;
     }
 
     public function AppendGeneralSetting(feSettingControls $setting){
         $this->siteSettingList[$setting->name()] = $setting;
     }
 
-    public function RemoveTheme($themeName){
-        unset($this->themeList[$themeName]);
-    }
-
-    public function GetThemeSettings(){
-        return $this->themeSetting;
-    }
-    
     public function GetSiteSettings(){
         return $this->siteSetting;
-    }
-
-    public function GetCurrentTheme(){
-        return $this->theme;
-    }
-
-    public function GetThemes(){
-        return $this->themeList;
-    }
-
-    public function getThemeByName($name){
-        return $this->themeList[$name];
     }
 
     public function getResources(){
@@ -148,10 +90,6 @@ class FeFrame {
         return $rst;
     }
 
-    public function RenderThemeSettings(){
-        return $this->RenderSettings($this->theme->ThemeSettings(), $this->themeSetting);
-    }
-
     public function RenderSiteSettings(){
         $SettingList='';
         foreach($this->siteSettingList as $name=>$Setting){
@@ -165,7 +103,7 @@ class FeFrame {
         foreach($settingList as $key=>$settings){
             $heading=($heading>5)?5:$heading;
             if((false === array_key_exists('type', $settings))){
-                $html.= '<div class="form-row"><h'.$heading.'><strong>'.$key. '</strong></h' . $heading . '>'.$this->RenderSettings($settings, $valueList, $heading+1). '</div>';
+                $html.= '<div class="form-row row"><h'.$heading.'><strong>'.$key. '</strong></h' . $heading . '>'.$this->RenderSettings($settings, $valueList, $heading+1). '</div>';
             }else{
                 $html .= '<div class="ThemeSettings col-md-4 col-sm-12">
                             <div class="ThemeSettingHeading">
@@ -185,41 +123,52 @@ class FeFrame {
                 $options='';
                 if(!empty($control['options']) && is_array($control['options'])){
                     foreach($control['options'] as $option){
-                        $options.='<option value="'. $option.'" '.($option==$value?'SELECTED':'').'>'.$option.'</option>';
+                        $options.='<option value="'. $option.'" '.($option==$value?'SELECTED default':'').'>'.$option.'</option>';
                     }
                 }
-                return '<select class="form-control" name="'. $control['name'].'">
+                return '<select class="form-control form-select" name="'. $control['name'].'">
                             '.$options.'
                         </select>';
-            break;
+            case 'switch':
+                return '
+                    <div class="form-check-inline form-switch me-2">
+                        <input class="form-check-input form-control" type="checkbox" toggle '.(($control['options']??'false')=='false'?'':'checked').' name="'.$control['name'].'" >
+                    </div>
+                ';
             case 'radio':
                 $options = '';
                 if (!empty($control['options']) && is_array($control['options'])) {
                     foreach ($control['options'] as $option) {
-                        $options .= '<label><input type="radio" ' . ($option == $value ? 'checked' : '') . ' name="' . $control['name'] . '" class="form-control" data-radio="iradio_minimal-blue" value="' . $option . '">' . $option . '</label>';
+                        $options .= '
+                            <div class="form-check-inline me-2">
+                                <input value="'.$option.'" class="form-check-input form-control" '.($option == $value ? 'checked' : '').' type="radio" name="'.$control['name'].'">
+                                <label class="form-check-label">
+                                '.$option.'
+                                </label>
+                            </div>
+                        ';
                     }
                 }
-                return '<div class="icheck-inline">
-                            '.$options.'
-                        </div>';
-            break;
+                return $options;
             case 'checkbox':
                 $options = '';
                 if (!empty($control['options']) && is_array($control['options'])) {
                     foreach ($control['options'] as $option) {
-                        $options .= '<label>
-                                        <input type="checkbox" '. ((is_array($value)?(in_array($option, $value)):($option == $value)) ? 'checked' : ''). ' name="' . $control['name'] . '" class="form-control" data-radio="icheckbox_square-blue" value="' . $option . '">' . $option . '</label>';
+                        $options .='
+                            <div class="form-check-inline me-2">
+                                <input class="form-check-input form-control" '. ((is_array($value)?(in_array($option, $value)):($option == $value)) ? 'checked' : ''). ' type="checkbox" value="' . $option . '" name="' . $control['name'] . '">
+                                <label class="form-check-label">' . $option . '</label>
+                            </div>
+                        ';
                     }
                 }
-                return '<div class="icheck-inline">
-                            ' . $options . '
-                        </div>';
-            break;
+                return $options;
             default:
                 return '<div class="prepend-icon">
-                            <input class="form-control" type="'. $control['type']. '" name="' . $control['name'] . '" value="'. ($control['value']??$value).'">
+                            <input class="form-control form-white" type="'. $control['type']. '" name="' . $control['name'] . '" value="'. ($control['value']??$value).'">
                             <i class="fa fa-indent"></i>
                         </div>';
         }
     }
+
 }

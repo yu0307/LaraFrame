@@ -5,12 +5,10 @@
     "license": "Apache-2.0",
     "require": {
         "php": ">=7.2.1",
-        "feiron/fe_login": ">=1.0",
         "laravel/framework": ">=8.0"
     },
     "require-dev": {
         "php": ">=7.2.1",
-        "feiron/fe_login": ">=1.0",
         "laravel/framework": ">=8.0"
     },
     "authors": [
@@ -19,7 +17,7 @@
             "email": "yu0307@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "beta",
     "autoload": {
         "psr-4": {
             "feiron\\felaraframe\\": "src/"

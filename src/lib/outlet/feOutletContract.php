@@ -7,7 +7,7 @@ interface feOutletContract{
 
     public function CallOutlet();
 
-    public function setResource($reousrce);
+    public function setResource($resource);
 
     public function getResource():array;
 
