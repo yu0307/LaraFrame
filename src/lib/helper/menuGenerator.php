@@ -1,47 +1,37 @@
 <?php
 
 namespace feiron\felaraframe\lib\helper;
-use Illuminate\Support\Facades\Route;
+use feiron\felaraframe\lib\feMenuItem;
+
 class menuGenerator {
-    private $menu=[];
-    public static function getMenuFromRoutes(){
-        if(config('felaraframe.appconfig.use_route_as_menu')){
-            return array_merge(
-                (Route::has('home')?[['title'=>'home','href'=>route('home')]]:[]), 
-                array_map(
-                        function ($val) {
-                            return ['title' =>explode('.', $val)[1], 'href'=>route($val)];
-                        },
-                        preg_grep(
-                            '/^FrameMenus.([\w|\S| ]*)$/i',
-                            array_keys(Route::getRoutes()->getRoutesByName())
-                        )
-                    )
-                );
+    private $menu;
+
+    public function __construct()
+    {
+        $this->menu=['default'=>[]];
+    }
+
+    public function addMenu($menuItem,$location='default'){
+        array_push($this->menu[$location],new feMenuItem($menuItem));
+        return $this->menu[$location][count($this->menu[$location])-1];
+    }
+
+    public function addMenus($menuItems,$location='default'){
+        foreach($menuItems as $menu){
+            $this->addMenu($menu,$location);
+        }
+        return $this;
+    }
+
+    public function getMenu($location='default'){
+        if(array_key_exists($location,$this->menu)){
+            $output = [];
+            foreach($this->menu[$location] as $menu){
+                $output=array_merge($output,[$menu->outputMenu()]);
+            }
+            return $output;
         }
         return [];
-    }
-    public function addMenu($menuItem){
-        if(array_key_exists('title',$menuItem)){
-            array_push($this->menu,[
-                'title'=>$menuItem['title'],
-                'href'=>$menuItem['href'],
-                'icon'=>($menuItem['icon']??''),
-                'class'=>($menuItem['class']??'')
-            ]);
-        }else{
-            foreach($menuItem as $menu){
-                array_push($this->menu,[
-                    'title'=>$menu['title'],
-                    'href'=>$menu['href'],
-                    'icon'=>($menu['icon']??''),
-                    'class'=>($menu['class']??'')
-                ]);
-            }
-        }
-    }
-    public function getMenu(){
-        return $this->menu??[];
     }
 }
 
